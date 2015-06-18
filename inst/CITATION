@@ -1,0 +1,15 @@
+citHeader("To cite lubridate in publications use:")
+
+citEntry(entry = "Article",
+  title        = "OASIS - un Outil d'Analyse de la Segregation et des Inegalites Spatiales",
+  author       = "Mihai Tivadar et al.",
+  journal      = "Cybergeo: European Journal of Geography",
+  year         = "2014",
+  url          = "http://cybergeo.revues.org/26579",
+
+  textVersion  =
+  paste("Mihai Tivadar et al. (2014).",
+        "OASIS - un Outil d'Analyse de la Segregation et des Inegalites Spatiales.",
+        "Cybergeo: European Journal of Geography",
+        "URL http://cybergeo.revues.org/26579.")
+)
