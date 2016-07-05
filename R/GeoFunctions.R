@@ -1,6 +1,7 @@
 library(rgdal)
 library(spdep)
 library(rgeos)
+library(birk)
 
 
 ################################################## 
@@ -14,23 +15,24 @@ library(rgeos)
 #'
 #' @usage area(spatobj = NULL, folder = NULL, shape = NULL)
 #' @param folder - a character vector with the folder (directory) 
-#' where the shapefile is
+#' name indicating where the shapefile with the geographic information 
+#' is located.
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension)
-#' @param spatobj - a Spatial object (SpatialPolygonsDataFrame)
-#' @return A vector with spatial units' areas. 
-#' @description The function is based on \pkg{rgdal} package and 
-#' can be used by providing a shape file or a R spatial object 
-#' (SpatialPolygonsDataFrame).
-#' @examples  area(GreHSize) 
-#' 
+#' (without the .shp extension) which contains the geographic information
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' geographic information
+#' @return A area vector
+#' @description The function is based on \pkg{rgdal} package and can be 
+#' used with a shape file or an R spatial object (SpatialPolygonsDataFrame).
+#' @examples  area(segdata) 
 #' foldername <- system.file('extdata', package = 'OasisR')
-#' shapename <- 'GreHSize'
+#' shapename <- 'segdata'
 #' area(folder = foldername, shape = shapename)
 #' @seealso  Other spatial functions used for segregation indices 
 #' computation: \code{\link{contig}}, \code{\link{perimeter}}, 
 #' \code{\link{distance}}, \code{\link{distcenter}}, 
-#' \code{\link{boundaries}}, \code{\link{xgeo}}
+#' \code{\link{boundaries}}
+#' @importFrom methods slot
 #' @export
 
 area <- function(spatobj = NULL, folder = NULL, shape = NULL) {
@@ -43,33 +45,35 @@ area <- function(spatobj = NULL, folder = NULL, shape = NULL) {
 
 #' A function to compute the contiguity matrix
 #'
-#' @usage contig(spatobj = NULL, folder = NULL, shape = NULL)
+#' @usage contig(spatobj = NULL, folder = NULL, shape = NULL, queen = TRUE)
 #' @param folder - a character vector with the folder (directory) 
-#' where the shapefile is
+#' name indicating where the shapefile with the geographic information 
+#' is located.
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension)
-#' @param spatobj - a Spatial object (SpatialPolygonsDataFrame)
+#' (without the .shp extension) which contains the geographic information
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' geographic information
+#' @param queen = TRUE (by default) for queen criteria, FALSE for rook criteria
 #' @return A first order contiguity (adjacency) matrix, where each 
 #' element [\emph{i,j}] equals 1 if \emph{i}-th  and \emph{j}-th  
-#' spatial units are adjacent, 0 otherwise (queen criteria)
+#' spatial units are adjacent, 0 otherwise (queen or rook criteria)
 #' @description The function is based on \pkg{rgdal} and 
-#' \pkg{spdep} packages and it can be used by providing a shape 
-#' file or a R spatial object (SpatialPolygonsDataFrame).
-#' @examples  contig(GreHSize) 
-#' 
+#' \pkg{spdep} packages and can be used with a shape file 
+#' or an R spatial object (SpatialPolygonsDataFrame).
+#' @examples  contig(segdata) 
 #' foldername <- system.file('extdata', package = 'OasisR')
-#' shapename <- 'GreHSize'
+#' shapename <- 'segdata'
 #' contig(folder = foldername, shape = shapename)
 #' @seealso  Other spatial functions used for segregation indices 
 #' computation: \code{\link{area}}, \code{\link{perimeter}}, 
 #' \code{\link{distance}}, \code{\link{distcenter}}, 
-#' \code{\link{boundaries}}, \code{\link{xgeo}}
+#' \code{\link{boundaries}}
 #' @export
 
-contig <- function(spatobj = NULL, folder = NULL, shape = NULL) {
+contig <- function(spatobj = NULL, folder = NULL, shape = NULL, queen = TRUE) {
     if (is.null(spatobj)) 
         spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
-    data_ngb <- spdep::poly2nb(spatobj)
+    data_ngb <- spdep::poly2nb(spatobj, queen = queen)
     contig <- spdep::nb2mat(data_ngb, style = "B")
     return(contig)
 }
@@ -79,31 +83,31 @@ contig <- function(spatobj = NULL, folder = NULL, shape = NULL) {
 #'
 #' @usage perimeter(spatobj = NULL, folder = NULL, shape = NULL)
 #' @param folder - a character vector with the folder (directory) 
-#' where the shapefile is
+#' name indicating where the shapefile with the geographic information 
+#' is located.
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension)
-#' @param spatobj - a Spatial object (SpatialPolygonsDataFrame)
-#' @return A vector with spatial units' perimeters. 
-#' @description The function is based on \pkg{rgdal} and \pkg{rgeos} 
-#' packages and it can be used by providing a shape 
-#' file or a R spatial object (SpatialPolygonsDataFrame).
-#' @examples  perimeter(GreHSize) 
-#' 
+#' (without the .shp extension) which contains the geographic information
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' geographic information
+#' @return A perimeter vector 
+#' @description The function is based on on \pkg{rgdal} and \pkg{rgeos}  
+#' packages and can be used with a shape file or an R spatial object 
+#' (SpatialPolygonsDataFrame).
+#' @examples  perimeter(segdata)  
 #' foldername <- system.file('extdata', package = 'OasisR')
-#' shapename <- 'GreHSize'
+#' shapename <- 'segdata'
 #' perimeter(folder = foldername, shape = shapename)
 #' @seealso  Other spatial functions used for segregation indices 
 #' computation:  \code{\link{area}}, \code{\link{contig}}, 
 #' \code{\link{distance}}, \code{\link{distcenter}}, 
-#' \code{\link{boundaries}}, \code{\link{xgeo}}
+#' \code{\link{boundaries}}
 #' @export
 
 perimeter <- function(spatobj = NULL, folder = NULL, shape = NULL) {
     if (is.null(spatobj)) 
         spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
-    perim <- vector(length = nrow(spatobj))
-    for (i in 1:nrow(spatobj)) 
-      perim[i] <- rgeos::gLength(spatobj[i, ])
+    perim <- vector(length = length(spatobj))
+    for (i in 1:length(spatobj)) perim[i] <- rgeos::gLength(spatobj[i, ])
     return(perim)
 }
 
@@ -111,77 +115,93 @@ perimeter <- function(spatobj = NULL, folder = NULL, shape = NULL) {
 #' A function to compute the distance matrix between centroids 
 #' of spatial units
 #'
-#' @usage distance(spatobj = NULL, folder = NULL, shape = NULL)
+#' @usage distance(spatobj = NULL, folder = NULL, shape = NULL,
+#' distin = 'm',  distout = 'm', diagval = '0')
 #' @param folder - a character vector with the folder (directory) 
-#' where the shapefile is
+#' name indicating where the shapefile with the geographic information 
+#' is located.
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension)
-#' @param spatobj - a Spatial object (SpatialPolygonsDataFrame)
-#' @return A matrix with the distance between spatial units centroids
+#' (without the .shp extension) which contains the geographic information
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' geographic information
+#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
+#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
+#' @param diagval -  the user has the choice of the definition of the diagonal: 
+#' diagval = '0'  (by default) for an 'empty' diagonal and diagval = 'a'
+#' to compute  the diagonal as 0.6 * square root (spatial units area) (White, 1983) 
+#' @return A matrix with the distance between centroids
 #' @description The function is based on \pkg{rgdal} and \pkg{rgeos} 
-#' packages and it can be used by providing a  shape file or a R 
-#' spatial object (SpatialPolygonsDataFrame).
-#' @examples  distance(GreHSize) 
+#' packages and can be used with a shape file or an R spatial object 
+#' (SpatialPolygonsDataFrame).
+#' @examples  distance(segdata) 
 #' 
 #' foldername <- system.file('extdata', package = 'OasisR')
-#' shapename <- 'GreHSize'
+#' shapename <- 'segdata'
 #' distance(folder = foldername, shape = shapename)
 #' @seealso  Other spatial functions used for segregation indices 
 #' computation: \code{\link{area}}, \code{\link{contig}}, 
 #' \code{\link{perimeter}}, \code{\link{distcenter}}, 
-#' \code{\link{boundaries}}, \code{\link{xgeo}}
+#' \code{\link{boundaries}}
 #' @export
 
-distance <- function(spatobj = NULL, folder = NULL, shape = NULL) {
+distance <- function(spatobj = NULL, folder = NULL, shape = NULL, distin = "m", distout = "m", diagval = "0") {
     if (is.null(spatobj)) 
         spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
-    dist <- matrix(0, nrow = nrow(spatobj), ncol = nrow(spatobj))
-    centroids <- vector("list", nrow(spatobj))
-    for (i in 1:nrow(spatobj)) centroids[[i]] <- rgeos::gCentroid(spatobj[i, ])
-    for (i in 1:(nrow(spatobj) - 1)) 
-      for (j in (i + 1):nrow(spatobj)) 
-        dist[i, j] <- rgeos::gDistance(centroids[[i]], 
-        centroids[[j]])
+    dist <- matrix(0, nrow = length(spatobj), ncol = length(spatobj))
+    centroids <- vector("list", length(spatobj))
+    for (i in 1:length(spatobj)) centroids[[i]] <- rgeos::gCentroid(spatobj[i, ])
+    for (i in 1:(length(spatobj) - 1)) for (j in (i + 1):length(spatobj)) dist[i, j] <- rgeos::gDistance(centroids[[i]], centroids[[j]])
     dist <- dist + t(dist)
+    if (diagval == "a") {
+        a <- area(spatobj = spatobj, folder = folder, shape = shape)
+        diag(dist) <- sqrt(a) * 0.6
+    }
+    dist <- birk::conv_unit(dist, from = distin, to = distout)
     return(dist)
 }
 
 #' A function to compute the distance from spatial units centroids 
 #' to the center
 #'
-#' @usage distcenter(spatobj = NULL, folder = NULL, shape = NULL, center = 1)
+#' @usage distcenter(spatobj = NULL, folder = NULL, shape = NULL, 
+#' center = 1, distin = 'm',  distout = 'm')
 #' @param folder - a character vector with the folder (directory) 
-#' where the shapefile is
+#' name indicating where the shapefile with the geographic information 
+#' is located.
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension)
-#' @param spatobj - a Spatial object (SpatialPolygonsDataFrame)
+#' (without the .shp extension) which contains the geographic information
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' geographic information
 #' @param center - the row number of the center
+#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
+#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
 #' @return A vector with the distance to the center's centroid
 #' @description The function is based on \pkg{rgdal} and \pkg{rgeos} 
-#' packages and it can be used by providing a shape file or a R 
+#' packages and it can be used with a shape file or an R 
 #' spatial object (SpatialPolygonsDataFrame).
-#' @examples  distcenter(GreHSize, center = 19) 
-#' 
+#' @examples  distcenter(segdata, center = 46) 
 #' foldername <- system.file('extdata', package = 'OasisR')
-#' shapename <- 'GreHSize'
+#' shapename <- 'segdata'
 #' distcenter(folder = foldername, shape = shapename, center = 19)
 #' @seealso  Other spatial functions used for segregation indices 
 #' computation: \code{\link{area}}, \code{\link{contig}}, 
 #' \code{\link{perimeter}}, \code{\link{distance}}, 
-#' \code{\link{boundaries}}, \code{\link{xgeo}}
+#' \code{\link{boundaries}}
 #' @export
 
 
-distcenter <- function(spatobj = NULL, folder = NULL, 
-                       shape = NULL, center = 1) {
+distcenter <- function(spatobj = NULL, folder = NULL, shape = NULL, center = 1, distin = "m", distout = "m") {
     if (is.null(spatobj)) 
         spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
-    distcenter <- vector(length = nrow(spatobj))
-    centroids <- vector("list", nrow(spatobj))
-    for (i in 1:nrow(spatobj)) 
-      centroids[[i]] <- rgeos::gCentroid(spatobj[i, ])
-    for (i in 1:nrow(spatobj)) 
-      distcenter[i] <- rgeos::gDistance(centroids[[i]], centroids[[center]])
+    distcenter <- vector(length = length(spatobj))
+    centroids <- vector("list", length(spatobj))
+    for (i in 1:length(spatobj)) centroids[[i]] <- rgeos::gCentroid(spatobj[i, ])
+    for (i in 1:length(spatobj)) distcenter[i] <- rgeos::gDistance(centroids[[i]], centroids[[center]])
+    distcenter <- birk::conv_unit(distcenter, from = distin, to = distout)
     return(distcenter)
 }
 
@@ -189,95 +209,37 @@ distcenter <- function(spatobj = NULL, folder = NULL,
 #'
 #' @usage boundaries(spatobj = NULL, folder = NULL, shape = NULL)
 #' @param folder - a character vector with the folder (directory) 
-#' where the shapefile is
+#' name indicating where the shapefile with the geographic information 
+#' is located.
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension)
-#' @param spatobj - a Spatial object (SpatialPolygonsDataFrame)
-#' @return A matrix with common boundaries between spatial units
+#' (without the .shp extension) which contains the geographic information
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' geographic information
+#' @return A common boundaries matrix
 #' @description The function is based on \pkg{rgdal} and \pkg{rgeos} 
-#' packages and it can be used by providing a shape file 
-#' or a R spatial object (SpatialPolygonsDataFrame).
-#' @examples  boundaries(AnnHAge) 
-#' 
+#' packages and it can be used with a shape file 
+#' or an R spatial object (SpatialPolygonsDataFrame).
+#' @examples  boundaries(segdata) 
 #' foldername <- system.file('extdata', package = 'OasisR')
-#' shapename <- 'AnnHAge'
+#' shapename <- 'segdata'
 #' boundaries(folder = foldername, shape = shapename)
 #' @seealso  Other spatial functions used for segregation indices 
 #' computation:  \code{\link{area}}, \code{\link{contig}}, 
 #' \code{\link{perimeter}}, \code{\link{distance}}, 
-#' \code{\link{distcenter}}, \code{\link{xgeo}}
+#' \code{\link{distcenter}}
 #' @export
 
 
 boundaries <- function(spatobj = NULL, folder = NULL, shape = NULL) {
     if (is.null(spatobj)) 
         spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
-    boundaries <- matrix(0, nrow = nrow(spatobj), ncol = nrow(spatobj))
-    for (i in 1:(nrow(spatobj) - 1)) for (j in (i + 1):nrow(spatobj)) {
-        provi <- rgeos::gIntersection(spatobj[i, ], spatobj[j, ])
-        if (!is.null(provi)) 
-            boundaries[i, j] <- rgeos::gLength(provi)
+    boundaries <- contig(spatobj)
+    mat <- upper.tri(boundaries, diag = FALSE) * 1
+    boundaries <- boundaries * mat
+    for (i in 1:(length(spatobj) - 1)) for (j in (i + 1):length(spatobj)) {
+        if (boundaries[i, j] != 0) 
+            boundaries[i, j] <- rgeos::gLength(rgeos::gIntersection(spatobj[i, ], spatobj[j, ]))
     }
     boundaries <- boundaries + t(boundaries)
     return(boundaries)
 }
-
-#' A function to compute all spatial info for segregation indexes
-#'
-#' @usage xgeo(spatobj = NULL, folder = NULL, shape = NULL, center = 1)
-#' @param folder - a character vector with the folder (directory) 
-#' where the shapefile is
-#' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension)
-#' @param spatobj - a Spatial object (SpatialPolygonsDataFrame)
-#' @param center - the row number of the center
-#' @return A list that contains all geographic information 
-#' needed to calculate segregation indexes.
-#' @description The function is based on \pkg{rgdal}, \pkg{rgeos} 
-#' and \pkg{spdep} packages and it can be used by providing a 
-#' shape file or a R spatial object (SpatialPolygonsDataFrame).
-#' @examples  xgeo(AnnHAge, center = 1) 
-#' 
-#' foldername <- system.file('extdata', package = 'OasisR')
-#' shapename <- 'AnnHAge'
-#' xgeo(folder = foldername, shape = shapename, center = 19)
-#' @seealso  Other spatial functions used for segregation indices 
-#' computation:  \code{\link{area}}, \code{\link{contig}}, 
-#' \code{\link{perimeter}}, \code{\link{distance}}, 
-#' \code{\link{distcenter}}, \code{\link{boundaries}}
-#' @export
-
-xgeo <- function(spatobj = NULL, folder = NULL, shape = NULL, center = 1) {
-    if (is.null(spatobj)) 
-        spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
-    data_ngb <- spdep::poly2nb(spatobj)
-    contig <- spdep::nb2mat(data_ngb, style = "B")
-    provi <- slot(spatobj, "polygons")
-    area <- sapply(provi, slot, "area")
-    perim <- vector(length = nrow(spatobj))
-    for (i in 1:nrow(spatobj)) 
-      perim[i] <- rgeos::gLength(spatobj[i, ])
-    dist <- matrix(0, nrow = nrow(spatobj), ncol = nrow(spatobj))
-    centroids <- vector("list", nrow(spatobj))
-    for (i in 1:nrow(spatobj)) 
-      centroids[[i]] <- rgeos::gCentroid(spatobj[i, ])
-    for (i in 1:(nrow(spatobj) - 1)) 
-      for (j in (i + 1):nrow(spatobj)) 
-        dist[i, j] <- rgeos::gDistance(centroids[[i]], 
-        centroids[[j]])
-    dist <- dist + t(dist)
-    distcenter <- vector(length = nrow(spatobj))
-    for (i in 1:nrow(spatobj)) 
-      distcenter[i] <- rgeos::gDistance(centroids[[i]], centroids[[center]])
-    boundaries <- matrix(0, nrow = nrow(spatobj), ncol = nrow(spatobj))
-    for (i in 1:(nrow(spatobj) - 1)) 
-      for (j in (i + 1):nrow(spatobj)) {
-        provi <- rgeos::gIntersection(spatobj[i, ], spatobj[j, ])
-        if (!is.null(provi)) 
-            boundaries[i, j] <- rgeos::gLength(provi)
-    }
-    boundaries <- boundaries + t(boundaries)
-    resultlist <- list(perimeter = perim, area = area, contiguity = contig, 
-          boundaries = boundaries, distance = dist, distcenter = distcenter)
-    return(resultlist)
-} 

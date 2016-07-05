@@ -11,18 +11,20 @@ vignette: >
 
 ## Dimensions of social segregation
 
+
+
 Spatial segregation is defined as inequality in the spatial distribution of
 social groups in a residential area. It can be measured in relation 
 to various dimensions such as evenness, exposure, concentration, clustering
 and centralization (Massey & Denton, 1988). There is a distinction between
-different types of segregation indexes:
+different types of segregation indices:
 
-- intra-group indexes: measure the segregation of a group compared to all
+- onegroup indices: measure the segregation of a group compared to all
 population
-- inter-group indexes: compare the distribution of a social group with another
+- intergroups indices: compare the distribution of a social group with another
 group
-- multi-groups indexes: evaluate a global segregation level 
-- local indexes: measure the segregation intensity variation in space
+- multigroups indices: evaluate a global segregation level 
+- local indices: measure the segregation intensity variation in space
 
 
 ## Eveness
@@ -34,7 +36,7 @@ units in the residential area.
 ## Exposure
 
 Exposure refers to the potential interaction between members of the same group 
-(intragroup indexes) or of different groups (intergroup indexes)
+(intragroup indices) or of different groups (intergroup indices)
 
 ## Concentration
 

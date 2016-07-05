@@ -1,6 +1,0 @@
- var1 : communes.depcom;
- var2 : communes.nom_commune;
- var3 : Nombre de ménages dont la personne de référence est âgée de 15 à 29 ans en 2011 (fichier: indicateurs_demographie_menages_11);
- var4 : Nombre de ménages dont la personne de référence est âgée de 30 à 59 ans en 2011 (fichier: indicateurs_demographie_menages_11);
- var5 : Nombre de ménages dont la personne de référence est âgée de 60 ans ou plus en 2011 (fichier: indicateurs_demographie_menages_11);
- var6 : GID;
