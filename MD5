@@ -1,14 +1,14 @@
-d684d55dd3713e012397dcc8ed2ccb7a *DESCRIPTION
-84ec4acc41bded6f12ec5ee4a6a32ac3 *NAMESPACE
+0742d21ad29de51fe1034bfdc5cb08e1 *DESCRIPTION
+7944d1a592e98e9508162b047a45225b *NAMESPACE
 8032c43a6624454d91d8b20235ca0dad *R/DataDoc.R
 b9346a07877b5a2a0af2b85a61110b4c *R/GeoFunctions.R
-d3bfd0949a0aae67071d4745ee271b57 *R/SegFunctions.R
+2d642ad38ef333d7283531cbff7b9768 *R/SegFunctions.R
 11ab8222670aaceab60344ea145a7e61 *build/vignette.rds
 bc3b341ad004e0d283a21b710b5a3a04 *data/GreHSize.rda
 61405b4c82596be6086242b686c80e60 *data/segdata.rda
 14e9787874f46bb0aee0daf521897e70 *inst/CITATION
 25ceb942e8823cde4aa503b374f00496 *inst/doc/Dimensions_of_segregation.Rmd
-9e7ffbb5c341973c6be2d31e7b3d279c *inst/doc/Dimensions_of_segregation.html
+3b9990585312f33d6125b6e9b4fc5caf *inst/doc/Dimensions_of_segregation.html
 7ee4fa81ccc6e35c5bfceb0048dad719 *inst/extdata/GreHSize.dbf
 7464f323d80d4f92b7913e70abb8c14d *inst/extdata/GreHSize.prj
 5ea66b4ccbff505b80a683cffa60d049 *inst/extdata/GreHSize.shp
@@ -28,7 +28,7 @@ a10e2930fe6edbffb9aba437b54e2201 *man/ACO.Rd
 012d1ff23b4664bfb995ea3c049935b2 *man/DIMorrill.Rd
 f331c8014f509e5adad87b314e0847a2 *man/DIWong.Rd
 f329c9e8b960253cb2e3057bb161b5c6 *man/DMulti.Rd
-056f197acf969a67709eac5b41d2314e *man/DPxx.Rd
+ecaf7b4c6e6af37daec3da545b06caf0 *man/DPxx.Rd
 7921cd33d5280538e74065f4a9001c9e *man/DPxy.Rd
 060212e6814c8f2cc1ee34358eb5c8d2 *man/Delta.Rd
 934b7201cd740583a93bd62f05f4f261 *man/Eta2.Rd
@@ -37,7 +37,7 @@ bda23be5f141f328d579f43a1bea3f33 *man/Gini.Rd
 abdb1a6cbdcc95ed19fc8cb27d3d0404 *man/GiniMulti.Rd
 61c187cd6973422c5bfdadd6c44f9a53 *man/Gorard.Rd
 7f05bf8424cbf3598ebd42fa074cb00b *man/GreHSize.Rd
-9a069fb617e058575c8a4a84cf178669 *man/HLoc.Rd
+ca64f92f7d6b2180f967c90a2128f421 *man/HLoc.Rd
 9409fbde77e8de8429bef04db5664843 *man/HMulti.Rd
 e5cf83fbc1243d888227572b76555cbd *man/HShannon.Rd
 1c0b4650b5e39d3ef21aef895a9850e7 *man/HTheil.Rd
@@ -45,7 +45,9 @@ e5cf83fbc1243d888227572b76555cbd *man/HShannon.Rd
 9819c848044a7ba499805d704befceca *man/ISMorrill.Rd
 eb586deb5efb2e0e12518995fa66d600 *man/ISWong.Rd
 129e990ad6d1930052f78cc8f6b83918 *man/ISimpson.Rd
-edb53b1efed0f0d463317c7eb979e903 *man/LQ.Rd
+b6454c47977a30eac43a868bcd73d53b *man/LQ.Rd
+c387f4bbc2a2c056f3ea47126da48a4d *man/LShannon.Rd
+534ecdd0effa9de1d27a139e190813c5 *man/LSimpson.Rd
 d5a98312b1b5e539e56883c3bd75cf5c *man/MCPlot.Rd
 729bb6747a09b325f3ee205226567029 *man/MCTest.Rd
 5b403af219908cd09bd33f689dc33557 *man/NShannon.Rd

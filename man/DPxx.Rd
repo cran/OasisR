@@ -62,9 +62,8 @@ DPxx(x, spatobj = segdata, diagval = 'a')
 DPxx(x, folder = foldername, shape = shapename, diagval = '0') 
 }
 \references{
-Morgan, B. S. (1983) \emph{An Alternate Approach to the 
-Development of a Distance-Based Measure of Racial Segregation}. 
-American Journal of Sociology 88,  pp. 1237-1249.
+Morgan, B. S. (1983) \emph{A Distance-Decay Based Interaction 
+Index to Measure Residential Segregation}. Area 15(3),  pp. 211-217.
 }
 \seealso{
 Isolation indices: 

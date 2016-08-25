@@ -1,7 +1,7 @@
 Package: OasisR
 Type: Package
-Version: 2.0.0
-Date: 2016-07-04
+Version: 2.0.1
+Date: 2016-08-25
 Title: Outright Tool for the Analysis of Spatial Inequalities and
         Segregation
 Author: Mihai Tivadar <mihai.tivadar@irstea.fr>
@@ -16,6 +16,6 @@ Suggests: testthat, knitr
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2016-07-05 09:42:30 UTC; mihai.tivadar
+Packaged: 2016-08-25 13:58:14 UTC; mihai.tivadar
 Repository: CRAN
-Date/Publication: 2016-07-05 12:49:50
+Date/Publication: 2016-08-25 17:57:14

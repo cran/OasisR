@@ -431,7 +431,9 @@ Gini2 <- function(x) {
     x <- as.matrix(x)
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     for (k1 in 1:(ncol(x) - 1)) for (k2 in (k1 + 1):ncol(x)) {
-        result[k1, k2] <- Gini(x[, c(k1, k2)])[1]
+        xprovi <- x[, c(k1, k2)]
+        xprovi <- xprovi[rowSums(xprovi)>0,]
+        result[k1, k2] <- Gini(xprovi)[1]
         result[k2, k1] <- result[k1, k2]
     }
     return(round(result, 4))
@@ -538,6 +540,7 @@ DIMorrill <- function(x, c = NULL, queen = TRUE, spatobj = NULL, folder = NULL, 
     for (k1 in 1:(ncol(x) - 1)) for (k2 in (k1 + 1):ncol(x)) {
         for (i in 1:nrow(x)) pij[k1, , i] <- x[i, k1]/(x[i, k1] + x[i, k2])
         for (i in 1:nrow(x)) pij[k1, i, ] <- abs(pij[k1, i, ] - x[i, k1]/(x[i, k1] + x[i, k2]))
+        pij[k1, , ][is.nan(pij[k1, , ])] <- 0
         matprovi <- c %*% pij[k1, , ]
         matprovi <- matprovi * diag(nrow(x))
         result[k1, k2] <- DI[k1, k2] - sum(matprovi)/sum(c)
@@ -620,6 +623,7 @@ DIWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
         for (k1 in 1:(ncol(x) - 1)) for (k2 in (k1 + 1):ncol(x)) {
             for (i in 1:nrow(x)) pij[k1, , i] <- x[i, k1]/(x[i, k1] + x[i, k2])
             for (i in 1:nrow(x)) pij[k1, i, ] <- abs(pij[k1, i, ] - x[i, k1]/(x[i, k1] + x[i, k2]))
+            pij[k1, , ][is.nan(pij[k1, , ])] <- 0
             matprovi <- w %*% (pij[k1, , ])
             matprovi <- matprovi * diag(nrow(x))
             result[k1, k2] <- DI[k1, k2] - sum(matprovi)
@@ -641,6 +645,7 @@ DIWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
         for (k1 in 1:(ncol(x) - 1)) for (k2 in (k1 + 1):ncol(x)) {
             for (i in 1:nrow(x)) pij[k1, , i] <- x[i, k1]/(x[i, k1] + x[i, k2])
             for (i in 1:nrow(x)) pij[k1, i, ] <- abs(pij[k1, i, ] - x[i, k1]/(x[i, k1] + x[i, k2]))
+            pij[k1, , ][is.nan(pij[k1, , ])] <- 0
             matprovi <- w %*% (pij[k1, , ] * PerAij)
             matprovi <- matprovi * diag(nrow(x))
             result[k1, k2] <- DI[k1, k2] - sum(matprovi)/(2 * maxPA)
@@ -693,7 +698,7 @@ xPx <- function(x, exact = FALSE) {
     t <- rowSums(x)
     if (exact == FALSE) 
         for (k in 1:ncol(x)) result[k] <- sum(x[, k]/varTotal[k] * x[, k]/t)
-    if (exact == T) 
+    if (exact == TRUE) 
         for (k in 1:ncol(x)) result[k] <- sum(x[, k]/varTotal[k] * (x[, k] - 1)/(t - 1))
     return(round(result, 4))
 }
@@ -726,9 +731,8 @@ xPx <- function(x, exact = FALSE) {
 #' geographic information
 #' @return a numeric vector containing the distance-decay isolation index 
 #' value for each population group
-#' @references Morgan, B. S. (1983) \emph{An Alternate Approach to the 
-#' Development of a Distance-Based Measure of Racial Segregation}. 
-#' American Journal of Sociology 88,  pp. 1237-1249.
+#' @references Morgan, B. S. (1983) \emph{A Distance-Decay Based Interaction 
+#' Index to Measure Residential Segregation}. Area 15(3),  pp. 211-217.
 #' @description The distance decay isolation index, DPxx, is a spatial
 #' adaptation of isolation index \code{\link{xPx}}. 
 #' The function can be used in two ways: to provide a distance matrix 
@@ -1264,10 +1268,9 @@ ACL <- function(x, spatmat = "c", c = NULL, queen = TRUE, distin = "m", distout 
         c <- contig(spatobj = spatobj, folder = folder, shape = shape, queen = queen)
         diag(c) <- 1
     }
-    if (spatmat == "d" & is.null(c)) {
+    if (spatmat == "d" & is.null(c)) 
         c <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
-        c <- exp(-c)
-    }
+    if (spatmat == "d" )  c <- exp(-c)
     result <- vector(length = ncol(x))
     varTotal <- colSums(x)
     t <- as.vector(rowSums(x))
@@ -2276,7 +2279,8 @@ CMulti <- function(x) {
 #' same group in the area.
 #' @examples x <- segdata@data[ ,1:2]
 #' LQ(x) 
-#' @seealso Other local indices:  local diversity index \code{\link{HLoc}}
+#' @seealso Other local indices \code{\link{LShannon}}
+#' \code{\link{HLoc}}, \code{\link{LSimpson}}   
 #' @export
 
 LQ <- function(x) {
@@ -2307,7 +2311,8 @@ LQ <- function(x) {
 #' adaptation of Pielou's normalized diversity index \code{\link{NShannon}}.
 #' @examples x <- segdata@data[ ,1:2]
 #' HLoc(x) 
-#' @seealso Other local indices:  location quotients \code{\link{LQ}}
+#' @seealso Other local indices \code{\link{LQ}}
+#' \code{\link{LShannon}}, \code{\link{LSimpson}}   
 #' @export
 
 
@@ -2329,6 +2334,77 @@ HLoc <- function(x) {
     result[is.na(result)] <- 0
     return(round(result, 4))
 }
+
+
+#' A function to compute Shannon-Wiener local diversity (entropy) index
+#'
+#' @usage LShannon(x) 
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a population group, within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' population groups are required). You should not include a column with total 
+#' population in each unit, because this will be interpreted as a group.
+#' @return Local Shannon-Wiener diversity index 
+#' @references Shannon C. E. (1948) \emph{A mathematical theory 
+#' of communication}. Bell System Technical Journal (27) 
+#' @description The Shannon-Wiener diversity index is based on 
+#' the notion of entropy and measures population heterogeneity.
+#' @examples x <- segdata@data[ ,1:2]
+#' LShannon(x) 
+#' @seealso Other local indices: \code{\link{LQ}}, 
+#' \code{\link{HLoc}}, \code{\link{LSimpson}}   
+#' @export
+
+
+LShannon <- function(x) {
+  x <- as.matrix(x)
+  Total <- sum(x)
+  t <- rowSums(x)
+  result <- x/t
+  result <- cbind(result, 0)
+  for (i in 1:nrow(result)) {
+    n <- 0
+    for (j in 1:(ncol(result) - 1)) if (result[i, j] > 0) {
+      result[i, ncol(result)] <- result[i, ncol(result)] + result[i, j] * log(result[i, j])
+      n <- n + 1
+    }
+    result[i, ncol(result)] <- -result[i, ncol(result)]
+  }
+  result <- result[, ncol(result)]
+  result[is.na(result)] <- 0
+  return(round(result, 4))
+}
+
+
+#' A function to compute local Simpson's index
+#'
+#' @usage LSimpson (x) 
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a population group, within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' population groups are required). You should not include a column with total 
+#' population in each unit, because this will be interpreted as a group.
+#' @return Local Simpson's interaction index 
+#' @references Simpson E. H. (1949) \emph{Measurement of diversity}. 
+#' Nature 163:688 
+#' @description Local Simpson's interaction index measures the probability 
+#' that randomly selected individuals are not in the same group in 
+#' each spatial unit. 
+#' @examples x <- segdata@data[ ,1:2]
+#' LSimpson (x) 
+#' @seealso Other local indices: \code{\link{LQ}}, 
+#' \code{\link{HLoc}}, \code{\link{LShannon}}   
+#' @export
+
+
+LSimpson <- function(x) {
+  x <- as.matrix(x)
+  p <- x/rowSums(x)
+  result <- rowSums(p*(1-p))
+  result[is.na(result)] <- 0
+  return(round(result, 4))
+}
+
 
 
 

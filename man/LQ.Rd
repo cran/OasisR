@@ -30,6 +30,7 @@ Isard W. (1960) \emph{Methods of regional analysis:
 an introduction to regional science}. The MIT Press, Cambridge
 }
 \seealso{
-Other local indices:  local diversity index \code{\link{HLoc}}
+Other local indices \code{\link{LShannon}}
+\code{\link{HLoc}}, \code{\link{LSimpson}}
 }
 
