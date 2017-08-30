@@ -1,4 +1,4 @@
-citHeader("To cite lubridate in publications use:")
+citHeader("To cite in publications use:")
 
 citEntry(entry = "Article",
   title        = "OASIS - un Outil d'Analyse de la Segregation et des Inegalites Spatiales",

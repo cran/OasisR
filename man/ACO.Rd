@@ -8,34 +8,33 @@ ACO(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 
-\item{a}{- a numeric vector containing the areas of spatial units}
+\item{a}{- a numeric vector containing spatial unit areas}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
-name indicating where the shapefile with the geographic information 
-is located.}
+name indicating where the shapefile is located on the drive}
 
 \item{shape}{- a character vector with the name of the shapefile 
-(without the .shp extension) which contains the geographic information}
+(without the .shp extension).}
 }
 \value{
 a numeric vector containing Absolute Concentration index value for 
-each population group
+each group
 }
 \description{
 The absolute concentration index, ACO, computes 
 the total area inhabited by a group, and compares the result 
 to the minimum and maximum possible areas that could be 
-inhabited by that group in the study area. 
-#' The function can be used in two ways: to provide an area vector or a 
-external geographic information source (spatial object or shape file).
+inhabited by that group in the study area. The function can be 
+used in two ways: to provide an area vector or a external 
+geographic information source (spatial object or shape file).
 }
 \examples{
 x <- GreHSize@data[ ,3:5]
@@ -60,4 +59,3 @@ Delta Index: \code{\link{Delta}}
 
 Relative Concentration Index: \code{\link{RCO}}
 }
-

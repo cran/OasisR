@@ -8,19 +8,19 @@ Gorard(x)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-totals because this will be interpreted as a population group}
+groups are required). You should not include a column with total 
+totals because this will be interpreted as a group}
 }
 \value{
 a numeric vector containing the Gorard's segregation index value for 
-each population group
+each group
 }
 \description{
 Gorard's index is an alternative to \code{\link{ISDuncan}}'s 
-index, which measures the dissimilarity between the spatial  
-distribution of a group and the total population.
+index, which measures the dissimilarity between the distribution of a 
+group and the total population.
 }
 \examples{
 x <- segdata@data[ ,1:2]
@@ -33,10 +33,10 @@ Cardiff, University of Wales Press
 \seealso{
 One-group evenness indices: 
 \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Atkinson}}, 
-\code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}}
+\code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}},
+\code{\link{ISMorrillK}}
 
 Between groups dissimilarity indices: 
 \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-\code{\link{DIMorrill}}, \code{\link{DIWong}}
+\code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 }
-

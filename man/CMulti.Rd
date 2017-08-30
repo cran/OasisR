@@ -2,19 +2,19 @@
 % Please edit documentation in R/SegFunctions.R
 \name{CMulti}
 \alias{CMulti}
-\title{A function to compute multigroup squared coefficient of variation index}
+\title{A function to compute multi-group squared coefficient of variation index}
 \usage{
 CMulti(x)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 }
 \value{
-Multigroup entropy segregation index
+multi-group entropy segregation index
 }
 \description{
 The index can be interpreted as a measure of the variance of the 
@@ -26,11 +26,11 @@ x <- segdata@data[ ,1:2]
 CMulti(x) 
 }
 \references{
-Reardon S. F. and Firebaugh G. (2002) \emph{Measures of multigroup 
+Reardon S. F. and Firebaugh G. (2002) \emph{Measures of multi-group 
 segregation}. Sociological Methodology, 32, pp. 33-67.
 }
 \seealso{
-Multigroup indices: 
+Multi-group indices: 
 \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 \code{\link{HMulti}}, \code{\link{RelDivers}}
 
@@ -38,4 +38,3 @@ Social diversity indices:
 \code{\link{HShannon}}, \code{\link{NShannon}}, 
 \code{\link{ISimpson}},
 }
-

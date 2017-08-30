@@ -8,21 +8,20 @@ Atkinson (x, delta = 0.5)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 
-\item{delta}{- a inequality aversion parameter, by default equal to 0.5, 
-varying from 0 to 1.}
+\item{delta}{- an inequality aversion parameter}
 }
 \value{
 a numeric vector containing the Atkinson's segregation index value for 
-each population group
+each group
 }
 \description{
-The spatial version of Atkinson inequality index is derived
-from Lorenz curves. It allows to decide wich part of the curve contribute more 
+The spatial version of Atkinson inequality index is based on 
+Lorenz curves. The user can decide wich part of the curve contributes more 
 to the index, by choosing the value of the shape parameter, delta.
 }
 \examples{
@@ -38,10 +37,10 @@ of Segregation}. Sociological Methodology 15, pp. 1-32
 \seealso{
 One-group evenness indices: 
 \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
-\code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}}
+\code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}},
+\code{\link{ISMorrillK}}
 
 Between groups dissimilarity indices: 
 \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-\code{\link{DIMorrill}}, \code{\link{DIWong}}
+\code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 }
-

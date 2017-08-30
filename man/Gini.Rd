@@ -8,14 +8,14 @@ Gini(x)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 }
 \value{
 a numeric vector containing the Gini's segregation index value for 
-each population group
+each group
 }
 \description{
 The spatial version of the Gini index can be derived from 
@@ -34,10 +34,10 @@ pp. 210-217
 \seealso{
 Other one-group  evenness indices: 
 \code{\link{ISDuncan}}, \code{\link{Atkinson}}, \code{\link{Gorard}}, 
-\code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}}
+\code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}},
+\code{\link{ISMorrillK}}
 
 Between groups dissimilarity indices: 
 \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-\code{\link{DIMorrill}}, \code{\link{DIWong}}
+\code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 }
-

@@ -36,4 +36,3 @@ computation: \code{\link{contig}}, \code{\link{perimeter}},
 \code{\link{distance}}, \code{\link{distcenter}}, 
 \code{\link{boundaries}}
 }
-

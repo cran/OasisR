@@ -8,10 +8,10 @@ xPy(x, exact = FALSE)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 
 \item{exact}{- a logical variable to specifiy the index version: 
 exact = FALSE (by default) for the approximate version of the index, 
@@ -42,4 +42,3 @@ Isolation indices:
 
 Distance decay interaction index: \code{\link{DPxy}}
 }
-

@@ -1,7 +1,7 @@
 library(rgdal)
 library(spdep)
 library(rgeos)
-library(birk)
+library(measurements)
 
 
 ################################################## 
@@ -45,7 +45,7 @@ area <- function(spatobj = NULL, folder = NULL, shape = NULL) {
 
 #' A function to compute the contiguity matrix
 #'
-#' @usage contig(spatobj = NULL, folder = NULL, shape = NULL, queen = TRUE)
+#' @usage contig(spatobj = NULL, folder = NULL, shape = NULL, queen = FALSE)
 #' @param folder - a character vector with the folder (directory) 
 #' name indicating where the shapefile with the geographic information 
 #' is located.
@@ -53,7 +53,7 @@ area <- function(spatobj = NULL, folder = NULL, shape = NULL) {
 #' (without the .shp extension) which contains the geographic information
 #' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
 #' geographic information
-#' @param queen = TRUE (by default) for queen criteria, FALSE for rook criteria
+#' @param queen = TRUE for queen criteria, FALSE (by default)  for rook criteria
 #' @return A first order contiguity (adjacency) matrix, where each 
 #' element [\emph{i,j}] equals 1 if \emph{i}-th  and \emph{j}-th  
 #' spatial units are adjacent, 0 otherwise (queen or rook criteria)
@@ -70,11 +70,11 @@ area <- function(spatobj = NULL, folder = NULL, shape = NULL) {
 #' \code{\link{boundaries}}
 #' @export
 
-contig <- function(spatobj = NULL, folder = NULL, shape = NULL, queen = TRUE) {
+contig <- function(spatobj = NULL, folder = NULL, shape = NULL, queen = FALSE) {
     if (is.null(spatobj)) 
         spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
     data_ngb <- spdep::poly2nb(spatobj, queen = queen)
-    contig <- spdep::nb2mat(data_ngb, style = "B")
+    contig <- spdep::nb2mat(data_ngb, style = "B", zero.policy = TRUE)
     return(contig)
 }
 
@@ -124,9 +124,9 @@ perimeter <- function(spatobj = NULL, folder = NULL, shape = NULL) {
 #' (without the .shp extension) which contains the geographic information
 #' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
 #' geographic information
-#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' @param distin - input metric conversion, based on  \pkg{measurements} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' @param distout - output metric conversion, based on  \pkg{measurements} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
 #' @param diagval -  the user has the choice of the definition of the diagonal: 
 #' diagval = '0'  (by default) for an 'empty' diagonal and diagval = 'a'
@@ -158,7 +158,7 @@ distance <- function(spatobj = NULL, folder = NULL, shape = NULL, distin = "m", 
         a <- area(spatobj = spatobj, folder = folder, shape = shape)
         diag(dist) <- sqrt(a) * 0.6
     }
-    dist <- birk::conv_unit(dist, from = distin, to = distout)
+    dist <- measurements::conv_unit(dist, from = distin, to = distout)
     return(dist)
 }
 
@@ -175,9 +175,9 @@ distance <- function(spatobj = NULL, folder = NULL, shape = NULL, distin = "m", 
 #' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
 #' geographic information
 #' @param center - the row number of the center
-#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' @param distin - input metric conversion, based on  \pkg{measurements} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' @param distout - output metric conversion, based on  \pkg{measurements} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
 #' @return A vector with the distance to the center's centroid
 #' @description The function is based on \pkg{rgdal} and \pkg{rgeos} 
@@ -201,7 +201,7 @@ distcenter <- function(spatobj = NULL, folder = NULL, shape = NULL, center = 1, 
     centroids <- vector("list", length(spatobj))
     for (i in 1:length(spatobj)) centroids[[i]] <- rgeos::gCentroid(spatobj[i, ])
     for (i in 1:length(spatobj)) distcenter[i] <- rgeos::gDistance(centroids[[i]], centroids[[center]])
-    distcenter <- birk::conv_unit(distcenter, from = distin, to = distout)
+    distcenter <- measurements::conv_unit(distcenter, from = distin, to = distout)
     return(distcenter)
 }
 

@@ -6,14 +6,14 @@
 persons without regard to group (Poo)}
 \usage{
 Poo(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
-itype = 'multi', spatobj = NULL, folder = NULL, shape = NULL)
+itype = 'multi', beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 
 \item{d}{- a matrix of the distances between spatial unit centroids}
 
@@ -29,25 +29,25 @@ includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.}
 \item{diagval}{- when providing a spatial object or a shape file, 
 the user has the choice of the spatial matrix diagonal definition: 
 diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983)}
+to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983)}
 
 \item{itype}{- a character string defining the index type:
-itype = 'multi' (by default) for the multigroup index (White, 1986)
+itype = 'multi' (by default) for the multi-group index (White, 1986)
 or itype = 'between' for the between groups version (White, 1983)}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{beta}{- distance decay parameter}
+
+\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
-name indicating where the shapefile with the geographic information 
-is located.}
+name indicating where the shapefile is located on the drive}
 
 \item{shape}{- a character vector with the name of the shapefile 
-(without the .shp extension) which contains the geographic information}
+(without the .shp extension).}
 }
 \value{
-a numeric vector containing Poo index value for 
-each population group
+Poo index value(s)
 }
 \description{
 Mean proximity, Poo, computes the mean distance 
@@ -87,4 +87,3 @@ Proximity measures: \code{\link{Pxx}},
 Clustering Indices: 
 \code{\link{ACL}}, \code{\link{RCL}}
 }
-

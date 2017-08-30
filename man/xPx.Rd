@@ -8,10 +8,10 @@ xPx(x, exact = FALSE)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 
 \item{exact}{- a logical variable to specifiy the index version: 
 exact = FALSE (by default) for the approximate version of the index, 
@@ -19,7 +19,7 @@ and exact = TRUE for the exact version}
 }
 \value{
 a numeric vector containing the isolation index value for 
-each population group
+each group
 }
 \description{
 The isolation index, xPx, is an exposure index 
@@ -44,4 +44,3 @@ Isolation indices:
 Interaction indices: 
 \code{\link{xPy}}, \code{\link{DPxy}}
 }
-

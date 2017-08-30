@@ -1,4 +1,3 @@
-
 #' Households distribution by  size in Grenoble urban area in 2011
 #' 
 #' This data set gives the households distribution by size in 

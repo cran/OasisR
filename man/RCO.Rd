@@ -8,28 +8,27 @@ RCO(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 
-\item{a}{- a numeric vector containing the areas of spatial units}
+\item{a}{- a numeric vector containing spatial unit areas}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
-name indicating where the shapefile with the geographic information 
-is located.}
+name indicating where the shapefile is located on the drive}
 
 \item{shape}{- a character vector with the name of the shapefile 
-(without the .shp extension) which contains the geographic information}
+(without the .shp extension).}
 }
 \value{
 a matrix containing relative concentration index values
 }
 \description{
-The relative concentration index, RCO, measures 
+The relative concentration index, measures 
 the share of space occupied by a group compared to another group.
 The function can be used in two ways: to provide an area vector or a 
 external geographic information source (spatial object or shape file).
@@ -56,4 +55,3 @@ Social Forces 67(2),  pp. 281-315.
 one-group concentration indices: 
 \code{\link{Delta}},  \code{\link{ACO}}
 }
-

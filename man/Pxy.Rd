@@ -6,14 +6,14 @@
 persons of different groups (Pxy)}
 \usage{
 Pxy(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
-spatobj = NULL, folder = NULL, shape = NULL)
+beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 
 \item{d}{- a matrix of the distances between spatial unit centroids}
 
@@ -29,27 +29,27 @@ includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.}
 \item{diagval}{- when providing a spatial object or a shape file, 
 the user has the choice of the spatial matrix diagonal definition: 
 diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983)}
+to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983)}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{beta}{- distance decay parameter}
+
+\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
-name indicating where the shapefile with the geographic information 
-is located.}
+name indicating where the shapefile is located on the drive}
 
 \item{shape}{- a character vector with the name of the shapefile 
-(without the .shp extension) which contains the geographic information}
+(without the .shp extension).}
 }
 \value{
 a matrix containing Pxy index values for each pair of groups
 }
 \description{
 Mean proximity, Pxy, computes the mean distance 
-between the members of different groups. 
-The function can be used in two ways: to provide a distance matrix 
-or a external geographic information source (spatial object 
-or shape file).
+between the members of different groups.The function can be used in 
+two ways: to provide a distance matrix or a external geographic 
+information source (spatial object or shape file).
 }
 \examples{
 x <- segdata@data[ ,1:2]
@@ -79,4 +79,3 @@ Proximity measures: \code{\link{Pxx}},
 Clustering Indices: 
 \code{\link{ACL}}, \code{\link{RCL}}
 }
-

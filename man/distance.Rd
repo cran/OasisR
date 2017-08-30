@@ -19,10 +19,10 @@ is located.}
 \item{shape}{- a character vector with the name of the shapefile 
 (without the .shp extension) which contains the geographic information}
 
-\item{distin}{- input metric conversion, based on  \pkg{bink} package and 
+\item{distin}{- input metric conversion, based on  \pkg{measurements} package and 
 includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.}
 
-\item{distout}{- output metric conversion, based on  \pkg{bink} package and 
+\item{distout}{- output metric conversion, based on  \pkg{measurements} package and 
 includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.}
 
 \item{diagval}{-  the user has the choice of the definition of the diagonal: 
@@ -50,4 +50,3 @@ computation: \code{\link{area}}, \code{\link{contig}},
 \code{\link{perimeter}}, \code{\link{distcenter}}, 
 \code{\link{boundaries}}
 }
-

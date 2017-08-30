@@ -4,7 +4,7 @@
 \alias{contig}
 \title{A function to compute the contiguity matrix}
 \usage{
-contig(spatobj = NULL, folder = NULL, shape = NULL, queen = TRUE)
+contig(spatobj = NULL, folder = NULL, shape = NULL, queen = FALSE)
 }
 \arguments{
 \item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
@@ -17,7 +17,7 @@ is located.}
 \item{shape}{- a character vector with the name of the shapefile 
 (without the .shp extension) which contains the geographic information}
 
-\item{queen}{= TRUE (by default) for queen criteria, FALSE for rook criteria}
+\item{queen}{= TRUE for queen criteria, FALSE (by default)  for rook criteria}
 }
 \value{
 A first order contiguity (adjacency) matrix, where each 
@@ -41,4 +41,3 @@ computation: \code{\link{area}}, \code{\link{perimeter}},
 \code{\link{distance}}, \code{\link{distcenter}}, 
 \code{\link{boundaries}}
 }
-

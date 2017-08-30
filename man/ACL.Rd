@@ -4,15 +4,15 @@
 \alias{ACL}
 \title{A function to compute Absolute Clustering Index (ACL)}
 \usage{
-ACL(x, spatmat = 'c', c = NULL, queen = TRUE, distin = 'm',  
-distout = 'm', diagval = '0',  spatobj = NULL, folder = NULL, shape = NULL)
+ACL(x, spatmat = 'c', c = NULL, queen = FALSE, d = NULL, distin = 'm',  
+distout = 'm', diagval = '0', beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 
 \item{spatmat}{- the method used for spatial calculations: 'c' for the 
 contiguity matrix (by default) or any other user spatial interaction matrix 
@@ -23,7 +23,9 @@ each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial
 units are adjacent or identical, and 0 otherwise.}
 
 \item{queen}{- logical parameter difining criteria used for contiguity 
-matrix computation, TRUE (by default) for queen , FALSE for rook}
+matrix computation, TRUE for queen, FALSE (by default) for rook}
+
+\item{d}{- a matrix of the distances between spatial unit centroids}
 
 \item{distin}{- input metric conversion, based on  \pkg{bink} package and 
 includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.}
@@ -34,33 +36,35 @@ includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.}
 \item{diagval}{- when providing a spatial object or a shape file, 
 the user has the choice of the spatial matrix diagonal definition: 
 diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983)}
+to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983)}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{beta}{- distance decay parameter}
+
+\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
-name indicating where the shapefile with the geographic information 
-is located.}
+name indicating where the shapefile is located on the drive}
 
 \item{shape}{- a character vector with the name of the shapefile 
-(without the .shp extension) which contains the geographic information}
+(without the .shp extension).}
 }
 \value{
 a numeric vector containing Absolute Clustering index value for 
-each population group
+each group
 }
 \description{
 The absolute clustering index, ACL, expresses the 
-average number of a population group's members in nearby spatial 
-units, as a proportion of the total population in those spatial units. 
+average number of a group's members in nearby spatial units, as 
+a proportion of the total population in those spatial units. 
 The spatial interactions can be expressed as a contiguity matrix 
 (with diagonal equal to 1), as an inverse exponential function of the 
-distance between spatial units centres (with diagonal equal to 0.6 of the 
-square root of each spatial units area) or other user specified interaction matrix. 
-The function can be used in two ways: to provide a spatial interactions matrix 
-(a contiguity matrix or a distance matrix) or a external 
-geographic information source (spatial object or shape file).
+distance between spatial units centers (with diagonal equal 
+to 0.6 of the square root of each spatial units area) or other 
+user specified interaction matrix. The function can be used in two 
+ways: to provide a spatial interactions matrix (a contiguity matrix 
+or a distance matrix) or a external  geographic information source 
+(spatial object or shape file).
 }
 \examples{
 x <- segdata@data[ ,1:2]
@@ -68,7 +72,6 @@ contiguity <- contig(segdata)
 diag(contiguity) <- 1
 ar<-area(segdata)
 dist <- distance(segdata)
-dist <- exp(-dist)
 diag(dist)<-sqrt(ar) * 0.6
 foldername <- system.file('extdata', package = 'OasisR')
 shapename <- 'segdata'
@@ -79,9 +82,9 @@ ACL(x, spatobj = segdata)
 
 ACL(x, spatmat = 'd', folder = foldername, shape = shapename) 
  
-ACL(x, spatobj = segdata, spatmat = 'd', diagval = 'a')
+ACL(x,  spatmat = 'd', diagval = 'a', spatobj = segdata)
 
-ACL(x, c = dist, spatmat = 'd')
+ACL(x, d = dist, spatmat = 'd')
 
 }
 \references{
@@ -95,4 +98,3 @@ Proximity measures: \code{\link{Pxx}},
 
 Relative Clustering Index: \code{\link{RCL}}
 }
-

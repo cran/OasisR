@@ -37,4 +37,3 @@ computation:  \code{\link{area}}, \code{\link{contig}},
 \code{\link{perimeter}}, \code{\link{distance}}, 
 \code{\link{distcenter}}
 }
-

@@ -9,47 +9,46 @@ spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-totals because this will be interpreted as a population group}
+groups are required). You should not include a column with total 
+totals because this will be interpreted as a group}
 
 \item{b}{- a common boundaries matrix where each element \emph{Bij} 
 equals the shared boundary of \emph{i}-th and \emph{j}-th spatial units.}
 
-\item{a}{- a numeric vector containing the areas of spatial units}
+\item{a}{- a numeric vector containing spatial unit areas}
 
-\item{p}{- a numeric vector containing the perimeters of spatial units}
+\item{p}{- a numeric vector containing spatial units perimeters.}
 
 \item{ptype}{- a string variable giving two options for perimeter calculation
 when a spatial object or shapefile is provided: 'int' to use only interior
 boundaries of spatial units, and 'all' to use entire boundaries, 
-including the boundaries to the exterior of the area}
+including the boundaries to the exterior}
 
 \item{variant}{- a character variable that allows to choose the index version: 
-variant = 's' for the index adjusted for contiguous spatial units 
+variant = 's' for the index adjusted for contiguous spatial/organizational units
 boundary lengths and perimeter/area ratio (by default) and variant = 'w' 
 for the version based only on shared boundaries length}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
-name indicating where the shapefile with the geographic information 
-is located.}
+name indicating where the shapefile is located on the drive}
 
 \item{shape}{- a character vector with the name of the shapefile 
-(without the .shp extension) which contains the geographic information}
+(without the .shp extension).}
 }
 \value{
 a numeric vector containing the Wong's segregation index value for 
-each population group
+each group
 }
 \description{
 Wong's segregation index is a development of 
 \code{\link{ISDuncan}}'s which takes into account the interactions 
 between spatial units (common boundaries and perimeter/area ratio). 
-The function can be used in two ways: to provide spatial data ( 
+The function can be used in two ways: to provide spatial data (
 boundaries matrix, a perimeter vector and an area vector) 
 or a external geographic information source (spatial object or shape file).
 }
@@ -75,10 +74,10 @@ segregation}. Urban Geography, 19 (1), pp. 77-87.
 \seealso{
 One-group evenness indices: 
 \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
-\code{\link{HTheil}}, '\code{\link{Atkinson}}, \code{\link{ISMorrill}}
+\code{\link{HTheil}}, '\code{\link{Atkinson}}, \code{\link{ISMorrill}},
+\code{\link{ISMorrillK}}
 
 Between groups dissimilarity indices: 
 \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-\code{\link{DIMorrill}}, \code{\link{DIWong}}
+\code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 }
-

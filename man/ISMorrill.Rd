@@ -4,41 +4,40 @@
 \alias{ISMorrill}
 \title{A function to compute Morrill's segregation index}
 \usage{
-ISMorrill(x, c = NULL, queen = TRUE, 
+ISMorrill(x, c = NULL, queen = FALSE, 
 spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 
 \item{c}{- a standard binary contiguity (adjacency) symmetric matrix where 
 each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 units are adjacent, and 0 otherwise.}
 
-\item{queen}{- logical parameter difining criteria used for contiguity 
-matrix computation, TRUE (by default) for queen , FALSE for rook}
+\item{queen}{- a logical parameter difining criteria used for the contiguity 
+matrix computation, TRUE for queen, FALSE (by default) for rook}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
-name indicating where the shapefile with the geographic information 
-is located.}
+name indicating where the shapefile is located on the drive}
 
 \item{shape}{- a character vector with the name of the shapefile 
-(without the .shp extension)  which contains the geographic information}
+(without the .shp extension) .}
 }
 \value{
 a numeric vector containing the Morrill's segregation index value for 
-each population group
+each group
 }
 \description{
 Morrill's segregation index is a development of 
 \code{\link{ISDuncan}}'s index which takes into account the 
-interactions between spatial units (contiguity). 
+interactions between spatial units(contiguity). 
 The function can be used in two ways: to provide a contiguity 
 matrix or a external geographic information source (spatial object 
 or shape file).
@@ -63,10 +62,10 @@ segregation}. Geography research forum, 11, pp. 25-36.
 \seealso{
 One-group evenness indices: 
 \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
-\code{\link{HTheil}}, \code{\link{Atkinson}}, '\code{\link{ISWong}}
+\code{\link{HTheil}}, \code{\link{Atkinson}}, '\code{\link{ISWong}},
+\code{\link{ISMorrillK}}
 
 Between groups dissimilarity indices: 
 \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-\code{\link{DIMorrill}}, \code{\link{DIWong}}
+\code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 }
-

@@ -8,22 +8,22 @@ ISDuncan (x)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
-where each column represents the distribution of a population group, within 
+where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
-population groups are required). You should not include a column with total 
-population in each unit, because this will be interpreted as a group.}
+groups are required). You should not include a column with total 
+population, because this will be interpreted as a group.}
 }
 \value{
-a numeric vector containing the Duncan's segregation index value for 
-each population group
+a numeric vector with values of the Duncan's segregation index 
+for each group
 }
 \description{
 Duncan's segregation index is one-group form of 
 dissimilarity index \code{\link{DIDuncan}} and  
-measures the unevenness of a group spatial distribution  
+measures the unevenness of a group distribution  
 compared to the rest of the population. It can be interpreted
 as the share of the group that would have to move to achieve 
-an even distribution, compared to the rest of the population.
+an even distribution compared to the rest of the population.
 }
 \examples{
 x <- segdata@data[ ,1:2]
@@ -37,10 +37,10 @@ American Journal of Sociology 60 (5), pp. 493-503
 \seealso{
 One-group evenness indices: 
 \code{\link{Gini}}, \code{\link{Atkinson}}, \code{\link{Gorard}}, 
-\code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}}
+\code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}},
+\code{\link{ISMorrillK}}
 
 Between groups dissimilarity indices: 
 \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-\code{\link{DIMorrill}}, \code{\link{DIWong}}
+\code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 }
-

@@ -1,3 +1,6 @@
+library(seg)
+library(outliers)
+library(spdep)
 
 
 ################################################## 
@@ -15,34 +18,36 @@
 #'
 #' @usage ISDuncan (x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @return a numeric vector containing the Duncan's segregation index value for 
-#' each population group 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @return a numeric vector with values of the Duncan's segregation index 
+#' for each group
 #' @references Duncan O. D. and Duncan B. (1955) \emph{ 
 #' Residential Distribution and Occupational Stratification}. 
 #' American Journal of Sociology 60 (5), pp. 493-503
 #' @description Duncan's segregation index is one-group form of 
 #' dissimilarity index \code{\link{DIDuncan}} and  
-#' measures the unevenness of a group spatial distribution  
+#' measures the unevenness of a group distribution  
 #' compared to the rest of the population. It can be interpreted
 #' as the share of the group that would have to move to achieve 
-#' an even distribution, compared to the rest of the population.
+#' an even distribution compared to the rest of the population.
 #' @examples x <- segdata@data[ ,1:2]
 #' ISDuncan(x) 
 #' @seealso One-group evenness indices: 
 #' \code{\link{Gini}}, \code{\link{Atkinson}}, \code{\link{Gorard}}, 
-#' \code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}}
+#' \code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}},
+#' \code{\link{ISMorrillK}}
 #' @seealso Between groups dissimilarity indices: 
 #' \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-#' \code{\link{DIMorrill}}, \code{\link{DIWong}}
+#' \code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 #' @export
 
 
 ISDuncan <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- vector(length = ncol(x))
     Total <- sum(x)
     pTotal <- colSums(x)/Total
@@ -59,18 +64,17 @@ ISDuncan <- function(x) {
 #'
 #' @usage Atkinson (x, delta = 0.5) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @param delta - a inequality aversion parameter, by default equal to 0.5, 
-#' varying from 0 to 1.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param delta - an inequality aversion parameter
 #' @return a numeric vector containing the Atkinson's segregation index value for 
-#' each population group 
+#' each group 
 #' @references James, D. and K. E. Taeuber (1985)  \emph{ Measures 
 #' of Segregation}. Sociological Methodology 15, pp. 1-32
-#' @description The spatial version of Atkinson inequality index is derived
-#' from Lorenz curves. It allows to decide wich part of the curve contribute more 
+#' @description The spatial version of Atkinson inequality index is based on 
+#' Lorenz curves. The user can decide wich part of the curve contributes more 
 #' to the index, by choosing the value of the shape parameter, delta. 
 #' @examples x <- segdata@data[ ,7:8]
 #' Atkinson(x) 
@@ -78,14 +82,16 @@ ISDuncan <- function(x) {
 #' Atkinson(x, delta = 0.9)
 #' @seealso One-group evenness indices: 
 #' \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
-#' \code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}}
+#' \code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}},
+#' \code{\link{ISMorrillK}}
 #' @seealso Between groups dissimilarity indices: 
 #' \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-#' \code{\link{DIMorrill}}, \code{\link{DIWong}}
+#' \code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 #' @export
 
 Atkinson <- function(x, delta = 0.5) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- vector(length = ncol(x))
     Total <- sum(x)
     pTotal <- colSums(x)/Total
@@ -103,12 +109,12 @@ Atkinson <- function(x, delta = 0.5) {
 #'
 #' @usage HTheil (x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return a numeric vector containing Theils's entropy index value for 
-#' each population group 
+#' each group 
 #' @references Theil H. (1972)  \emph{Statistical decomposition analysis: with 
 #' applications in the social and administrative.} Amsterdam, North-Holland, 337 p.
 #' @description The entropy index (also called information index) measures
@@ -118,14 +124,17 @@ Atkinson <- function(x, delta = 0.5) {
 #' HTheil(x) 
 #' @seealso One-group evenness indices: 
 #' \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
-#' \code{\link{Atkinson}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}}
+#' \code{\link{Atkinson}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}},
+#' \code{\link{ISMorrillK}}
 #' @seealso Between groups dissimilarity indices: 
-#' \code{\link{DIDuncan}}, \code{\link{Gini2}}, \code{\link{DIMorrill}}, \code{\link{DIWong}}
+#' \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
+#' \code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 #' @export
 
 
 HTheil <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- vector(length = ncol(x))
     E <- matrix(data = 0, nrow = nrow(x), ncol = ncol(x))
     Total <- sum(x)
@@ -145,29 +154,123 @@ HTheil <- function(x) {
 
 
 
+
+#' A function to compute K-th order Morrill's segregation index 
+#'
+#' @usage ISMorrillK(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NULL, 
+#' shape = NULL, K = 2, f = 'exp', beta = 1, prec = NULL)
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greaterTR than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param ck - a list containing contiguity matrices coresponding to each order 
+#' (from 1 to K)
+#' @param queen - logical parameter defining criteria used for contiguity 
+#' matrix computation, TRUE for queen, FALSE (by default) for rook 
+#' @param folder - a character vector with the folder (directory) 
+#' name indicating where the shapefile is located on the driveis located.
+#' @param shape - a character vector with the name of the shapefile 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' geographic information
+#' @param K - the order of the contiguity matrix
+#' @param f - the distance function, f = 'exp' (by default) for negative 
+#' exponential function and f = 'rec' for reciprocal function
+#' @param prec - precision parameter. If not NULL, the function stop computing
+#' the spatial interaction when the impact on the indice is bellow 10 ^ (-prec)
+#' @param beta - distance decay parameter
+#' @return a matrix with Generalized Morrill's dissimilarity index values 
+#' @references Morrill B. (1991) \emph{On the measure of geographic 
+#' segregation}. Geography research forum, 11, pp. 25-36.
+#' @description This function computes an adaptation of Morrill's segregation 
+#' index which takes into account the interactions between spatial units 
+#' defined by K-th ordered contiguity matrix. The index can be used in two   
+#' ways: to provide a contiguity units defined by K order contiguity matrix. The 
+#' function can be used in two matrix or a external geographic information source 
+#' (spatial object or shape file).
+#' @examples x <- segdata@data[ ,1:2]
+#' foldername <- system.file('extdata', package = 'OasisR')
+#' shapename <- 'segdata'
+#' 
+#' ISMorrillK(x, spatobj = segdata, queen = FALSE, K = 3)
+#' 
+#' ISMorrillK(x, folder = foldername, shape = shapename, K = 4, f = 'rec') 
+#' 
+#' @seealso One-group evenness indices: 
+#' \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
+#' \code{\link{HTheil}}, \code{\link{Atkinson}}, '\code{\link{ISWong}},
+#' \code{\link{ISMorrill}}
+#' @seealso Between groups dissimilarity indices: 
+#' \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
+#' \code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
+#' @export
+
+
+ISMorrillK <- function(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NULL, shape = NULL, K = 2, f = "exp", beta = 1, prec = NULL) {
+    x <- as.matrix(x)
+    if (K == 1) 
+        result <- ISMorrill(x, ck[[1]], queen, spatobj, folder, shape)
+    if (K > 1) {
+        if (is.null(ck)) {
+            if (is.null(spatobj)) 
+                spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
+            xx <- as.data.frame(x)
+            # row.names(xx) <- labels(spatobj) row.names(xx) <- labels(spatobj@data) spatobj <- SpatialPolygonsDataFrame(spatobj, xx)@data
+            spatobj@data <- xx
+            x <- segdataclean(spatobj@data)$x
+            ngb <- spdep::poly2nb(spatobj, queen = queen)
+            ngbk <- spdep::nblag(ngb, K)
+            ck <- vector("list", K)
+            for (k in 1:K) ck[[k]] <- spdep::nb2mat(ngbk[[k]], style = "B", zero.policy = TRUE)
+        } else {
+            cldata <- segdataclean(x, ck = ck)
+            x <- cldata$x
+            ck <- cldata$ck
+            if (is.null(K)) 
+                K <- length(ck)
+        }
+        result <- vector(length = ncol(x))
+        if (ncol(x) == 2) {
+            result[1] <- DIMorrillK(x, ck = ck, K = K, f = f)[1, 2]
+            result[2] <- result[1]
+        }
+        if (ncol(x) > 2) {
+            xprovi <- x[, 1:2]
+            for (i in 1:ncol(x)) {
+                xprovi[, 1] <- x[, i]
+                xprovi[, 2] <- rowSums(x[, -i])
+                result[i] <- DIMorrillK(xprovi, ck, queen, spatobj, folder, shape, K, f, beta, prec)[1, 2]
+            }
+        }
+    }
+    return(round(result, 4))
+}
+
+
+
 #' A function to compute Morrill's segregation index 
 #'
-#' @usage ISMorrill(x, c = NULL, queen = TRUE, 
+#' @usage ISMorrill(x, c = NULL, queen = FALSE, 
 #' spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param c - a standard binary contiguity (adjacency) symmetric matrix where 
 #' each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 #' units are adjacent, and 0 otherwise.
-#' @param queen - logical parameter difining criteria used for contiguity 
-#' matrix computation, TRUE (by default) for queen , FALSE for rook 
+#' @param queen - a logical parameter difining criteria used for the contiguity 
+#' matrix computation, TRUE for queen, FALSE (by default) for rook 
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension)  which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension) .
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a numeric vector containing the Morrill's segregation index value for 
-#' each population group
+#' each group
 #' @examples x <- segdata@data[ ,1:2]
 #' contiguity <- contig(segdata)
 #' foldername <- system.file('extdata', package = 'OasisR')
@@ -183,23 +286,27 @@ HTheil <- function(x) {
 #' segregation}. Geography research forum, 11, pp. 25-36.
 #' @description Morrill's segregation index is a development of 
 #' \code{\link{ISDuncan}}'s index which takes into account the 
-#' interactions between spatial units (contiguity). 
+#' interactions between spatial units(contiguity). 
 #' The function can be used in two ways: to provide a contiguity 
 #' matrix or a external geographic information source (spatial object 
 #' or shape file).
 #' @seealso One-group evenness indices: 
 #' \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
-#' \code{\link{HTheil}}, \code{\link{Atkinson}}, '\code{\link{ISWong}}
+#' \code{\link{HTheil}}, \code{\link{Atkinson}}, '\code{\link{ISWong}},
+#' \code{\link{ISMorrillK}}
 #' @seealso Between groups dissimilarity indices: 
 #' \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-#' \code{\link{DIMorrill}}, \code{\link{DIWong}}
+#' \code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 #' @export
 
 
-ISMorrill <- function(x, c = NULL, queen = TRUE, spatobj = NULL, folder = NULL, shape = NULL) {
+ISMorrill <- function(x, c = NULL, queen = FALSE, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
     if (is.null(c)) 
         c <- contig(spatobj = spatobj, folder = folder, shape = shape, queen = queen)
+    cldata <- segdataclean(x, c = c)
+    x <- cldata$x
+    c <- cldata$c
     IS <- ISDuncan(x)
     result <- vector(length = ncol(x))
     pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
@@ -221,31 +328,30 @@ ISMorrill <- function(x, c = NULL, queen = TRUE, spatobj = NULL, folder = NULL, 
 #' @usage ISWong(x, b = NULL,  a = NULL, p = NULL, ptype = 'int', variant = 's', 
 #' spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' totals because this will be interpreted as a population group
+#' groups are required). You should not include a column with total 
+#' totals because this will be interpreted as a group
 #' @param b - a common boundaries matrix where each element \emph{Bij} 
 #' equals the shared boundary of \emph{i}-th and \emph{j}-th spatial units.
-#' @param p - a numeric vector containing the perimeters of spatial units
+#' @param p - a numeric vector containing spatial units perimeters.
 #' @param ptype - a string variable giving two options for perimeter calculation
 #' when a spatial object or shapefile is provided: 'int' to use only interior
 #' boundaries of spatial units, and 'all' to use entire boundaries, 
-#' including the boundaries to the exterior of the area
-#' @param a - a numeric vector containing the areas of spatial units
+#' including the boundaries to the exterior
+#' @param a - a numeric vector containing spatial unit areas
 #' @param variant - a character variable that allows to choose the index version: 
-#' variant = 's' for the index adjusted for contiguous spatial units 
+#' variant = 's' for the index adjusted for contiguous spatial/organizational units
 #' boundary lengths and perimeter/area ratio (by default) and variant = 'w' 
 #' for the version based only on shared boundaries length
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a numeric vector containing the Wong's segregation index value for 
-#' each population group
+#' each group
 #' @examples x <- segdata@data[ ,1:2]
 #' bound <- boundaries(segdata)
 #' per <- perimeter(segdata)
@@ -264,15 +370,16 @@ ISMorrill <- function(x, c = NULL, queen = TRUE, spatobj = NULL, folder = NULL, 
 #' @description Wong's segregation index is a development of 
 #' \code{\link{ISDuncan}}'s which takes into account the interactions 
 #' between spatial units (common boundaries and perimeter/area ratio). 
-#' The function can be used in two ways: to provide spatial data ( 
+#' The function can be used in two ways: to provide spatial data (
 #' boundaries matrix, a perimeter vector and an area vector) 
 #' or a external geographic information source (spatial object or shape file).
 #' @seealso One-group evenness indices: 
 #' \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
-#' \code{\link{HTheil}}, '\code{\link{Atkinson}}, \code{\link{ISMorrill}}
+#' \code{\link{HTheil}}, '\code{\link{Atkinson}}, \code{\link{ISMorrill}},
+#' \code{\link{ISMorrillK}}
 #' @seealso Between groups dissimilarity indices: 
 #' \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-#' \code{\link{DIMorrill}}, \code{\link{DIWong}}
+#' \code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 #' @export
 
 
@@ -281,6 +388,19 @@ ISWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
     x <- as.matrix(x)
     if (is.null(b)) 
         b <- boundaries(spatobj = spatobj, folder = folder, shape = shape)
+    if (is.null(p)) {
+        if (ptype == "all") 
+            p <- perimeter(spatobj = spatobj, folder = folder, shape = shape)
+        if (ptype == "int") 
+            p <- rowSums(b)
+    }
+    if (is.null(a)) 
+        a <- area(spatobj = spatobj, folder = folder, shape = shape)
+    cldata <- segdataclean(x, b = b, p = p, a = a)
+    x <- cldata$x
+    b <- cldata$b
+    p <- cldata$p
+    a <- cldata$a
     IS <- ISDuncan(x)
     result <- vector(length = ncol(x))
     pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
@@ -296,14 +416,6 @@ ISWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
             result[k] <- IS[k] - sum(matprovi)
         }
     if (variant == "s") {
-        if (is.null(a)) 
-            a <- area(spatobj = spatobj, folder = folder, shape = shape)
-        if (is.null(p)) {
-            if (ptype == "all") 
-                p <- perimeter(spatobj = spatobj, folder = folder, shape = shape)
-            if (ptype == "int") 
-                p <- rowSums(b)
-        }
         PerAij <- matrix(data = 0, nrow = nrow(x), ncol = nrow(x))
         for (i in 1:nrow(x)) PerAij[, i] <- p[i]/a[i]
         for (i in 1:nrow(x)) PerAij[i, ] <- PerAij[i, ] + p[i]/a[i]
@@ -326,30 +438,32 @@ ISWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
 #'
 #' @usage Gorard(x)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' totals because this will be interpreted as a population group
+#' groups are required). You should not include a column with total 
+#' totals because this will be interpreted as a group
 #' @return a numeric vector containing the Gorard's segregation index value for 
-#' each population group
+#' each group
 #' @examples x <- segdata@data[ ,1:2]
 #' Gorard(x)
 #' @references Gorard S. (2000) \emph{Education and Social Justice}. 
 #' Cardiff, University of Wales Press
 #' @description Gorard's index is an alternative to \code{\link{ISDuncan}}'s 
-#' index, which measures the dissimilarity between the spatial  
-#' distribution of a group and the total population. 
+#' index, which measures the dissimilarity between the distribution of a 
+#' group and the total population. 
 #' @seealso One-group evenness indices: 
 #' \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Atkinson}}, 
-#' \code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}}
+#' \code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}},
+#' \code{\link{ISMorrillK}}
 #' @seealso Between groups dissimilarity indices: 
 #' \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-#' \code{\link{DIMorrill}}, \code{\link{DIWong}}
+#' \code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 #' @export
 
 
 Gorard <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- vector(length = ncol(x))
     tx <- rowSums(x)
     varTotal <- colSums(x)
@@ -362,12 +476,12 @@ Gorard <- function(x) {
 #'
 #' @usage Gini(x)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return a numeric vector containing the Gini's segregation index value for 
-#' each population group
+#' each group
 #' @examples x <- segdata@data[ ,1:2]
 #' Gini(x)
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A Methodological 
@@ -378,15 +492,17 @@ Gorard <- function(x) {
 #' diagonal. 
 #' @seealso Other one-group  evenness indices: 
 #' \code{\link{ISDuncan}}, \code{\link{Atkinson}}, \code{\link{Gorard}}, 
-#' \code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}}
+#' \code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}},
+#' \code{\link{ISMorrillK}}
 #' @seealso Between groups dissimilarity indices: 
 #' \code{\link{DIDuncan}}, \code{\link{Gini2}}, 
-#' \code{\link{DIMorrill}}, \code{\link{DIWong}}
+#' \code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 #' @export
 
 
 Gini <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- vector(length = ncol(x))
     pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
     t <- rowSums(x)
@@ -403,36 +519,39 @@ Gini <- function(x) {
 }
 
 
-#' A function to compute Spatial Gini's between group index index 
+#' A function to compute Spatial Gini's between group index 
 #'
 #' @usage Gini2(x)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return a matrix with between group Gini index 
 #' @examples x <- segdata@data[ ,1:2]
-#' Gini(x)
+#' Gini2(x)
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A Methodological 
 #' Analysis of Segregation Indexes}. American Sociological Review 41, 
 #' pp. 210-217
 #' @description The between group version of Gini index is obtained 
-#' by computing the index for a subpopulation formed by two groups 
+#' by computing the index for a subpopulation formed by each pair of groups 
 #' @seealso Other one-group  evenness indices: 
 #' \code{\link{ISDuncan}}, \code{\link{Gini}}, 
 #' \code{\link{Gorard}}, \code{\link{Atkinson}}, 
-#' \code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}}
+#' \code{\link{HTheil}}, '\code{\link{ISWong}}, \code{\link{ISMorrill}},
+#' \code{\link{ISMorrillK}}
 #' @seealso Between groups dissimilarity indices: 
-#' \code{\link{DIDuncan}}, \code{\link{DIMorrill}}, \code{\link{DIWong}}
+#' \code{\link{DIDuncan}}, \code{\link{DIMorrill}}, 
+#' \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 #' @export
 
 Gini2 <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     for (k1 in 1:(ncol(x) - 1)) for (k2 in (k1 + 1):ncol(x)) {
         xprovi <- x[, c(k1, k2)]
-        xprovi <- xprovi[rowSums(xprovi)>0,]
+        xprovi <- xprovi[rowSums(xprovi) > 0, ]
         result[k1, k2] <- Gini(xprovi)[1]
         result[k2, k1] <- result[k1, k2]
     }
@@ -444,10 +563,10 @@ Gini2 <- function(x) {
 #'
 #' @usage DIDuncan(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return a matrix containing dissimilarity index values
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A Methodological 
 #' Analysis of Segregation Indexes}. American Sociological Review 41, 
@@ -464,13 +583,14 @@ Gini2 <- function(x) {
 #' @seealso Other one-group  evenness indices: 
 #' \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
 #' \code{\link{Atkinson}}, \code{\link{HTheil}}, 
-#' \code{\link{ISWong}}, \code{\link{ISMorrill}}
+#' \code{\link{ISWong}}, \code{\link{ISMorrill}}, \code{\link{ISMorrillK}}
 #' @seealso Between groups dissimilarity indices: 
-#' \code{\link{DIMorrill}}, \code{\link{DIWong}}
+#' \code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 #' @export
 
 DIDuncan <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
     varTotal <- colSums(x)
@@ -484,33 +604,31 @@ DIDuncan <- function(x) {
 
 #' A function to compute Morrill's dissimilarity index
 #'
-#' @usage DIMorrill(x, c = NULL, queen = TRUE, spatobj = NULL, folder = NULL, shape = NULL)
+#' @usage DIMorrill(x, c = NULL, queen = FALSE, spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param c - a standard binary contiguity (adjacency) symmetric matrix where 
 #' each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 #' units are adjacent, and 0 otherwise.
-#' @param queen - logical parameter difining criteria used for contiguity 
-#' matrix computation, TRUE (by default) for queen , FALSE for rook 
+#' @param queen - a logical parameter difining criteria used for contiguity 
+#' matrix computation, TRUE for queen, FALSE (by default) for rook 
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension)  which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension) .
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a matrix with Morrill's dissimilarity index values 
 #' @references Morrill B. (1991) \emph{On the measure of geographic 
 #' segregation}. Geography research forum, 11, pp. 25-36.
 #' @description Morrill's dissimilarity index is a development of 
 #' \code{\link{DIDuncan}}'s index which takes into account the 
-#' interactions between spatial units (contiguity). 
-#' The function can be used in two ways: to provide a contiguity 
-#' matrix or a external geographic information source (spatial object 
-#' or shape file).
+#' interactions between spatial units(contiguity). The function can 
+#' be used in two ways: to provide a contiguity matrix or a external 
+#' geographic information source (spatial object or shape file).
 #' @examples x <- segdata@data[ ,1:2]
 #' contiguity <- contig(segdata)
 #' foldername <- system.file('extdata', package = 'OasisR')
@@ -524,17 +642,20 @@ DIDuncan <- function(x) {
 #' @seealso Other one-group  evenness indices: 
 #' \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
 #' \code{\link{Atkinson}}, \code{\link{HTheil}}, 
-#' \code{\link{ISWong}}, \code{\link{ISMorrill}}
+#' \code{\link{ISWong}}, \code{\link{ISMorrill}}, \code{\link{ISMorrillK}}
 #' @seealso Between groups dissimilarity indices: 
-#' \code{\link{DIDuncan}}, \code{\link{DIWong}}
+#' \code{\link{DIDuncan}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 #' @export
 
 
-DIMorrill <- function(x, c = NULL, queen = TRUE, spatobj = NULL, folder = NULL, shape = NULL) {
+DIMorrill <- function(x, c = NULL, queen = FALSE, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
-    result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     if (is.null(c)) 
         c <- contig(spatobj = spatobj, folder = folder, shape = shape, queen = queen)
+    cldata <- segdataclean(x, c = c)
+    x <- cldata$x
+    c <- cldata$c
+    result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     DI <- DIDuncan(x)
     pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
     for (k1 in 1:(ncol(x) - 1)) for (k2 in (k1 + 1):ncol(x)) {
@@ -551,42 +672,147 @@ DIMorrill <- function(x, c = NULL, queen = TRUE, spatobj = NULL, folder = NULL, 
 
 
 
+#' A function to compute K-th order Morrill's dissimilarity index
+#'
+#' @usage DIMorrillK(x, ck = NULL, queen = FALSE, spatobj = NULL, 
+#' folder = NULL, shape = NULL, K = 2, f = 'exp', beta = 1, prec = NULL)
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param ck - a list with contiguity matrix for each order (from 1 to K)
+#' @param queen - logical parameter difining criteria used for contiguity 
+#' matrix computation, TRUE for queen, FALSE (by default) for rook 
+#' @param folder - a character vector with the folder (directory) 
+#' name indicating where the shapefile is located on the drive
+#' @param shape - a character vector with the name of the shapefile 
+#' (without the .shp extension) .
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' geographic information
+#' @param K - contiguity matrix order
+#' @param f - the distance function, f = 'exp' (by default) for negative 
+#' exponential function and f = 'rec' for reciprocal function
+#' @param beta - distance decay parameter
+#' @param prec - precision parameter. If not NULL, the function stop computing
+#' the spatial interaction when the impact on the indice is bellow 10 ^ (-prec)
+#' @return a matrix with Generalized Morrill's dissimilarity index values 
+#' @references Morrill B. (1991) \emph{On the measure of geographic 
+#' segregation}. Geography research forum, 11, pp. 25-36.
+#' @description This function compute an adaptation of Morrill's dissimilarity 
+#' index which takes into account the interactions between spatial units
+#' defined by K order contiguity matrix. The function can be used in two ways: 
+#' to provide a contiguity matrix or a external geographic information source 
+#' (spatial object or shape file).
+#' @examples x <- segdata@data[ ,1:2]
+#' foldername <- system.file('extdata', package = 'OasisR')
+#' shapename <- 'segdata'
+#' 
+#' DIMorrillK(x, spatobj = segdata, queen = FALSE, K = 3)
+#' 
+#' DIMorrillK(x, folder = foldername, shape = shapename, K = 4, f = 'rec') 
+#' @seealso Other one-group  evenness indices: 
+#' \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
+#' \code{\link{Atkinson}}, \code{\link{HTheil}}, 
+#' \code{\link{ISWong}}, \code{\link{ISMorrill}}, \code{\link{ISMorrillK}}
+#' @seealso Between groups dissimilarity indices: 
+#' \code{\link{DIDuncan}}, \code{\link{DIMorrill}}, \code{\link{DIWong}}
+#' @export
+
+DIMorrillK <- function(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NULL, 
+                       shape = NULL, K = 2, f = "exp", beta = 1, prec = NULL) {
+    x <- as.matrix(x)
+    if (K == 1) 
+        result <- DIMorrill(x, ck[[1]], queen, spatobj, folder, shape)
+    if (K > 1) {
+        if (is.null(ck)) {
+            if (is.null(spatobj)) 
+                spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
+            xx <- as.data.frame(x)
+            # row.names(xx) <- labels(spatobj@data) spatobj <- SpatialPolygonsDataFrame(spatobj, xx)@data
+            spatobj@data <- xx
+            spatobj <- subset(spatobj, rowSums(spatobj@data) != 0)
+            x <- segdataclean(spatobj@data)$x
+            ngb <- spdep::poly2nb(spatobj, queen = queen)
+            ngbk <- spdep::nblag(ngb, K)
+            if (sum(spdep::card(ngbk[[K]])) == 0) {
+                for (k in K:1) if (sum(spdep::card(ngbk[[k]])) == 0) 
+                  kk <- k
+                K <- kk - 1
+                ngbk <- spdep::nblag(ngb, K)
+            }
+            ck <- vector("list", K)
+            for (k in 1:K) ck[[k]] <- spdep::nb2mat(ngbk[[k]], style = "B", zero.policy = TRUE)
+        } else {
+            cldata <- segdataclean(x, ck = ck)
+            x <- cldata$x
+            ck <- cldata$ck
+            if (is.null(K)) 
+                K <- length(ck)
+        }
+        result <- DIDuncan(x)
+        pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
+        for (k1 in 1:(ncol(x) - 1)) for (k2 in (k1 + 1):ncol(x)) {
+            for (i in 1:nrow(x)) pij[k1, , i] <- x[i, k1]/(x[i, k1] + x[i, k2])
+            for (i in 1:nrow(x)) pij[k1, i, ] <- abs(pij[k1, i, ] - x[i, k1]/(x[i, k1] + x[i, k2]))
+            pij[k1, , ][is.nan(pij[k1, , ])] <- 0
+            k <- 1
+            cond <- TRUE
+            while (cond) {
+                if (f == "exp") 
+                  interact <- exp(beta * (-k + 1))
+                if (f == "rec") 
+                  interact <- 1/(k^beta)
+                matprovi <- ck[[k]] %*% pij[k1, , ]
+                matprovi <- matprovi * diag(nrow(x))
+                result[k1, k2] <- result[k1, k2] - sum(matprovi)/sum(ck[[k]]) * interact
+                result[k2, k1] <- result[k1, k2]
+                k <- k + 1
+                if (k > K) 
+                  cond <- FALSE
+                if (!is.null(prec)) 
+                  if (interact < 10^-prec) 
+                    cond <- FALSE
+            }
+        }
+    }
+    return(round(result, 4))
+}
 
 #' A function to compute Wongs's dissimilarity index
 #'
 #' @usage DIWong(x, b = NULL,  a = NULL, p = NULL, ptype = 'int', variant = 's', 
 #' spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' totals because this will be interpreted as a population group
+#' groups are required). You should not include a column with total 
+#' totals because this will be interpreted as a group
 #' @param b - a common boundaries matrix where each element \emph{Bij} 
 #' equals the shared boundary of \emph{i}-th and \emph{j}-th spatial units.
-#' @param p - a numeric vector containing the perimeters of spatial units
+#' @param p - a numeric vector containing spatial units perimeters.
 #' @param ptype - a string variable giving two options for perimeter calculation
 #' when a spatial object or shapefile is provided: 'int' to use only interior
 #' borders of spatial units, and 'all' to use entire borders, including to
 #' the exterior of the area
-#' @param a - a numeric vector containing the areas of spatial units
+#' @param a - a numeric vector containing spatial unit areas
 #' @param variant - a character variable that allows to choose the index version: 
-#' variant = 's' for the dissimilarity index adjusted for contiguous spatial units 
+#' variant = 's' for the dissimilarity index adjusted for contiguous spatial units
 #' boundary lengths and perimeter/area ratio (by default) and variant = 'w' 
 #' for the version without perimeter/area ratio
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a matrix containing Wong's dissimilarity index values 
 #' @references Wong D. W. S. (1993) \emph{Spatial Indices of Segregation}. 
 #' Urban Studies, 30 (3), pp. 559-572.
 #' @description Wong's dissimilarity index is a development of 
 #' \code{\link{DIDuncan}}'s which takes into account the interactions 
-#' between spatial units (common boundaries and perimeter/area ratios). 
-#' The function can be used in two ways: to provide spatial data ( 
+#' between spatial units(common boundaries and perimeter/area ratios). 
+#' The function can be used in two ways: to provide spatial data (
 #' boundaries matrix, a perimeter vector and an area vector) 
 #' or a external geographic information source (spatial object or shape file).
 #' @examples x <- segdata@data[ ,1:2]
@@ -604,9 +830,9 @@ DIMorrill <- function(x, c = NULL, queen = TRUE, spatobj = NULL, folder = NULL, 
 #' @seealso Other one-group  evenness indices: 
 #' \code{\link{ISDuncan}}, \code{\link{Gini}}, \code{\link{Gorard}}, 
 #' \code{\link{Atkinson}}, \code{\link{HTheil}}, 
-#' '\code{\link{ISWong}}, \code{\link{ISMorrill}}
+#' '\code{\link{ISWong}}, \code{\link{ISMorrill}}, \code{\link{ISMorrillK}}
 #' @seealso Between groups dissimilarity indices: 
-#' \code{\link{DIDuncan}}, \code{\link{DIMorrill}}
+#' \code{\link{DIDuncan}}, \code{\link{DIMorrill}}, \code{\link{DIMorrillK}}
 #' @export
 
 
@@ -614,6 +840,19 @@ DIWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
     x <- as.matrix(x)
     if (is.null(b)) 
         b <- boundaries(spatobj = spatobj, folder = folder, shape = shape)
+    if (is.null(p)) {
+        if (ptype == "all") 
+            p <- perimeter(spatobj = spatobj, folder = folder, shape = shape)
+        if (ptype == "int") 
+            p <- rowSums(b)
+    }
+    if (is.null(a)) 
+        a <- area(spatobj = spatobj, folder = folder, shape = shape)
+    cldata <- segdataclean(x, b = b, p = p, a = a)
+    x <- cldata$x
+    b <- cldata$b
+    p <- cldata$p
+    a <- cldata$a
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     DI <- DIDuncan(x)
     pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
@@ -630,14 +869,6 @@ DIWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
             result[k2, k1] <- result[k1, k2]
         }
     if (variant == "s") {
-        if (is.null(a)) 
-            a <- area(spatobj = spatobj, folder = folder, shape = shape)
-        if (is.null(p)) {
-            if (ptype == "all") 
-                p <- perimeter(spatobj = spatobj, folder = folder, shape = shape)
-            if (ptype == "int") 
-                p <- rowSums(b)
-        }
         PerAij <- matrix(data = 0, nrow = nrow(x), ncol = nrow(x))
         for (i in 1:nrow(x)) PerAij[, i] <- p[i]/a[i]
         for (i in 1:nrow(x)) PerAij[i, ] <- PerAij[i, ] + p[i]/a[i]
@@ -656,6 +887,7 @@ DIWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
 }
 
 
+
 #################### 
 
 # EXPOSITION INDEXES
@@ -666,15 +898,15 @@ DIWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
 #'
 #' @usage xPx(x, exact = FALSE) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param exact - a logical variable to specifiy the index version: 
 #' exact = FALSE (by default) for the approximate version of the index, 
 #' and exact = TRUE for the exact version
 #' @return a numeric vector containing the isolation index value for 
-#' each population group
+#' each group
 #' @references Bell W. (1954) \emph{A probability model for the 
 #' measurement of ecological segregation}. Social Forces 32(4), 
 #' pp. 357-364
@@ -693,6 +925,7 @@ DIWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
 
 xPx <- function(x, exact = FALSE) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- vector(length = ncol(x))
     varTotal <- colSums(x)
     t <- rowSums(x)
@@ -706,13 +939,13 @@ xPx <- function(x, exact = FALSE) {
 
 #' A function to compute the distance-decay isolation index (DPxx)
 #'
-#' @usage DPxx(x, d = NULL, distin = 'm',  distout = 'm', diagval = '0', 
+#' @usage DPxx(x, d = NULL, distin = 'm',  distout = 'm', diagval = '0', beta = 1, 
 #' spatobj = NULL, folder = NULL, shape = NULL) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param d - a matrix of the distances between spatial unit centroids
 #' @param distin - input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
@@ -721,22 +954,23 @@ xPx <- function(x, exact = FALSE) {
 #' @param diagval - when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-#' to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983) 
+#' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) 
+#' (White, 1983) 
+#' @param beta - distance decay parameter
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a numeric vector containing the distance-decay isolation index 
-#' value for each population group
+#' value for each group
 #' @references Morgan, B. S. (1983) \emph{A Distance-Decay Based Interaction 
 #' Index to Measure Residential Segregation}. Area 15(3),  pp. 211-217.
 #' @description The distance decay isolation index, DPxx, is a spatial
-#' adaptation of isolation index \code{\link{xPx}}. 
-#' The function can be used in two ways: to provide a distance matrix 
-#' or a external geographic information source (spatial object or shape file).
+#' adaptation of isolation index \code{\link{xPx}}. The function can be 
+#' used in two ways: to provide a distance matrix or a external geographic 
+#' information source (spatial object or shape file).
 #' @examples x <- segdata@data[ ,1:2]
 #' ar <- area(segdata)
 #' dist <- distance(segdata)
@@ -756,14 +990,17 @@ xPx <- function(x, exact = FALSE) {
 #' @export
 
 
-DPxx <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", spatobj = NULL, folder = NULL, shape = NULL) {
+DPxx <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", beta = 1, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
+    if (is.null(d)) 
+        d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
+    cldata <- segdataclean(x, d = d)
+    x <- cldata$x
+    d <- cldata$d
     result <- vector(length = ncol(x))
     varTotal <- colSums(x)
     t <- rowSums(x)
-    if (is.null(d)) 
-        d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
-    dd <- exp(-d)
+    dd <- exp(-beta * d)
     K1 <- dd %*% t
     K2 <- dd * t
     K <- K2/as.vector(K1)
@@ -781,12 +1018,12 @@ DPxx <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", spatob
 #'
 #' @usage Eta2(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return a numeric vector containing the adjusted isolation index value for 
-#' each population group
+#' each group
 #' @references Bell W. (1954) \emph{A probability model for the 
 #' measurement of ecological segregation}. Social Forces 32(4), 
 #' pp. 357-364
@@ -814,6 +1051,7 @@ DPxx <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", spatob
 
 Eta2 <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- vector(length = ncol(x))
     varTotal <- colSums(x)
     Total <- sum(x)
@@ -831,10 +1069,10 @@ Eta2 <- function(x) {
 #'
 #' @usage xPy(x, exact = FALSE) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param exact - a logical variable to specifiy the index version: 
 #' exact = FALSE (by default) for the approximate version of the index, 
 #' and exact = TRUE for the exact version
@@ -858,6 +1096,7 @@ Eta2 <- function(x) {
 
 xPy <- function(x, exact = FALSE) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     varTotal <- colSums(x)
     t <- rowSums(x)
@@ -880,12 +1119,12 @@ xPy <- function(x, exact = FALSE) {
 #' A function to compute the distance-decay interaction index (DPxy)
 #'
 #' @usage DPxy(x, d = NULL, distin = 'm',  distout = 'm', diagval = '0', 
-#' spatobj = NULL, folder = NULL, shape = NULL) 
+#' beta = 1, spatobj = NULL, folder = NULL, shape = NULL) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param d - a matrix of the distances between spatial unit centroids
 #' @param distin - input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
@@ -894,16 +1133,16 @@ xPy <- function(x, exact = FALSE) {
 #' @param diagval - when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-#' to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983) 
+#' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
+#' @param beta - distance decay parameter
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing the distance-decay isolation index 
-#' value for each population group
+#' @return a numeric matrix containing the distance-decay isolation index 
+#' values
 #' @references Morgan, B. S. (1983) \emph{An Alternate Approach to the 
 #' Development of a Distance-Based Measure of Racial Segregation}. 
 #' American Journal of Sociology 88,  pp. 1237-1249.
@@ -929,15 +1168,18 @@ xPy <- function(x, exact = FALSE) {
 #' @export
 
 
-DPxy <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", spatobj = NULL, folder = NULL, shape = NULL) {
+DPxy <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", beta = 1, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
-    t <- rowSums(x)
-    varTotal <- colSums(x)
     if (is.null(d)) 
         d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
+    cldata <- segdataclean(x, d = d)
+    x <- cldata$x
+    d <- cldata$d
+    t <- rowSums(x)
+    varTotal <- colSums(x)
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     varTotal <- colSums(x)
-    dd <- exp(-d)
+    dd <- exp(-beta * d)
     K1 <- dd %*% t
     K2 <- dd * t
     K <- K2/as.vector(K1)
@@ -948,6 +1190,60 @@ DPxy <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", spatob
         result[k1, k2] <- sum(X2)
     }
     return(round(result, 4))
+}
+
+
+#' A function adapted from seg package to compute spatial exposure/isolation indices
+#'
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' geographic information
+#' @param folder - a character vector with the folder (directory) 
+#' name indicating where the shapefile is located on the drive
+#' @param shape - a character vector with the name of the shapefile 
+#' (without the .shp extension) .
+#' @param ... - other parameters of spseg function from seg package.
+#' @return A matrix with Reardon's spatial exposure/isolation indices
+#' @references Reardon, S. F. and O'Sullivan, D. (2004) 
+#' \emph{Measures of spatial segregation}.
+#' Sociological Methodology, 34, 121-162.
+#' @references Hong S.Y., O'Sullivan D., Sadahiro Y. (2014) 
+#' \emph{Implementing Spatial Segregation Measures in R'}.
+#' PLoS ONE, 9(11)
+#' @description  A function adapted from seg package (Hong et al. 2014) 
+#' to compute spatial exposure/isolation indices developed by 
+#' Reardon and O'Sullivan (2004)
+#' @examples x <- segdata@data[ ,1:2]
+#' foldername <- system.file('extdata', package = 'OasisR')
+#' shapename <- 'segdata'
+#' 
+#' spatinteract(x, spatobj = segdata)
+#' 
+#' spatinteract(x, folder = foldername, shape = shapename) 
+#' 
+#' @seealso Multi-group indices: 
+#' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
+#' \code{\link{HMulti}}, \code{\link{RelDivers}}
+#' @seealso  Social diversity indices: 
+#' \code{\link{HShannon}}, \code{\link{NShannon}}, 
+#' \code{\link{ISimpson}}, 
+#' @export 
+
+
+spatinteract <- function(x, spatobj = NULL, folder = NULL, shape = NULL, ...) {
+    
+    if (is.null(spatobj) & !is.null(folder) & !is.null(shape)) 
+        spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
+    spatobj@data <- as.data.frame(x)
+    spatobj <- subset(spatobj, rowSums(spatobj@data) != 0)
+    x <- segdataclean(spatobj@data)$x
+    result <- seg::spseg(spatobj, x, ...)
+    
+    return(round(result@p, 4))
 }
 
 
@@ -963,27 +1259,26 @@ DPxy <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", spatob
 #'
 #' @usage Delta(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @param a - a numeric vector containing the areas of spatial units
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param a - a numeric vector containing spatial unit areas
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a numeric vector containing Delta index value for 
-#' each population group
+#' each group
 #' @references Duncan O. D., Cuzzoert  and Duncan B. (1961) 
 #' \emph{Problems in analyzing areal data}. Statistical geography, 
 #' Glencoe, Illinois: The free press of Glencoe
-#' @description The Delta index is a specific application of dissimilarity
-#'  index \code{\link{DIDuncan}} which simply measures the dissimilarity 
-#' between the spatial distribution of a population group and the spatial 
-#' distribution of available area. It can be interpreted as the share of group 
+#' @description The Delta index is a specific application of dissimilarity 
+#' index \code{\link{DIDuncan}} which simply measures the dissimilarity
+#' between the spatial distribution of a group and the spatial 
+#' distribution of available land. It can be interpreted as the share of group 
 #' that would have to move to achieve uniform density over all spatial units. 
 #' The function can be used in two ways: to provide an area vector or 
 #' a external geographic information source (spatial object or shape file).
@@ -1006,6 +1301,9 @@ Delta <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
     if (is.null(a)) 
         a <- area(spatobj = spatobj, folder = folder, shape = shape)
+    cldata <- segdataclean(x, a = a)
+    x <- cldata$x
+    a <- cldata$a
     result <- vector(length = ncol(x))
     varTotal <- colSums(x)
     areaTotal <- sum(a)
@@ -1019,29 +1317,28 @@ Delta <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
 #'
 #' @usage ACO(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @param a - a numeric vector containing the areas of spatial units
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param a - a numeric vector containing spatial unit areas
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a numeric vector containing Absolute Concentration index value for 
-#' each population group
+#' each group
 #' @references Massey D. S. and Denton N. A. (1988) \emph{
 #' The dimensions of residential segregation}. 
 #' Social Forces 67(2),  pp. 281-315.
 #' @description The absolute concentration index, ACO, computes 
 #' the total area inhabited by a group, and compares the result 
 #' to the minimum and maximum possible areas that could be 
-#' inhabited by that group in the study area. 
-#' #' The function can be used in two ways: to provide an area vector or a 
-#' external geographic information source (spatial object or shape file). 
+#' inhabited by that group in the study area. The function can be 
+#' used in two ways: to provide an area vector or a external 
+#' geographic information source (spatial object or shape file). 
 #' @examples x <- GreHSize@data[ ,3:5]
 #' ar <- area(GreHSize)
 #' foldername <- system.file('extdata', package = 'OasisR')
@@ -1062,6 +1359,9 @@ ACO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
     if (is.null(a)) 
         a <- area(spatobj = spatobj, folder = folder, shape = shape)
+    cldata <- segdataclean(x, a = a)
+    x <- cldata$x
+    a <- cldata$a
     varTotal <- colSums(x)
     xprovi <- as.data.frame(cbind(x, a))
     xprovi <- xprovi[order(xprovi$a), ]
@@ -1090,7 +1390,6 @@ ACO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
         }
         n2[k] <- i
     }
-    
     for (k in 1:ncol(x)) {
         vartemp1 <- sum(xprovi[, k] * xprovi$a/varTotal[k])
         vartemp2 <- sum(xprovi$Total[1:n1[k]] * xprovi$a[1:n1[k]]/T1[k])
@@ -1106,23 +1405,22 @@ ACO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
 #'
 #' @usage RCO(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @param a - a numeric vector containing the areas of spatial units
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param a - a numeric vector containing spatial unit areas
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a matrix containing relative concentration index values
 #' @references Massey D. S. and Denton N. A. (1988) \emph{
 #' The dimensions of residential segregation}. 
 #' Social Forces 67(2),  pp. 281-315.
-#' @description The relative concentration index, RCO, measures 
+#' @description The relative concentration index, measures 
 #' the share of space occupied by a group compared to another group.
 #' The function can be used in two ways: to provide an area vector or a 
 #' external geographic information source (spatial object or shape file).
@@ -1146,6 +1444,9 @@ RCO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
     if (is.null(a)) 
         a <- area(spatobj = spatobj, folder = folder, shape = shape)
+    cldata <- segdataclean(x, a = a)
+    x <- cldata$x
+    a <- cldata$a
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     varTotal <- colSums(x)
     xprovi <- as.data.frame(cbind(x, a))
@@ -1191,21 +1492,22 @@ RCO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
 
 #' A function to compute Absolute Clustering Index (ACL)
 #'
-#' @usage ACL(x, spatmat = 'c', c = NULL, queen = TRUE, distin = 'm',  
-#' distout = 'm', diagval = '0',  spatobj = NULL, folder = NULL, shape = NULL)
+#' @usage ACL(x, spatmat = 'c', c = NULL, queen = FALSE, d = NULL, distin = 'm',  
+#' distout = 'm', diagval = '0', beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param spatmat - the method used for spatial calculations: 'c' for the 
 #' contiguity matrix (by default) or any other user spatial interaction matrix 
 #' and 'd' for the inverse exponential function of the distance. 
 #' @param c - a modified binary contiguity (adjacency) symmetric matrix where 
 #' each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 #' units are adjacent or identical, and 0 otherwise.
+#' @param d - a matrix of the distances between spatial unit centroids
 #' @param queen - logical parameter difining criteria used for contiguity 
-#' matrix computation, TRUE (by default) for queen , FALSE for rook 
+#' matrix computation, TRUE for queen, FALSE (by default) for rook 
 #' @param distin - input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
 #' @param distout - output metric conversion, based on  \pkg{bink} package and 
@@ -1213,35 +1515,35 @@ RCO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
 #' @param diagval - when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-#' to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983) 
+#' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
+#' @param beta - distance decay parameter
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a numeric vector containing Absolute Clustering index value for 
-#' each population group
+#' each group
 #' @references Massey D. S. and Denton N. A. (1988) \emph{
 #' The dimensions of residential segregation}. 
 #' Social Forces 67(2),  pp. 281-315.
 #' @description The absolute clustering index, ACL, expresses the 
-#' average number of a population group's members in nearby spatial 
-#' units, as a proportion of the total population in those spatial units. 
+#' average number of a group's members in nearby spatial units, as 
+#' a proportion of the total population in those spatial units. 
 #' The spatial interactions can be expressed as a contiguity matrix 
 #' (with diagonal equal to 1), as an inverse exponential function of the 
-#' distance between spatial units centres (with diagonal equal to 0.6 of the 
-#' square root of each spatial units area) or other user specified interaction matrix. 
-#' The function can be used in two ways: to provide a spatial interactions matrix 
-#' (a contiguity matrix or a distance matrix) or a external 
-#' geographic information source (spatial object or shape file).
+#' distance between spatial units centers (with diagonal equal 
+#' to 0.6 of the square root of each spatial units area) or other 
+#' user specified interaction matrix. The function can be used in two 
+#' ways: to provide a spatial interactions matrix (a contiguity matrix 
+#' or a distance matrix) or a external  geographic information source 
+#' (spatial object or shape file).
 #' @examples x <- segdata@data[ ,1:2]
 #' contiguity <- contig(segdata)
 #' diag(contiguity) <- 1
 #' ar<-area(segdata)
 #' dist <- distance(segdata)
-#' dist <- exp(-dist)
 #' diag(dist)<-sqrt(ar) * 0.6
 #' foldername <- system.file('extdata', package = 'OasisR')
 #' shapename <- 'segdata'
@@ -1252,9 +1554,9 @@ RCO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
 #' 
 #' ACL(x, spatmat = 'd', folder = foldername, shape = shapename) 
 #'  
-#' ACL(x, spatobj = segdata, spatmat = 'd', diagval = 'a')
+#' ACL(x,  spatmat = 'd', diagval = 'a', spatobj = segdata)
 #' 
-#' ACL(x, c = dist, spatmat = 'd')
+#' ACL(x, d = dist, spatmat = 'd')
 #'
 #' @seealso Proximity measures: \code{\link{Pxx}}, 
 #' \code{\link{Pxy}}, \code{\link{Poo}}, \code{\link{SP}}
@@ -1262,15 +1564,20 @@ RCO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
 #' @export
 
 
-ACL <- function(x, spatmat = "c", c = NULL, queen = TRUE, distin = "m", distout = "m", diagval = "0", spatobj = NULL, folder = NULL, shape = NULL) {
+ACL <- function(x, spatmat = "c", c = NULL, queen = FALSE, d = NULL, distin = "m", distout = "m", diagval = "0", beta = 1, spatobj = NULL, folder = NULL, 
+    shape = NULL) {
     x <- as.matrix(x)
     if (spatmat == "c" & is.null(c)) {
         c <- contig(spatobj = spatobj, folder = folder, shape = shape, queen = queen)
         diag(c) <- 1
     }
-    if (spatmat == "d" & is.null(c)) 
-        c <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
-    if (spatmat == "d" )  c <- exp(-c)
+    if (spatmat == "d" & is.null(d)) 
+        d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
+    if (spatmat == "d") 
+        c <- exp(-beta * d)
+    cldata <- segdataclean(x, c = c)
+    x <- cldata$x
+    c <- cldata$c
     result <- vector(length = ncol(x))
     varTotal <- colSums(x)
     t <- as.vector(rowSums(x))
@@ -1287,12 +1594,12 @@ ACL <- function(x, spatmat = "c", c = NULL, queen = TRUE, distin = "m", distout 
 #' A function to compute the mean proximity between members of a group (Pxx)
 #'
 #' @usage Pxx(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
-#' spatobj = NULL, folder = NULL, shape = NULL)
+#' beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param d - a matrix of the distances between spatial unit centroids
 #' @param fdist - the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
@@ -1303,22 +1610,22 @@ ACL <- function(x, spatmat = "c", c = NULL, queen = TRUE, distin = "m", distout 
 #' @param diagval - when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-#' to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983) 
+#' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983)
+#' @param beta - distance decay parameter 
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a numeric vector containing Pxx index value for 
-#' each population group
+#' each group
 #' @references White M. J. (1983) \emph{The Measurement of Spatial 
 #' Segregation}. American Journal of Sociology, 88, p. 1008-1019
 #' @description  Mean proximity, Pxx, computes the mean distance 
 #' between the members of a group. The distance matrix can be expressed as  
 #' a linear or as an inverse exponential function of the distance between 
-#' spatial units centroids.The function can be used in two ways: to providea 
+#' spatial unit centroids.The function can be used in two ways: to provide  
 #' a distance matrix  or a external geographic information source (spatial 
 #' object or shape file).
 #' @examples x <- segdata@data[ ,1:2]
@@ -1344,12 +1651,15 @@ ACL <- function(x, spatmat = "c", c = NULL, queen = TRUE, distin = "m", distout 
 
 
 
-Pxx <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", spatobj = NULL, folder = NULL, shape = NULL) {
+Pxx <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", beta = 1, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
     if (is.null(d)) 
-        d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
+        d <- distance(spatobj = spatobj, folder = folder, shape = shape)
+    cldata <- segdataclean(x, d = d)
+    x <- cldata$x
+    d <- cldata$d
     if (fdist == "e") 
-        d <- exp(-d)
+        d <- exp(-beta * d)
     varTotal <- colSums(x)
     result <- vector(length = ncol(x))
     for (k in 1:ncol(x)) result[k] <- sum((d %*% x[, k]) * x[, k]/(varTotal[k])^2)
@@ -1363,12 +1673,12 @@ Pxx <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #' persons without regard to group (Poo)
 #'
 #' @usage Poo(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
-#' itype = 'multi', spatobj = NULL, folder = NULL, shape = NULL)
+#' itype = 'multi', beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param d - a matrix of the distances between spatial unit centroids
 #' @param fdist - the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
@@ -1379,19 +1689,18 @@ Pxx <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #' @param diagval - when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-#' to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983) 
+#' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
 #' @param itype - a character string defining the index type:
-#' itype = 'multi' (by default) for the multigroup index (White, 1986)
+#' itype = 'multi' (by default) for the multi-group index (White, 1986)
 #' or itype = 'between' for the between groups version (White, 1983)
+#' @param beta - distance decay parameter
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing Poo index value for 
-#' each population group
+#' @return Poo index value(s) 
 #' @references White M. J. (1983) \emph{The Measurement of Spatial 
 #' Segregation}. American Journal of Sociology, 88, p. 1008-1019
 #' @references  White, M. J. (1986) \emph{Segregation and Diversity Measures 
@@ -1424,14 +1733,17 @@ Pxx <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 
 
 
-Poo <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", itype = "multi", spatobj = NULL, folder = NULL, shape = NULL) {
+Poo <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", itype = "multi", beta = 1, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
-    tx <- rowSums(x)
-    varTotal <- colSums(x)
     if (is.null(d)) 
         d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
+    cldata <- segdataclean(x, d = d)
+    x <- cldata$x
+    d <- cldata$d
+    tx <- rowSums(x)
+    varTotal <- colSums(x)
     if (fdist == "e") 
-        d <- exp(-d)
+        d <- exp(-beta * d)
     if (itype == "between") {
         result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
         for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) result[k1, k2] <- sum((d %*% (x[, k1] + x[, k2])) * (x[, k1] + x[, k2])/(varTotal[k1] + varTotal[k2])^2)
@@ -1445,12 +1757,12 @@ Poo <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #' persons of different groups (Pxy)
 #'
 #' @usage Pxy(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
-#' spatobj = NULL, folder = NULL, shape = NULL)
+#' beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param d - a matrix of the distances between spatial unit centroids
 #' @param fdist - the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
@@ -1461,22 +1773,21 @@ Poo <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #' @param diagval - when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-#' to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983) 
+#' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
+#' @param beta - distance decay parameter
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a matrix containing Pxy index values for each pair of groups
 #' @references White M. J. (1983) \emph{The Measurement of 
 #' Spatial Segregation}. American Journal of Sociology, 88, p. 1008-1019
 #' @description Mean proximity, Pxy, computes the mean distance 
-#' between the members of different groups. 
-#' The function can be used in two ways: to provide a distance matrix 
-#' or a external geographic information source (spatial object 
-#' or shape file).
+#' between the members of different groups.The function can be used in 
+#' two ways: to provide a distance matrix or a external geographic 
+#' information source (spatial object or shape file).
 #' @examples x <- segdata@data[ ,1:2]
 #' ar<-area(segdata)
 #' dist <- distance(segdata)
@@ -1499,12 +1810,15 @@ Poo <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #' @export
 
 
-Pxy <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", spatobj = NULL, folder = NULL, shape = NULL) {
+Pxy <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", beta = 1, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
     if (is.null(d)) 
         d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
+    cldata <- segdataclean(x, d = d)
+    x <- cldata$x
+    d <- cldata$d
     if (fdist == "e") 
-        d <- exp(-d)
+        d <- exp(-beta * d)
     varTotal <- colSums(x)
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) result[k1, k2] <- sum((d %*% (x[, k2])) * (x[, k1]))/varTotal[k1]/varTotal[k2]
@@ -1515,12 +1829,12 @@ Pxy <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #' A function to compute the spatial proximity index (SP)
 #'
 #' @usage SP(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
-#' itype = 'multi', spatobj = NULL, folder = NULL, shape = NULL)
+#' itype = 'multi', beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param d - a matrix of the distances between spatial unit centroids
 #' @param fdist - the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
@@ -1531,19 +1845,19 @@ Pxy <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #' @param diagval - when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-#' to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983) 
+#' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
 #' @param itype - a character string defining the index type:
-#' itype = 'multi' (by default) for the multigroup index (White, 1986)
-#' itype = 'between' for the between groups version (White, 1983) or
+#' itype = 'multi' (by default) for the multi-group index (White, 1986),
+#' itype = 'between' for the between groups version (White, 1983), or
 #' itype = 'one' for the one-group version (Apparicio et al, 2008)
+#' @param beta - distance decay parameter
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a matrix containing spatial proximity index values for each pair of groups
+#' @return spatial proximity index value(s) 
 #' @references White M. J. (1983) \emph{The Measurement of Spatial 
 #' Segregation}. American Journal of Sociology, 88, p. 1008-1019.
 #' @references  White, M. J. (1986) \emph{Segregation and Diversity Measures 
@@ -1579,19 +1893,23 @@ Pxy <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 
 
 
-SP <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", itype = "multi", spatobj = NULL, folder = NULL, shape = NULL) {
+SP <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", itype = "multi", beta = 1, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
-    varTotal <- colSums(x)
-    tx <- rowSums(x)
     if (is.null(d)) 
         d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
+    cldata <- segdataclean(x, d = d)
+    x <- cldata$x
+    d <- cldata$d
     if (fdist == "e") 
-        d <- exp(-d)
+        d <- exp(-beta * d)
+    varTotal <- colSums(x)
+    tx <- rowSums(x)
     if (itype == "between") {
         Poo1 <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
         for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) Poo1[k1, k2] <- sum((d %*% (x[, k1] + x[, k2])) * (x[, k1] + x[, k2])/(varTotal[k1] + varTotal[k2])^2)
     }
-    if (itype == "multi" || itype == "one") Poo1 <- sum((d %*% tx) * tx/(sum(tx))^2)
+    if (itype == "multi" || itype == "one") 
+        Poo1 <- sum((d %*% tx) * tx/(sum(tx))^2)
     Pxx1 <- vector(length = ncol(x))
     for (k in 1:ncol(x)) Pxx1[k] <- sum((d %*% x[, k]) * x[, k]/(varTotal[k])^2)
     if (itype == "multi") 
@@ -1600,7 +1918,8 @@ SP <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = 
         result <- Pxx1/Poo1
     if (itype == "between") {
         result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
-        for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) result[k1, k2] <- (varTotal[k1] * Pxx1[k1] + varTotal[k2] * Pxx1[k2])/((varTotal[k1] + varTotal[k2]) * Poo1[k1, k2])
+        for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) result[k1, k2] <- (varTotal[k1] * Pxx1[k1] + varTotal[k2] * Pxx1[k2])/((varTotal[k1] + varTotal[k2]) * 
+            Poo1[k1, k2])
     }
     return(round(result, 4))
 }
@@ -1611,12 +1930,12 @@ SP <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = 
 #' A function to compute the relative clustering index (RCL)
 #'
 #' @usage RCL(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
-#' spatobj = NULL, folder = NULL, shape = NULL)
+#' beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param d - a matrix of the distances between spatial unit centroids
 #' @param fdist - the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
@@ -1627,13 +1946,13 @@ SP <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = 
 #' @param diagval - when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-#' to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983) 
+#' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
+#' @param beta - distance decay parameter
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a matrix containing relative clustering index values for each pair of groups
 #' @references Massey D. S. and Denton N. A. (1988) \emph{The dimensions 
@@ -1664,12 +1983,15 @@ SP <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = 
 #' @export
 
 
-RCL <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", spatobj = NULL, folder = NULL, shape = NULL) {
+RCL <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", beta = 1, spatobj = NULL, folder = NULL, shape = NULL) {
     x <- as.matrix(x)
     if (is.null(d)) 
         d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
     if (fdist == "e") 
-        d <- exp(-d)
+        d <- exp(-beta * d)
+    cldata <- segdataclean(x, d = d)
+    x <- cldata$x
+    d <- cldata$d
     varTotal <- colSums(x)
     Pxx1 <- vector(length = ncol(x))
     for (k in 1:ncol(x)) Pxx1[k] <- sum((d %*% x[, k]) * x[, k]/(varTotal[k])^2)
@@ -1694,23 +2016,22 @@ RCL <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #' @usage ACEDuncan(x, dc = NULL, center = 1, 
 #' spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @param dc - a numeric vector containing the distances between spatial units 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param dc - a numeric vector containing the distances between spatial units
 #' centroids and the central spatial unit
 #' @param center - a numeric value giving the number of the spatial unit that 
-#' represents the centre in the table
+#' represents the center in the table
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a numeric vector containing Duncan's asolute centralisation index 
-#' value for each population group
+#' value for each group
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A 
 #' Methodological Analysis of Segregation Indexes}. 
 #' American Sociological Review 41, pp. 210-217
@@ -1718,22 +2039,22 @@ RCL <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #' proportion of a group that should change its localization to 
 #' achieve the same level of centralization as the rest of the population.
 #' The function can be used in two ways: to provide a vector containing 
-#' the distances between spatial units centroids or a external geographic 
+#' the distances between spatial/organizational unit centroids or a external geographic 
 #' information source (spatial object or shape file).
 #' @examples x <- segdata@data[ ,1:2]
-#' ar<-area(segdata)
-#' distc<- distcenter(segdata, center = 45)
+#' distc<- distcenter(segdata, center = 28)
 #' foldername <- system.file('extdata', package = 'OasisR')
 #' shapename <- 'segdata'
 #' 
 #' ACEDuncan(x, dc=distc) 
 #' 
-#' ACEDuncan(x, spatobj = segdata, center = 45) 
+#' ACEDuncan(x, spatobj = segdata, center = 28) 
 #' 
-#' ACEDuncan(x, folder = foldername, shape = shapename, center = 45) 
+#' ACEDuncan(x, folder = foldername, shape = shapename, center = 28) 
 #'
-#' @seealso Relative Centralisation Index: \code{\link{RCE}}
-#' @seealso Absolute Centralisation Index: \code{\link{ACE}}
+#' @seealso \code{\link{ACEDuncanPoly}}, \code{\link{ACEDuncanPolyK}},
+#' @seealso \code{\link{RCE}}, \code{\link{RCEPoly}}, \code{\link{RCEPolyK}}
+#' @seealso \code{\link{ACE}}, \code{\link{ACEPoly}}
 #' @export
 
 
@@ -1741,45 +2062,197 @@ ACEDuncan <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, s
     x <- as.matrix(x)
     if (is.null(dc)) 
         dc <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center)
+    cldata <- segdataclean(x, dc = dc)
+    x <- cldata$x
+    dc <- cldata$dc
     result <- vector(length = ncol(x))
-    varTotal <- colSums(x)
     t <- rowSums(x)
+    varTotal <- colSums(x)
     prop <- varTotal/sum(varTotal)
-    xprovi <- cbind(x, t, dc)
-    xprovi <- xprovi[order(xprovi[, ncol(xprovi)]), ]
-    xprovi <- as.data.frame(xprovi)
-    xxprovi <- xprovi[, c(1, ncol(xprovi) - 1, ncol(xprovi))]
     for (k in 1:ncol(x)) {
-        xxprovi[, 1] <- xprovi[k]
-        varTotalb <- colSums(xxprovi)
-        XI1 <- cumsum(xxprovi[, 1])[1:(nrow(xxprovi) - 1)]/varTotalb[1]
-        XI <- cumsum(xxprovi[, 1])[2:nrow(xxprovi)]/varTotalb[1]
-        YI1 <- cumsum(xxprovi[, 2])[1:(nrow(xxprovi) - 1)]/varTotalb[2]
-        YI <- cumsum(xxprovi[, 2])[2:nrow(xxprovi)]/varTotalb[2]
-        result[k] <- (XI1 %*% YI - XI %*% YI1)/(1 - prop[k])
+        provi <- RCE(cbind(x[, k], t), dc = dc, center = center, spatobj = spatobj, folder = folder, shape = shape)/(1 - prop[k])
+        result[k] <- provi[1, 2]
     }
     return(round(result, 4))
 }
+
+
+#' A function to compute Duncan's Polycentric Absolute Centralisation Index
+#'
+#' @usage ACEDuncanPoly(x, dc = NULL, center = 1, 
+#' spatobj = NULL, folder = NULL, shape = NULL)
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param dc - a numeric matrix/vector containing the distances between spatial units
+#' centroids and the central spatial unit(s). 
+#' @param center - a numeric vector giving the number of the spatial/organizational units that 
+#' represents the centers in the table
+#' @param folder - a character vector with the folder (directory) 
+#' name indicating where the shapefile is located on the drive
+#' @param shape - a character vector with the name of the shapefile 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' geographic information
+#' @return a numeric vector containing Duncan's asolute centralisation index 
+#' value for each group
+#' @references Duncan O. D. and Duncan B. (1955) \emph{A 
+#' Methodological Analysis of Segregation Indexes}. 
+#' American Sociological Review 41, pp. 210-217
+#' @description Polycentric version of Duncan's absolute centralization index. 
+#' The function can be used in two ways: to provide a vector containing 
+#' the distances between spatial/organizational unit centroids or a 
+#' external geographic information source (spatial object or shape file).
+#' @examples x <- segdata@data[ ,1:2]
+#' foldername <- system.file('extdata', package = 'OasisR')
+#' shapename <- 'segdata'
+#' 
+#' ACEDuncanPoly(x, spatobj = segdata, center = c(28, 83) )
+#' 
+#' ACEDuncanPoly(x, folder = foldername, shape = shapename, center = c(28, 83))
+#' 
+#' center <- c(28, 83)
+#' polydist <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+#' for (i in 1:ncol(polydist))
+#'   polydist[,i] <- distcenter(spatobj = segdata, center = center[i])
+#' ACEDuncanPoly(x, dc = polydist)
+#' 
+#' distmin <- vector(length = nrow(x))
+#' for (i in 1:nrow(polydist)) distmin[i] <- min(polydist[i,])
+#' ACEDuncan(x, dc = distmin)
+#'
+#' @seealso \code{\link{ACEDuncan}}, \code{\link{ACEDuncanPolyK}},
+#' @seealso \code{\link{RCE}}, \code{\link{RCEPoly}}, \code{\link{RCEPolyK}}
+#' @seealso \code{\link{ACE}}, \code{\link{ACEPoly}}
+#' @export
+
+
+
+ACEDuncanPoly <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape = NULL) {
+    x <- as.matrix(x)
+    if (is.null(dc)) {
+        dc <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+        for (i in 1:ncol(dc)) dc[, i] <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center = center[i])
+    }
+    distmin <- vector(length = nrow(x))
+    for (i in 1:nrow(dc)) distmin[i] <- min(dc[i, ])
+    dc <- distmin
+    cldata <- segdataclean(x, dc = dc)
+    x <- cldata$x
+    dc <- cldata$dc
+    result <- vector(length = ncol(x))
+    t <- rowSums(x)
+    varTotal <- colSums(x)
+    prop <- varTotal/sum(varTotal)
+    for (k in 1:ncol(x)) {
+        provi <- RCE(as.matrix(cbind(x[, k], t - x[, k])), dc = dc, center = center, spatobj = spatobj, folder = folder, shape = shape)
+        result[k] <- provi[1, 2]
+    }
+    return(round(result, 4))
+}
+
+
+#' A function to compute Duncan's Constrained Absolute Centralisation Index 
+#'
+#' @usage ACEDuncanPolyK(x, dc = NULL,  K = NULL, kdist = NULL, center = 1,
+#'                 spatobj = NULL, folder = NULL, shape = NULL)
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param dc - a numeric matrix/vector containing the distances between spatial units
+#' centroids and the central spatial unit(s). 
+#' @param center - a numeric vector  giving the number of the spatial units that 
+#' represent the centers in the table
+#' @param K - the number of neighbourhoods under the influence of a center
+#' @param kdist - the maximal distance that defines the neighbourhoods influenced
+#' by a center
+#' @param folder - a character vector with the folder (directory) 
+#' name indicating where the shapefile is located on the drive
+#' @param shape - a character vector with the name of the shapefile 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' geographic information
+#' @return a matrix containing relative centralisation index values 
+#' @references Duncan O. D. and Duncan B. (1955) \emph{A 
+#' Methodological Analysis of Segregation Indexes}. 
+#' American Sociological Review 41, pp. 210-217
+#' @references Folch D.C and Rey S. J (2016) \emph{The centralization index: 
+#' A measure of local spatial segregation}. Papers in Regional 
+#' Science 95 (3), pp. 555-576
+#' @description Constrained (local) version of Duncan's centralization index.
+#' The function can be used in two ways: to provide a matrix containing 
+#' the distances between spatial/organizational unit centroids or a external geographic 
+#' information source (spatial object or shape file).
+#' @examples x <- segdata@data[ ,1:2]
+#' foldername <- system.file('extdata', package = 'OasisR')
+#' shapename <- 'segdata'
+#' 
+#' ACEDuncanPolyK(x, spatobj = segdata, center = c(28, 83))
+#' 
+#' ACEDuncanPolyK(x, folder = foldername, shape = shapename, center = c(28, 83), K = 3)
+#' 
+#' center <- c(28, 83)
+#' polydist <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+#' for (i in 1:ncol(polydist))
+#'   polydist[,i] <- distcenter(spatobj = segdata, center = center[i])
+#' ACEDuncanPolyK(x, dc = polydist, kdist = 2)
+#' 
+#' @seealso \code{\link{ACEDuncan}}, \code{\link{ACEDuncanPoly}},
+#' @seealso \code{\link{RCE}}, \code{\link{RCEPoly}}, \code{\link{RCEPolyK}}
+#' @seealso \code{\link{ACE}}, \code{\link{ACEPoly}}
+#' @export
+
+
+
+ACEDuncanPolyK <- function(x, dc = NULL, K = NULL, kdist = NULL, center = 1, spatobj = NULL, folder = NULL, shape = NULL) {
+    x <- as.matrix(x)
+    if (is.null(K) & is.null(kdist)) 
+        K <- round(sqrt(nrow(x)^2 + ncol(x)^2))
+    
+    # Calcul DistMin
+    
+    if (is.null(dc)) {
+        dc <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+        for (i in 1:ncol(dc)) dc[, i] <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center = center[i])
+    }
+  #  for (i in 1:nrow(dc)) distmin[i] <- min(dc[i, 1:ncol(dc)])
+    cldata <- segdataclean(x, dc = dc)
+    x <- cldata$x
+    dc <- cldata$dc
+    result <- vector(length = ncol(x))
+    for (i in 1:ncol(x)) {
+        x1 <- x[, i]
+        x2 <- rowSums(x) - x1
+        result[i] <- RCEPolyK(cbind(x1, x2), dc = dc, K = K, kdist = kdist, center = center, spatobj = spatobj, folder = folder, shape = shape)[1, 2]
+    }
+    return(round(result, 4))
+}
+
+
+
 
 
 #' A function to compute Relatice Centralisation Index (RCE)
 #'
 #' @usage RCE(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @param dc - a numeric vector containing the distances between spatial units 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param dc - a numeric vector containing the distances between spatial units
 #' centroids and the central spatial unit
 #' @param center - a numeric value giving the number of the spatial unit that 
-#' represents the centre in the table
+#' represents the center in the table
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a matrix containing relative centralisation index values 
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A 
@@ -1789,21 +2262,22 @@ ACEDuncan <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, s
 #' proportion of a group that should change its localization to 
 #' achieve the same level of centralization as another group.
 #' The function can be used in two ways: to provide a vector containing 
-#' the distances between spatial units centroids or a external geographic 
+#' the distances between spatial unit centroids or a external geographic 
 #' information source (spatial object or shape file).
 #' @examples x <- segdata@data[ ,1:2]
-#' distc<- distcenter(segdata, center = 45)
+#' distc<- distcenter(segdata, center = 28)
 #' foldername <- system.file('extdata', package = 'OasisR')
 #' shapename <- 'segdata'
 #' 
 #' RCE(x, dc=distc) 
 #' 
-#' RCE(x, spatobj = segdata, center = 45) 
+#' RCE(x, spatobj = segdata, center = 28) 
 #' 
-#' RCE(x, folder = foldername, shape = shapename, center = 45) 
+#' RCE(x, folder = foldername, shape = shapename, center = 28) 
 #'
-#' @seealso Duncan's Absolute Centralisation Index: \code{\link{ACEDuncan}}
-#' @seealso Absolute Centralisation Index: \code{\link{ACE}}
+#' @seealso \code{\link{RCEPoly}}, \code{\link{RCEPolyK}},
+#' @seealso \code{\link{ACEDuncan}}, \code{\link{ACEDuncanPoly}}, 
+#' @seealso \code{\link{ACEDuncanPolyK}}, \code{\link{ACE}}, \code{\link{ACEPoly}}
 #' @export
 
 
@@ -1811,11 +2285,18 @@ RCE <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape =
     x <- as.matrix(x)
     if (is.null(dc)) 
         dc <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center)
+    cldata <- segdataclean(x, dc = dc)
+    x <- cldata$x
+    dc <- cldata$dc
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     varTotal <- colSums(x)
     xprovi <- cbind(x, dc)
     xprovi <- xprovi[order(xprovi[, ncol(xprovi)]), ]
     xprovi <- as.data.frame(xprovi)
+    xprovi2 <- xprovi[1:length(unique(xprovi$dc)), ]
+    xprovi2$dc <- unique(xprovi$dc)
+    for (i in 1:ncol(x)) xprovi2[, i] <- tapply(xprovi[, i], xprovi$dc, sum)
+    xprovi <- xprovi2
     for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) {
         XI1 <- cumsum(xprovi[, k1])[1:(nrow(xprovi) - 1)]/varTotal[k1]
         XI <- cumsum(xprovi[, k1])[2:nrow(xprovi)]/varTotal[k1]
@@ -1828,53 +2309,255 @@ RCE <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape =
 
 
 
+#' A function to compute Polycentric Relative Centralisation Index
+#'
+#' @usage RCEPoly(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape = NULL)
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param dc - a numeric matrix/vector containing the distances between spatial units
+#' centroids and the central spatial unit(s). 
+#' @param center - a numeric vector  giving the number of the spatial units that 
+#' represent the centers in the table
+#' @param folder - a character vector with the folder (directory) 
+#' name indicating where the shapefile is located on the drive
+#' @param shape - a character vector with the name of the shapefile 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' geographic information
+#' @return a matrix containing relative centralisation index values 
+#' @references Duncan O. D. and Duncan B. (1955) \emph{A 
+#' Methodological Analysis of Segregation Indexes}. 
+#' American Sociological Review 41, pp. 210-217
+#' @description The polycentric version of the relative centralisation index. 
+#' The function can be used in two ways: to provide a matrix containing 
+#' the distances between spatial/organizational unit centroids or a external  
+#' geographic information source (spatial object or shape file).
+#' @examples x <- segdata@data[ ,1:2]
+#' foldername <- system.file('extdata', package = 'OasisR')
+#' shapename <- 'segdata'
+#' 
+#' RCEPoly(x, spatobj = segdata, center = c(28, 83) )
+#' 
+#' RCEPoly(x, folder = foldername, shape = shapename, center = c(28, 83))
+#' 
+#' center <- c(28, 83)
+#' polydist <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+#' for (i in 1:ncol(polydist))
+#'   polydist[,i] <- distcenter(spatobj = segdata, center = center[i])
+#' RCEPoly(x, dc = polydist)
+#' 
+#' distmin <- vector(length = nrow(x))
+#' for (i in 1:nrow(polydist)) distmin[i] <- min(polydist[i,])
+#' RCE(x, dc = distmin)
+#'
+#' @seealso \code{\link{RCE}}, \code{\link{RCEPolyK}},
+#' @seealso \code{\link{ACEDuncan}}, \code{\link{ACEDuncanPoly}}, 
+#' @seealso \code{\link{ACEDuncanPolyK}}, \code{\link{ACE}}, \code{\link{ACEPoly}}
+#' @export
+
+
+RCEPoly <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape = NULL) {
+    x <- as.matrix(x)
+    if (is.null(dc)) {
+        dc <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+        for (i in 1:ncol(dc)) dc[, i] <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center = center[i])
+    }
+    distmin <- vector(length = nrow(x))
+    for (i in 1:nrow(dc)) distmin[i] <- min(dc[i, ])
+    dc <- distmin
+    cldata <- segdataclean(x, dc = dc)
+    x <- cldata$x
+    dc <- cldata$dc
+    result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
+    varTotal <- colSums(x)
+    xprovi <- cbind(x, dc)
+    xprovi <- xprovi[order(xprovi[, ncol(xprovi)]), ]
+    xprovi <- as.data.frame(xprovi)
+    xprovi2 <- xprovi[1:length(unique(xprovi$dc)), ]
+    xprovi2$dc <- unique(xprovi$dc)
+    for (i in 1:ncol(x)) xprovi2[, i] <- tapply(xprovi[, i], xprovi$dc, sum)
+    xprovi <- xprovi2
+    for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) {
+        XI1 <- cumsum(xprovi[, k1])[1:(nrow(xprovi) - 1)]/varTotal[k1]
+        XI <- cumsum(xprovi[, k1])[2:nrow(xprovi)]/varTotal[k1]
+        YI1 <- cumsum(xprovi[, k2])[1:(nrow(xprovi) - 1)]/varTotal[k2]
+        YI <- cumsum(xprovi[, k2])[2:nrow(xprovi)]/varTotal[k2]
+        result[k1, k2] <- XI1 %*% YI - XI %*% YI1
+    }
+    return(round(result, 4))
+}
+
+
+
+
+#' A function to compute Constrained Relative Centralisation Index
+#'
+#' @usage RCEPolyK(x, dc = NULL,  K = NULL, kdist = NULL, center = 1,
+#'                 spatobj = NULL, folder = NULL, shape = NULL)
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param dc - a numeric matrix/vector containing the distances between spatial units
+#' centroids and the central spatial unit(s). 
+#' @param center - a numeric vector  giving the number of the spatial units that 
+#' represent the centers in the table
+#' @param K - the number of neighbourhoods under the influence of a center
+#' @param kdist - the maximal distance that defines the neighbourhoods influenced
+#' by a center
+#' @param folder - a character vector with the folder (directory) 
+#' name indicating where the shapefile is located on the drive
+#' @param shape - a character vector with the name of the shapefile 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' geographic information
+#' @return a matrix containing relative centralisation index values 
+#' @references Duncan O. D. and Duncan B. (1955) \emph{A 
+#' Methodological Analysis of Segregation Indexes}. 
+#' American Sociological Review 41, pp. 210-217
+#' @references Folch D.C and Rey S. J (2016) \emph{The centralization index: 
+#' A measure of local spatial segregation}. Papers in Regional 
+#' Science 95 (3), pp. 555-576
+#' @description The constrained (local) version of relative centralization index.
+#' The function can be used in two ways: to provide a matrix containing 
+#' the distances between spatial unit centroids or a external geographic 
+#' information source (spatial object or shape file).
+#' @examples x <- segdata@data[ ,1:2]
+#' foldername <- system.file('extdata', package = 'OasisR')
+#' shapename <- 'segdata'
+#' 
+#' RCEPolyK(x, spatobj = segdata, center = c(28, 83))
+#' 
+#' RCEPolyK(x, folder = foldername, shape = shapename, center = c(28, 83), K = 3)
+#' 
+#' center <- c(28, 83)
+#' polydist <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+#' for (i in 1:ncol(polydist))
+#'   polydist[,i] <- distcenter(spatobj = segdata, center = center[i])
+#' RCEPolyK(x, dc = polydist, kdist = 2)
+#' 
+#' @seealso \code{\link{RCE}}, \code{\link{RCEPoly}},
+#' @seealso \code{\link{ACEDuncan}}, \code{\link{ACEDuncanPoly}}, 
+#' @seealso \code{\link{ACEDuncanPolyK}}, \code{\link{ACE}}, \code{\link{ACEPoly}}
+#' @export
+#' @export
+
+
+
+RCEPolyK <- function(x, dc = NULL, K = NULL, kdist = NULL, center = 1, spatobj = NULL, folder = NULL, shape = NULL) {
+    x <- as.matrix(x)
+    if (is.null(K) & is.null(kdist)) 
+        K <- round(sqrt(nrow(x)^2 + ncol(x)^2))
+    
+    # Calcul DistMin
+    
+    if (is.null(dc)) {
+        dc <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+        for (i in 1:ncol(dc)) dc[, i] <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center = center[i])
+    }
+    distmin <- vector(length = nrow(dc))
+    for (i in 1:nrow(dc)) distmin[i] <- min(dc[i, 1:ncol(dc)])
+    cldata <- segdataclean(x, dc = distmin)
+    x <- cldata$x
+    dc <- cldata$dc
+    distmin <- dc
+    
+    # Asamblare dist egale
+    xprovi <- cbind(x, distmin)
+    xprovi <- xprovi[order(xprovi[, ncol(xprovi)]), ]
+    xprovi <- as.data.frame(xprovi)
+    xprovi2 <- xprovi[1:length(unique(xprovi$distmin)), ]
+    xprovi2$distmin <- unique(xprovi$distmin)
+    for (i in 1:ncol(x)) xprovi2[, i] <- tapply(xprovi[, i], xprovi$distmin, sum)
+    xprovi <- xprovi2
+    if (!is.null(K)) {
+        if (K >= nrow(xprovi2)) 
+            K <- nrow(xprovi2) - 1
+        xprovi <- xprovi[1:(K + 1), ]
+    }
+    if (!is.null(kdist)) 
+        xprovi <- xprovi[xprovi$distmin <= kdist, ]
+    result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
+    xprovi <- xprovi[, -ncol(xprovi)]
+    
+    # Calcul indice
+    varTotal <- colSums(xprovi)
+    test <- 0
+    if (sum(varTotal) == 0) 
+        test <- 1
+    for (i in length(varTotal)) if (varTotal[i] == 0 & sum(varTotal) > 0) {
+        test <- 1
+        for (j in 1:length(varTotal)) {
+            result[j, i] <- 1
+            result[i, j] <- -1
+        }
+    }
+    if (nrow(xprovi) <= 1) 
+        test <- 1
+    if (test == 0) 
+        for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) {
+            XI1 <- cumsum(xprovi[, k1])[1:(nrow(xprovi) - 1)]/varTotal[k1]
+            XI <- cumsum(xprovi[, k1])[2:nrow(xprovi)]/varTotal[k1]
+            YI1 <- cumsum(xprovi[, k2])[1:(nrow(xprovi) - 1)]/varTotal[k2]
+            YI <- cumsum(xprovi[, k2])[2:nrow(xprovi)]/varTotal[k2]
+            result[k1, k2] <- XI1 %*% YI - XI %*% YI1
+        }
+    return(round(result, 4))
+}
+
+
 #' A function to compute Massey Absolute Centralisation Index (ACE)
 #'
 #' @usage ACE(x, a = NULL, dc = NULL, center = 1, 
 #' spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @param a - a numeric vector containing the areas of spatial units
-#' @param dc - a numeric vector containing the distances between spatial units 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param a - a numeric vector containing spatial unit areas
+#' @param dc - a numeric vector containing the distances between spatial units
 #' centroids and the central spatial unit
 #' @param center - a numeric value giving the number of the spatial unit that 
-#' represents the centre in the table
+#' represents the center in the table
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
+#' name indicating where the shapefile is located on the drive
 #' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return a numeric vector containing asolute centralisation index value for 
-#' each population group
+#' each group
 #' @references Massey D. S. and Denton N. A. (1988) \emph{
 #' The dimensions of residential segregation}. 
 #' Social Forces 67(2),  pp. 281-315.
 #' @description The absolute centralization index measures a group
 #' spatial distribution compared to the distribution of land area 
-#' around the city centre. The function can be used in two ways: to provide 
-#' an area vector and a vector containing the distances between spatial units 
+#' around the city center. The function can be used in two ways: to provide 
+#' an area vector and a vector containing the distances between spatial units
 #' centroids and  the central spatial unit or a external geographic information 
 #' source (spatial object or shape file).
 #' 
 #' @examples x <- segdata@data[ ,1:2]
 #' ar<-area(segdata)
-#' distc<- distcenter(segdata, center = 45)
+#' distc<- distcenter(segdata, center = 28)
 #' foldername <- system.file('extdata', package = 'OasisR')
 #' shapename <- 'segdata'
 #' 
 #' ACE(x, a = ar, dc=distc) 
 #' 
-#' ACE(x, spatobj = segdata, center = 45) 
+#' ACE(x, spatobj = segdata, center = 28) 
 #' 
-#' ACE(x, folder = foldername, shape = shapename, center = 45) 
+#' ACE(x, folder = foldername, shape = shapename, center = 28) 
 #' 
-#' @seealso Duncan's Absolute Centralisation Index: \code{\link{ACEDuncan}}
-#' @seealso Relative Centralisation Index: \code{\link{RCE}}
+#' @seealso \code{\link{ACEPoly}},
+#' @seealso \code{\link{RCE}}, \code{\link{RCEPoly}}, \code{\link{RCEPolyK}},
+#' @seealso \code{\link{ACEDuncan}}, \code{\link{ACEDuncanPoly}}, 
+#' @seealso \code{\link{ACEDuncanPolyK}} 
 #' @export
 
 
@@ -1884,6 +2567,106 @@ ACE <- function(x, a = NULL, dc = NULL, center = 1, spatobj = NULL, folder = NUL
         a <- area(spatobj = spatobj, folder = folder, shape = shape)
     if (is.null(dc)) 
         dc <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center)
+    cldata <- segdataclean(x, a = a, dc = dc)
+    x <- cldata$x
+    a <- cldata$a
+    dc <- cldata$dc
+    
+    result <- vector(length = ncol(x))
+    varTotal <- colSums(x)
+    t <- rowSums(x)
+    prop <- varTotal/sum(varTotal)
+    xprovi <- cbind(x, a, dc)
+    xprovi <- xprovi[order(xprovi[, ncol(xprovi)]), ]
+    xprovi <- as.data.frame(xprovi)
+    
+    for (k in 1:ncol(x)) {
+        XI1 <- cumsum(xprovi[, k])[1:(nrow(xprovi) - 1)]/varTotal[k]
+        AI <- cumsum(xprovi$a)[2:nrow(xprovi)]/sum(xprovi$a)
+        XI <- cumsum(xprovi[, k])[2:nrow(xprovi)]/varTotal[k]
+        AI1 <- cumsum(xprovi$a)[1:(nrow(xprovi) - 1)]/sum(xprovi$a)
+        result[k] <- XI1 %*% AI - XI %*% AI1
+    }
+    return(round(result, 4))
+}
+
+
+
+
+#' A function to compute Massey's Polycentric Absolute Centralisation Index
+#'
+#' @usage ACEPoly(x, a = NULL, dc = NULL, center = 1, 
+#' spatobj = NULL, folder = NULL, shape = NULL)
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param a - a numeric vector containing spatial unit areas
+#' @param dc - a numeric matrix containing the distances between spatial units
+#' centroids and the central spatial units
+#' @param center - a numeric vector giving the number of the spatial units that 
+#' represent the centers in the table
+#' @param folder - a character vector with the folder (directory) 
+#' name indicating where the shapefile is located on the drive
+
+#' @param shape - a character vector with the name of the shapefile 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' geographic information
+#' @return a numeric vector containing asolute centralisation index value for 
+#' each group
+#' @references Massey D. S. and Denton N. A. (1988) \emph{
+#' The dimensions of residential segregation}. 
+#' Social Forces 67(2),  pp. 281-315.
+#' @description The absolute centralization index measures a group
+#' spatial distribution compared to the distribution of land area 
+#' around the city center. The function can be used in two ways: to provide 
+#' an area vector and a vector containing the distances between spatial units
+#' centroids and  the central spatial unit or a external geographic information 
+#' source (spatial object or shape file).
+#' 
+#' @examples x <- segdata@data[ ,1:2]
+#' ar<-area(segdata)
+#' foldername <- system.file('extdata', package = 'OasisR')
+#' shapename <- 'segdata'
+#' 
+#' ACEPoly(x, spatobj = segdata, center = c(28, 83) )
+#' 
+#' ACEPoly(x, folder = foldername, shape = shapename, center = c(28, 83))
+#' 
+#' center <- c(28, 83)
+#' polydist <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+#' for (i in 1:ncol(polydist))
+#'   polydist[,i] <- distcenter(spatobj = segdata, center = center[i])
+#' ACEPoly(x, a = ar, dc = polydist)
+#' 
+#' distmin <- vector(length = nrow(x))
+#' for (i in 1:nrow(polydist)) distmin[i] <- min(polydist[i,])
+#' ACE(x, a = ar, dc = distmin)
+#' 
+#' @seealso \code{\link{ACE}}, \code{\link{RCE}}, 
+#' @seealso \code{\link{RCEPoly}}, \code{\link{RCEPolyK}},
+#' @seealso \code{\link{ACEDuncan}}, \code{\link{ACEDuncanPoly}}, 
+#' @seealso \code{\link{ACEDuncanPolyK}} 
+#' @export
+
+
+ACEPoly <- function(x, a = NULL, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape = NULL) {
+    x <- as.matrix(x)
+    if (is.null(a)) 
+        a <- area(spatobj = spatobj, folder = folder, shape = shape)
+    if (is.null(dc)) {
+        dc <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+        for (i in 1:ncol(dc)) dc[, i] <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center = center[i])
+    }
+    distmin <- vector(length = nrow(x))
+    for (i in 1:nrow(dc)) distmin[i] <- min(dc[i, ])
+    dc <- distmin
+    cldata <- segdataclean(x, dc = dc, a = a)
+    x <- cldata$x
+    a <- cldata$a
+    dc <- cldata$dc
     result <- vector(length = ncol(x))
     varTotal <- colSums(x)
     t <- rowSums(x)
@@ -1906,7 +2689,7 @@ ACE <- function(x, a = NULL, dc = NULL, center = 1, spatobj = NULL, folder = NUL
 
 ######################## 
 
-# MULTIGROUP INDEXES
+# MULTI-GROUP INDEXES
 
 ######################## 
 
@@ -1915,10 +2698,10 @@ ACE <- function(x, a = NULL, dc = NULL, center = 1, spatobj = NULL, folder = NUL
 #'
 #' @usage HShannon(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return Shannon-Wiener diversity index 
 #' @references Shannon C. E. (1948) \emph{A mathematical theory 
 #' of communication}. Bell System Technical Journal (27) 
@@ -1928,7 +2711,7 @@ ACE <- function(x, a = NULL, dc = NULL, center = 1, spatobj = NULL, folder = NUL
 #' HShannon(x) 
 #' @seealso  Social diversity indices: 
 #' \code{\link{NShannon}}, \code{\link{ISimpson}}, 
-#' @seealso Multigroup indices: 
+#' @seealso Multi-group indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @export
@@ -1936,6 +2719,7 @@ ACE <- function(x, a = NULL, dc = NULL, center = 1, spatobj = NULL, folder = NUL
 
 HShannon <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     pTotal <- colSums(x)/sum(x)
     result <- -sum(pTotal * log(pTotal))
     return(round(result, 4))
@@ -1946,10 +2730,10 @@ HShannon <- function(x) {
 #'
 #' @usage NShannon(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return Shannon-Wiener normalized diversity index 
 #' @references Shannon C. E. (1948) \emph{A mathematical theory 
 #' of communication}. Bell System Technical Journal (27) 
@@ -1957,17 +2741,18 @@ HShannon <- function(x) {
 #' the notion of entropy and measures population heterogeneity.
 #' @examples x <- segdata@data[ ,1:2]
 #' NShannon(x) 
-#' @seealso  Other multigroup eveness indices: 
+#' @seealso  Other multi-group eveness indices: 
 #' \code{\link{HShannon}}, \code{\link{ISimpson}}, 
 #' \code{\link{GiniMulti}}, \code{\link{DMulti}}, \code{\link{HMulti}}, 
 #' \code{\link{CMulti}}
-#' @seealso Other multigroup indices: \code{\link{PMulti}}, 
+#' @seealso Other multi-group indices: \code{\link{PMulti}}, 
 #' \code{\link{RelDivers}}
 #' @export
 
 
 NShannon <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     pTotal <- colSums(x)/sum(x)
     result <- -sum(pTotal * log(pTotal))
     result <- result/log(ncol(x))
@@ -1978,10 +2763,10 @@ NShannon <- function(x) {
 #'
 #' @usage ISimpson(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return Simpson's interaction index 
 #' @references Simpson E. H. (1949) \emph{Measurement of diversity}. 
 #' Nature 163:688 
@@ -1991,7 +2776,7 @@ NShannon <- function(x) {
 #' ISimpson(x) 
 #' @seealso  Social diversity indices: 
 #' \code{\link{HShannon}}, \code{\link{NShannon}}, 
-#' @seealso Multigroup indices: 
+#' @seealso Multi-group indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @export
@@ -2000,6 +2785,7 @@ NShannon <- function(x) {
 
 ISimpson <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     pTotal <- colSums(x)/sum(x)
     result <- sum(pTotal * (1 - pTotal))
     return(round(result, 4))
@@ -2007,23 +2793,23 @@ ISimpson <- function(x) {
 
 
 
-#' A function to compute multigroup Gini index
+#' A function to compute multi-group Gini index
 #'
 #' @usage GiniMulti(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @references Reardon S. F. (1998) \emph{Measures of racial 
-#' diversity and segregation in multigroup and hierarchical 
+#' diversity and segregation in multi-group and hierarchical 
 #' structured Populations}. Annual meeting of the Eastern 
 #' Sociological Society, Philadelphia 
-#' @description GiniMulti is a multigroup version of 
+#' @description Multi-group Gini is a multi-group version of 
 #' the \code{\link{Gini}} index 
 #' @examples x <- segdata@data[ ,1:2]
 #' GiniMulti(x) 
-#' @seealso Multigroup indices: 
+#' @seealso Multi-group indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}},   
 #' \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @seealso  Social diversity indices: 
@@ -2035,6 +2821,7 @@ ISimpson <- function(x) {
 
 GiniMulti <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     pTotal <- colSums(x)/sum(x)
     II <- sum(pTotal * (1 - pTotal))
     vartemp <- vector(length = ncol(x))
@@ -2055,22 +2842,22 @@ GiniMulti <- function(x) {
 
 
 
-#' A function to compute multigroup dissimilarity index
+#' A function to compute multi-group dissimilarity index
 #'
 #' @usage DMulti(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @return Multigroup dissimilarity index 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @return multi-group dissimilarity index 
 #' @references Sakoda J. N. (1981) \emph{A generalized Index of 
 #' dissimilarity}. Demography,18, 245-250 
-#' @description Multigroup dissimilarity, DMulti, is a multigroup 
+#' @description Multi-group dissimilarity index, is a multi-group 
 #' version of  Duncan's dissimilarity index (\code{\link{DIDuncan}})
 #' @examples x <- segdata@data[ ,1:2]
 #' DMulti(x) 
-#' @seealso Multigroup indices: 
+#' @seealso Multi-group indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}},   
 #' \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @seealso  Social diversity indices: 
@@ -2082,6 +2869,7 @@ GiniMulti <- function(x) {
 
 DMulti <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- 0
     pTotal <- colSums(x)/sum(x)
     II <- sum(pTotal * (1 - pTotal))
@@ -2096,24 +2884,24 @@ DMulti <- function(x) {
 
 
 
-#' A function to compute multigroup normalised exposure (PMulti)
+#' A function to compute multi-group normalised exposure (PMulti)
 #'
 #' @usage PMulti(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @return Multigroup normalised isolation index 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @return multi-group normalised isolation index 
 #' @references  James, F. J. (1986) \emph{A New Generalized 'Exposure-Based' 
 #' Segregation Index}. Sociological Methods and Research, 14, pp. 301-316
 #' @references  Reardon S. F. and G. Firebaugh (2002) \emph{Measures of 
-#' Multigroup Segregation}. Sociological Methodology, 32(1), pp 33-67
-#' @description The multigroup normalised isolation index, PMulti, 
-#' is a multigroup version of the isolation index (\code{\link{xPx}})
+#' multi-group Segregation}. Sociological Methodology, 32(1), pp 33-67
+#' @description The multi-group normalised isolation index is a 
+#' multi-group version of the isolation index (\code{\link{xPx}})
 #' @examples x <- segdata@data[ ,1:2]
 #' PMulti(x) 
-#' @seealso Multigroup indices: 
+#' @seealso Multi-group indices: 
 #' \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @seealso  Social diversity indices: 
@@ -2125,6 +2913,7 @@ DMulti <- function(x) {
 
 PMulti <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- 0
     pTotal <- colSums(x)/sum(x)
     t <- rowSums(x)
@@ -2136,23 +2925,23 @@ PMulti <- function(x) {
 }
 
 
-#' A function to compute multigroup relative diversity index
+#' A function to compute multi-group relative diversity index
 #'
 #' @usage RelDivers(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @return Multigroup relative diversity index 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @return multi-group relative diversity index 
 #' @references Carlson S. M. (1992) \emph{Trends in race/sex 
 #' occupational inequality:  conceptual and measurement issues}. 
 #' Social Problems, 39, p. 269-290
-#' @description The relative diversity index is a multigroup 
+#' @description The relative diversity index is a multi-group 
 #' index based on Simpson's interaction index \code{\link{ISimpson}} 
 #' @examples x <- segdata@data[ ,1:2]
 #' RelDivers(x) 
-#' @seealso Multigroup indices: 
+#' @seealso Multi-group indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{HMulti}}, \code{\link{CMulti}}
 #' @seealso  Social diversity indices: 
@@ -2164,6 +2953,7 @@ PMulti <- function(x) {
 
 RelDivers <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- 0
     pTotal <- colSums(x)/sum(x)
     II <- sum(pTotal * (1 - pTotal))
@@ -2175,21 +2965,21 @@ RelDivers <- function(x) {
     return(round(result, 4))
 }
 
-#' A function to compute multigroup entropy segregation index
+#' A function to compute multi-group entropy segregation index
 #'
 #' @usage HMulti(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @return Multigroup entropy segregation index
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group. 
+#' @return multi-group entropy segregation index
 #' @references Theil H. (1972)  \emph{Statistical decomposition analysis: with 
 #' applications in the social and administrative.} Amsterdam, North-Holland, 337 p.
-#' @description The multigroup version of Theil's entropy index \code{\link{HTheil}} 
+#' @description The multi-group version of Theil's entropy index \code{\link{HTheil}} 
 #' @examples x <- segdata@data[ ,1:2]
 #' HMulti(x) 
-#' @seealso Multigroup indices: 
+#' @seealso Multi-group indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @seealso  Social diversity indices: 
@@ -2201,6 +2991,7 @@ RelDivers <- function(x) {
 
 HMulti <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     E <- vector("list", ncol(x))
     Total <- sum(x)
     pTotal <- colSums(x)/Total
@@ -2218,23 +3009,23 @@ HMulti <- function(x) {
 }
 
 
-#' A function to compute multigroup squared coefficient of variation index
+#' A function to compute multi-group squared coefficient of variation index
 #'
 #' @usage CMulti(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
-#' @return Multigroup entropy segregation index
-#' @references Reardon S. F. and Firebaugh G. (2002) \emph{Measures of multigroup 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @return multi-group entropy segregation index
+#' @references Reardon S. F. and Firebaugh G. (2002) \emph{Measures of multi-group 
 #' segregation}. Sociological Methodology, 32, pp. 33-67.
 #' @description The index can be interpreted as a measure of the variance of the 
 #' spatial representation of the groups accros spatial unite, or as a normalized 
 #' chi-squared measure of association between groups and units. 
 #' @examples x <- segdata@data[ ,1:2]
 #' CMulti(x) 
-#' @seealso Multigroup indices: 
+#' @seealso Multi-group indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{HMulti}}, \code{\link{RelDivers}}
 #' @seealso  Social diversity indices: 
@@ -2246,6 +3037,7 @@ HMulti <- function(x) {
 
 CMulti <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     Total <- sum(x)
     pTotal <- colSums(x)/Total
     tx <- rowSums(x)
@@ -2257,6 +3049,296 @@ CMulti <- function(x) {
 
 
 
+#' A function to compute Reardon multi-group ordinal segregation indices
+#'
+#' @usage ordinalseg(x) 
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group. The rows
+#' represent the nominal categories (spatial units) and the columns the ordinal 
+#' categories.
+#' @return A vector with Reardon multi-group ordinal segregation indices:
+#' Lambda1 - ordinal generalization of the information theory index
+#' Lambda2 - ordinal generalization of the variation ratio index
+#' Lambda3 - ordinal square root index
+#' Lambda4 - ordinal absolute difference index
+#' @references Reardon S. F. (2009) \emph{Measures of ordinal segregation}. 
+#' Research on Economic Inequality, 17, pp. 129-155.
+#' @description  A function to compute Reardon (2009) ordinal indices
+#' @examples x <- GreHSize@data[ ,3:5]
+#' ordinalseg(x) 
+#' 
+#' x1 <- matrix(nrow = 4, ncol = 3)
+#' x1[1,] <- c(0, 0, 30)
+#' x1[2,] <- c(0, 20, 10)
+#' x1[3,] <- c(10, 20 ,0)
+#' x1[4,] <- c(30, 0 ,0)
+#' 
+#' x2 <- matrix(nrow = 4, ncol = 3)
+#' x2[1,] <- c(0, 30, 0)
+#' x2[2,] <- c(0, 10, 20)
+#' x2[3,] <- c(10, 0, 20)
+#' x2[4,] <- c(30, 0, 0)
+#'
+#' ordinalseg(x1)
+#' ordinalseg(x2)
+#' @seealso \code{\link{rankorderseg}}
+#' @export 
+
+
+ordinalseg <- function(x) {
+    f1 <- function(xx) {
+        result <- -(xx * log2(xx) + (1 - xx) * log2(1 - xx))
+        result[is.na(result)] <- 0
+        return(result)
+    }
+    
+    f2 <- function(xx) {
+        result <- 4 * xx * (1 - xx)
+        return(result)
+    }
+    
+    f3 <- function(xx) {
+        result <- 2 * sqrt(xx * (1 - xx))
+        return(result)
+    }
+    
+    f4 <- function(xx) {
+        result <- 1 - abs(2 * xx - 1)
+        return(result)
+    }
+    x <- as.matrix(x)
+    x <- segdataclean(x)$x
+    ti <- rowSums(x)
+    tk <- colSums(x)
+    T <- sum(x)
+    cik <- x
+    for (i in 1:nrow(x)) cik[i, ] <- cumsum(x[i, ])/ti[i]
+    cik <- cik[, -ncol(cik)]
+    ck <- cumsum(tk)/T
+    ck <- ck[-length(ck)]
+    
+    v <- vector(length = 4)
+    result <- v
+    vi <- matrix(0, nrow = 4, ncol = nrow(x))
+    
+    v[1] <- sum(f1(ck))/(ncol(x) - 1)
+    v[2] <- sum(f2(ck))/(ncol(x) - 1)
+    v[3] <- sum(f3(ck))/(ncol(x) - 1)
+    v[4] <- sum(f4(ck))/(ncol(x) - 1)
+    
+    if (ncol(x) > 2) {
+        vi[1, ] <- rowSums(f1(cik))/(ncol(x) - 1)
+        vi[2, ] <- rowSums(f2(cik))/(ncol(x) - 1)
+        vi[3, ] <- rowSums(f3(cik))/(ncol(x) - 1)
+        vi[4, ] <- rowSums(f4(cik))/(ncol(x) - 1)
+    }
+    if (ncol(x) == 2) {
+        vi[1, ] <- f1(cik)/(ncol(x) - 1)
+        vi[2, ] <- f2(cik)/(ncol(x) - 1)
+        vi[3, ] <- f3(cik)/(ncol(x) - 1)
+        vi[4, ] <- f4(cik)/(ncol(x) - 1)
+    }
+    
+    for (vers in 1:4) for (i in 1:nrow(x)) result[vers] <- result[vers] + (v[vers] - vi[vers, i]) * ti[i]/(T * v[vers])
+    return(result)
+}
+
+
+
+
+
+#' A function to compute rank-ordered segregation indices
+#'
+#' @usage rankorderseg(x, polorder = 4, pred = NULL) 
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group. The rows
+#' represent the nominal categories (spatial units) and the columns the population
+#' distribution as ordered groups divided by thresholds
+#' @param polorder - order of the polynomial approximation (4 by default)
+#' @param pred  - a numerical vector with percentiles to be predicted. 
+#' If NULL, the predictions are made at threshold levels
+#' @return A list containing the results for three rank-ordered indices: 
+#' rank-order information theory index (Hr), rank-order variation ratio 
+#' index (Rr) and rank-order square root index (Sr). For each index, a sublist 
+#' is provided, containing: 
+#' Index - the rank-ordered index value
+#' Hp/Rp/Sp - a vector with ordinal information theory/variance ratio/square root 
+#' segregation index values at thresholds
+#' Coefficients - Coefficients extracted from the polynomial estimation model,
+#' including basic statistics
+#' Predict - a list contining predicted values of the coresponding ordinal index (fit); 
+#' standard error of predicted means (se.fit); degrees of freedom for residual (df); 
+#' and residual standard deviations (residuale.scale). If pred is NULL, the function 
+#' will return the the statistics at thresholds
+#' @references Reardon S. F. (2011) \emph{Measures of Income Segregation
+#' }. The Stanford Center on Poverty and Inequality
+#' @description  A function computing Reardon (2011) rank-ordered 
+#' segregation indices
+#' @examples x1 <- matrix(nrow = 4, ncol = 7)
+#' x1[1,] <- c( 10,  10, 10, 20, 30, 40, 50)
+#' x1[2,] <- c( 0, 20, 10, 10, 10, 20, 20)
+#' x1[3,] <- c(10, 20,  10, 10, 10, 0, 0 )
+#' x1[4,] <- c(30, 30,  20, 10, 10, 0, 0 )
+#' x2 <- x1
+#' x2[,c(3,4,6,7)] <- x1[,c(6,7,3,4)]
+#' 
+#' rankorderseg(x1)
+#' rankorderseg(x2, pred = seq(0, 1, 0.1))
+#' 
+#' @seealso \code{\link{ordinalseg}} 
+#' @export 
+
+
+
+rankorderseg <- function(x, polorder = 4, pred = NULL) {
+    x <- as.matrix(x)
+    stats::glm.control(epsilon = 1e-04, maxit = 1e+06, trace = FALSE)
+    x <- segdataclean(x)$x
+    result1 <- vector("list", 4)
+    result2 <- vector("list", 4)
+    result3 <- vector("list", 4)
+    names(result1) <- c("Index", "Hp", "Coefficients", "Predict")
+    names(result2) <- c("Index", "Rp", "Coefficients", "Predict")
+    names(result3) <- c("Index", "Sp", "Coefficients", "Predict")
+    poptot <- sum(x)
+    p <- matrix(nrow = nrow(x), ncol = 2)
+    Hp <- vector(length = ncol(x) - 1)
+    Rp <- vector(length = ncol(x) - 1)
+    Sp <- vector(length = ncol(x) - 1)
+    Pk <- vector(length = ncol(x) - 1)
+    
+    for (k in 1:(ncol(x) - 1)) {
+        if (k == 1) 
+            p[, 1] <- x[, 1] else p[, 1] <- rowSums(x[, 1:k])
+        p[, 2] <- rowSums(x) - p[, 1]
+        ordseg <- ordinalseg(p)
+        Hp[k] <- ordseg[1]
+        Rp[k] <- ordseg[2]
+        Sp[k] <- ordseg[3]
+        Pk[k] <- sum(p[, 1])/poptot
+    }
+    result1[[2]] <- Hp
+    result2[[2]] <- Rp
+    result3[[2]] <- Sp
+    
+    estim <- stats::lm(Hp ~ poly(Pk, polorder, raw = T))
+    result1[[3]] <- stats::coefficients(summary(estim))
+    estim <- stats::lm(Rp ~ poly(Pk, polorder, raw = T))
+    result2[[3]] <- stats::coefficients(summary(estim))
+    estim <- stats::lm(Sp ~ poly(Pk, polorder, raw = T))
+    result3[[3]] <- stats::coefficients(summary(estim))
+    
+    if (is.null(pred)) 
+        pred <- data.frame(Pk) else pred <- as.data.frame(pred)
+    
+    names(pred) <- "x"
+    x1 <- x
+    x <- Pk
+    
+    y <- Hp
+    result1[[4]] <- stats::predict(stats::lm(y ~ poly(x, polorder, raw = T)), newdata = pred, se.fit = T)
+    y <- Rp
+    result2[[4]] <- stats::predict(stats::lm(y ~ poly(x, polorder, raw = T)), newdata = pred, se.fit = T)
+    y <- Sp
+    result3[[4]] <- stats::predict(stats::lm(y ~ poly(x, polorder, raw = T)), newdata = pred, se.fit = T)
+    
+    coef1 <- as.vector(result1[[3]][, 1])
+    coef2 <- as.vector(result2[[3]][, 1])
+    coef3 <- as.vector(result3[[3]][, 1])
+    delta1 <- rep(0, length(coef1))
+    delta2 <- rep(0, length(coef1))
+    delta3 <- rep(1, length(coef1))
+    for (m in 0:(length(coef1) - 1)) {
+        for (n in 0:m) {
+            delta1[m + 1] <- delta1[m + 1] + (choose(m, n) * (-1)^(m - n))/((m - n + 2)^2)
+            delta3[m + 1] <- delta3[m + 1] * (2 * n + 1)/(2 * n + 4)
+        }
+        
+        delta1[m + 1] <- 2 * delta1[m + 1] + (2/((m + 2)^2))
+        delta2[m + 1] <- 6/((m + 2) * (m + 3))
+        delta3[m + 1] <- delta3[m + 1] * 4
+    }
+    result1[[1]] <- sum(delta1 * coef1)
+    result2[[1]] <- sum(delta2 * coef2)
+    result3[[1]] <- sum(delta3 * coef3)
+    result <- list(result1, result2, result3)
+    names(result) <- c("Hr", "Rr", "Sr")
+    return(result)
+}
+
+
+
+
+
+
+
+
+
+#' A function from seg package to compute spatial multi-group segregation indices
+#'
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' geographic information
+#' @param folder - a character vector with the folder (directory) 
+#' name indicating where the shapefile is located on the drive
+#' @param shape - a character vector with the name of the shapefile 
+#' (without the .shp extension) .
+#' @param ... - other parameters of spseg function from seg package.
+#' @return A vector with Reardon's spatial multi-group segregation indices:
+#' D* - spatial multi-group dissimilarity index
+#' R* - spatial multi-group relative diversity index
+#' H* - spatial multi-group information theory index 
+#' @references Reardon, S. F. and O'Sullivan, D. (2004) 
+#' \emph{Measures of spatial segregation}.
+#' Sociological Methodology, 34, 121-162.
+#' @references Hong S.Y., O'Sullivan D., Sadahiro Y. (2014) 
+#' \emph{Implementing Spatial Segregation Measures in R'}.
+#' PLoS ONE, 9(11)
+#' @description  A function adapted from seg package (Hong et al. 2014) 
+#' to compute spatial multi-group segregation indices developed by 
+#' Reardon and O'Sullivan (2004)
+#' @examples x <- segdata@data[ ,1:2]
+#' foldername <- system.file('extdata', package = 'OasisR')
+#' shapename <- 'segdata'
+#' 
+#' spatmultiseg(x, spatobj = segdata)
+#' 
+#' spatmultiseg(x, folder = foldername, shape = shapename) 
+#' 
+#' @seealso Multi-group indices: 
+#' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
+#' \code{\link{HMulti}}, \code{\link{RelDivers}}
+#' @seealso  Social diversity indices: 
+#' \code{\link{HShannon}}, \code{\link{NShannon}}, 
+#' \code{\link{ISimpson}}, 
+#' @export 
+
+
+spatmultiseg <- function(x, spatobj = NULL, folder = NULL, shape = NULL, ...) {
+    x <- as.matrix(x)
+    if (is.null(spatobj)) 
+        spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
+    cldata <- segdataclean(x, spatobj = spatobj)
+    x <- cldata$x
+    spatobj <- cldata$spatobj
+    result <- vector(length = 3)
+    provi <- seg::spseg(spatobj, x, ...)
+    result[1] <- provi@d
+    result[2] <- provi@r
+    result[3] <- provi@h
+    return(result)
+}
+
 ######################## 
 
 # LOCAL INDEXES
@@ -2267,10 +3349,10 @@ CMulti <- function(x) {
 #'
 #' @usage LQ(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return a matrix of location quotiens 
 #' @references Isard W. (1960) \emph{Methods of regional analysis: 
 #' an introduction to regional science}. The MIT Press, Cambridge
@@ -2285,6 +3367,7 @@ CMulti <- function(x) {
 
 LQ <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     result <- x
     Total <- sum(x)
     t <- rowSums(x)
@@ -2299,12 +3382,12 @@ LQ <- function(x) {
 #'
 #' @usage HLoc(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return a numeric vector containing  diversity index value for 
-#' each population group
+#' each group
 #' @references Theil H. (1972) \emph{Statistical Decomposition Analysis}. 
 #' North-Holland, Amsterdam
 #' @description Local diversity index, HLoc, is a local 
@@ -2318,6 +3401,7 @@ LQ <- function(x) {
 
 HLoc <- function(x) {
     x <- as.matrix(x)
+    x <- segdataclean(x)$x
     Total <- sum(x)
     t <- rowSums(x)
     result <- x/t
@@ -2340,10 +3424,10 @@ HLoc <- function(x) {
 #'
 #' @usage LShannon(x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return Local Shannon-Wiener diversity index 
 #' @references Shannon C. E. (1948) \emph{A mathematical theory 
 #' of communication}. Bell System Technical Journal (27) 
@@ -2357,22 +3441,23 @@ HLoc <- function(x) {
 
 
 LShannon <- function(x) {
-  x <- as.matrix(x)
-  Total <- sum(x)
-  t <- rowSums(x)
-  result <- x/t
-  result <- cbind(result, 0)
-  for (i in 1:nrow(result)) {
-    n <- 0
-    for (j in 1:(ncol(result) - 1)) if (result[i, j] > 0) {
-      result[i, ncol(result)] <- result[i, ncol(result)] + result[i, j] * log(result[i, j])
-      n <- n + 1
+    x <- as.matrix(x)
+    x <- segdataclean(x)$x
+    Total <- sum(x)
+    t <- rowSums(x)
+    result <- x/t
+    result <- cbind(result, 0)
+    for (i in 1:nrow(result)) {
+        n <- 0
+        for (j in 1:(ncol(result) - 1)) if (result[i, j] > 0) {
+            result[i, ncol(result)] <- result[i, ncol(result)] + result[i, j] * log(result[i, j])
+            n <- n + 1
+        }
+        result[i, ncol(result)] <- -result[i, ncol(result)]
     }
-    result[i, ncol(result)] <- -result[i, ncol(result)]
-  }
-  result <- result[, ncol(result)]
-  result[is.na(result)] <- 0
-  return(round(result, 4))
+    result <- result[, ncol(result)]
+    result[is.na(result)] <- 0
+    return(round(result, 4))
 }
 
 
@@ -2380,10 +3465,10 @@ LShannon <- function(x) {
 #'
 #' @usage LSimpson (x) 
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @return Local Simpson's interaction index 
 #' @references Simpson E. H. (1949) \emph{Measurement of diversity}. 
 #' Nature 163:688 
@@ -2398,326 +3483,1048 @@ LShannon <- function(x) {
 
 
 LSimpson <- function(x) {
-  x <- as.matrix(x)
-  p <- x/rowSums(x)
-  result <- rowSums(p*(1-p))
-  result[is.na(result)] <- 0
-  return(round(result, 4))
+    x <- as.matrix(x)
+    x <- segdataclean(x)$x
+    p <- x/rowSums(x)
+    result <- rowSums(p * (1 - p))
+    result[is.na(result)] <- 0
+    return(round(result, 4))
+}
+
+
+################################################## 
+
+# DATA CLEANING
+
+################################################## 
+
+#' A function to clean and prepare the data for segregation analysis
+#'
+#' @usage segdataclean (x, c = NULL, b = NULL, a = NULL, p = NULL, 
+#' ck = NULL, d = NULL, dc = NULL, spatobj = NULL, folder = NULL, shape = NULL, 
+#' warnings = T) 
+#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' where each column represents the distribution of a group within 
+#' spatial units. The number of columns should be greater than 1 (at least 2 
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
+#' @param c - a standard binary contiguity (adjacency) symmetric matrix where 
+#' each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
+#' units are adjacent, and 0 otherwise.
+#' @param b - a common boundaries matrix where each element \emph{Bij} 
+#' @param a - a numeric vector containing spatial unit areas
+#' @param p - a numeric vector containing spatial units perimeters.
+#' @param ck - a list containing contiguity matrices coresponding to each order 
+#' (from 1 to K)
+#' @param d - a matrix of the distances between spatial unit centroids
+#' @param dc - a numeric vector containing the distances between spatial units
+#' centroids and the central spatial unit
+#' @param warnings - warning alert (by default TRUE)
+#' @param folder - a character vector with the folder (directory) 
+#' name indicating where the shapefile is located on the drive
+#' @param shape - a character vector with the name of the shapefile 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' geographic information
+#' @param ... - specific geographic vectors or matrices to be cleaned
+#' @return The objects (data matrix, geographical vectors/matrices, spatial objects)
+#' cleaned from null rows or columns 
+#' @description The function cleans and prepares the data for segregation analysis 
+#' @examples x <- segdata@data[ ,1:2]
+#' x[ ,3] <- rep (0 ,100)
+#' x[1:3, ] <- rep (c(0, 0, 0), 3)
+#' x1 <- x
+#' spatobj <- segdata
+#' cldata <- segdataclean(x1, segdata)
+#' x1 <- cldata$x
+#' spatobj <- cldata$spatobj
+#' 
+#' c <- contig (segdata)
+#' c <- segdataclean(x, c = c)$c
+#' 
+#' @seealso Other local indices: \code{\link{LQ}}, 
+#' \code{\link{HLoc}}, \code{\link{LShannon}}   
+#' @export
+
+segdataclean <- function(x, c = NULL, b = NULL, a = NULL, p = NULL, 
+                         ck = NULL, d = NULL, dc = NULL, spatobj = NULL, 
+                         folder = NULL, shape = NULL, warnings = T) {
+    x <- as.matrix(x)
+    spatobj2 <- NULL
+    x <- x[, colSums(x) != 0]
+    x2 <- cbind(x, 1:nrow(x))
+    x1 <- x2[rowSums(x2[, 1:(ncol(x2) - 1)]) == 0, ]
+    x2 <- x2[rowSums(x2[, 1:(ncol(x2) - 1)]) != 0, ]
+    if (is.matrix(c)) 
+        c <- c[x2[, ncol(x2)], x2[, ncol(x2)]]
+    if (is.matrix(d)) 
+        d <- d[x2[, ncol(x2)], x2[, ncol(x2)]]
+    if (is.matrix(b)) 
+        b <- b[x2[, ncol(x2)], x2[, ncol(x2)]]
+    if (is.matrix(b)) 
+        b <- b[x2[, ncol(x2)], x2[, ncol(x2)]]
+    if (is.vector(p)) 
+        p <- p[x2[, ncol(x2)]]
+    if (is.vector(a)) 
+        a <- a[x2[, ncol(x2)]]
+    if (is.vector(dc)) 
+        dc <- dc[x2[, ncol(x2)]]
+    if (is.matrix(dc)) 
+        dc <- dc[x2[, ncol(x2)], ]
+    if (is.list(ck)) 
+        for (k in 1:length(ck)) ck[[k]] <- ck[[k]][x2[, ncol(x2)], x2[, ncol(x2)]]
+    
+    if (is.null(spatobj) & !is.null(folder) & !is.null(shape)) 
+        spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
+    if (!is.null(spatobj)) {
+        xx <- matrix(0, nrow = nrow(x), ncol = ncol(x))
+        for (i in 1:ncol(x)) xx[, i] <- as.numeric(x[, i])
+        spatobj@data <- as.data.frame(xx)
+        for (i in 1:ncol(x)) spatobj@data[, i] <- as.numeric(spatobj@data[, i])
+        spatobj2 <- subset(spatobj, rowSums(spatobj@data) != 0)
+        spatobj2@data <- as.data.frame(x2[, -ncol(x2)])
+    }
+    x2 <- x2[, -ncol(x2)]
+    if (nrow(x) != nrow(x2) & warnings) {
+        if (is.vector(x1)) 
+            warning("following line was deleted because of null population: ", paste(as.character(x1[length(x1)]), sep = " ", collapse = ", ")) else warning("following lines were deleted because of null population: ", paste(as.character(x1[, ncol(x1)]), sep = " ", collapse = ", "))
+        
+    }
+    
+    if (ncol(x) != ncol(x2) & warnings) {
+        delcol <- NULL
+        for (i in 1:ncol(x)) if (sum(x[, i]) == 0) 
+            delcol <- c(delcol, i)
+        warning("following variables were deleted because of null population: ", paste(as.character(delcol), sep = " ", collapse = ", "))
+    }
+    return(list(x = x2, c = c, b = b, a = a, p = p, ck = ck, d = d, dc = dc, spatobj = spatobj2))
 }
 
 
 
+################################################## 
+
+# RESAMPLING
 
 ################################################## 
 
-# MONTE CARLO SIMULATIONS
-
-################################################## 
 
 
 
-#' A function to test segregation indices using Monte Carlo simulations
+#' A function to test segregation indices by resampling 
 #'
-#' @usage MCTest(x, fun, simtype = "rand", proba = NULL, delta = 0.5, ptype = "int", 
-#' variant = "s", distin = "m", distout = "m", itype = "multi", exact = F, 
-#' diagval = "0", spatmat = "c", c = NULL, queen = TRUE, b = NULL, p = NULL, 
-#' a = NULL, d = NULL, dc = NULL, fdist = "e", center = 1, nsim = 99, 
-#' spatobj = NULL, folder = NULL, shape = NULL)
 #' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a population group, within 
+#' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
-#' population groups are required). You should not include a column with total 
-#' population in each unit, because this will be interpreted as a group.
+#' groups are required). You should not include a column with total 
+#' population, because this will be interpreted as a group.
 #' @param fun - a character vector with the segregation function 
-#' to be tested (only one-group or multigroup indexes)
-#' @param simtype - a character vector with type of simulation. 
-#' If simtype='perm', the function will use the permutation test. 
-#' If simtype='rand', the population is realocated in the spatial 
-#' units randomly. If simtype='area', the location probabilities 
-#' are proportional to the spatial units' area. For the default 
-#' value type='user', the function expects you to introduce a 
-#' probability location vector.
-#' @param proba - a vector with location probabilities. By 
-#' default proba = NULL being calculated depending on the 
-#' simulation type. The parameter is necessary when a user method 
-#' is specified.
+#' to be tested 
+#' @param var - vector with the variables to be tested 
+#' @param simtype - a character vector with the type of simulation. 
+#' If simtype = 'Boot', the function generates bootstrap replications
+#' If simtype = 'Jack', the function generates jackknife replications
+#' If simtype = 'MonteCarlo', the function produces a randomization test 
+#'  using Monte Carlo simulations
+#' @param sampleunit = 'unit' (by default) when the sampling unit is the 
+#' spatial/organisational unit and sampleunit = 'ind' for individual sampling
+#' @param samplesize - the size of the sample used for bootstraping. If null, 
+#' the samplesize equals the number of spatial/organizational units(sampleunit = 'unit') or 
+#' the total total population (sampleunit = 'ind')
+#' @param  perc - the percentiles for the bootstrap replications 
+#' @param outl - logical parameter for jackknife simulations, if TRUE 
+#' the function provides the outliers obtained by jackknife iterations 
+#' @param outmeth - a character vector designing the outliers detection method:
+#' outmeth = 'bp' (by default) for boxplot method 
+#' outmeth = 'sd'  for standard deviation method 
+#' outmeth = 'z'  for normal scores method
+#' outmeth = 't'  for t Student scores method
+#' outmeth = 'chisq'  for chi-squared scores method
+#' outmeth = 'mad'  for median absolute deviation method
+#' The estimations based on scoring methods are obtained using outliers package 
+#' @param sdtimes - multiplication factor of the standard deviation used for
+#' outliers detection with jackknife simulations (2 by default)
+#' @param IQRrange - determines the boxplot thresholds (1.5 by default) as multiplication of 
+#' IQR (Inter Quartile Range)
+#' @param proba - for Monte Carlo simulations, proba is a vector with location 
+#' probabilities. If proba = NULL, the vector is equiprobable. If outliers are determined 
+#' with jackknife technique, proba indicates the probability (confidence interval) for 
+#' scoring tests.
 #' @param nsim - the number of simulations
-#' @param delta - a specific Atikinson inequality aversion parameter,  
-#' by default equal to 0.5,varying from 0 to 1.
-#' @param variant - a character variable that allows to choose the Wong's index 
-#' version: variant = 's' for the index adjusted for contiguous spatial units 
-#' boundary lengths and perimeter/area ratio (by default) and variant = 'w' 
-#' for the version based only on shared boundaries length
-#' @param itype - a character string defining the type of some proximity indices:
-#' itype = 'multi' (by default) for the multigroup index (White, 1986) or
-#' itype = 'one' for the one-group version (Apparicio et al, 2008)
-#' @param exact - a logical variable to specifiy the version of interaction indices 
-#' exact = FALSE (by default) for the approximate version of the index, 
-#' and exact = TRUE for the exact version
-#' @param spatmat - the method used for some spatial calculations: 'c' for the 
-#' contiguity matrix (by default) or any other user spatial interaction matrix 
-#' and 'd' for the inverse exponential function of the distance. 
+#' @param setseed - if TRUE, specify zero seed for repetead simulation
+#' @param a - a numeric vector containing spatial unit areas
 #' @param c - a standard binary contiguity (adjacency) symmetric matrix where 
 #' each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 #' units are adjacent, and 0 otherwise.
-#' @param queen - logical parameter difining criteria used for contiguity 
-#' matrix computation, TRUE (by default) for queen , FALSE for rook 
+#' @param ck - a list containing contiguity matrices coresponding to each order 
+#' (from 1 to K)
+#' @param K - the order of the contiguity matrix
+#' @param queen - logical parameter defining criteria used for contiguity 
+#' matrix computation, TRUE for queen, FALSE (by default) for rook 
+#' @param b - a common boundaries matrix where each element \emph{Bij} 
+#' @param p - a numeric vector containing spatial units perimeters.
+#' @param ptype - a string variable giving two options for perimeter calculation
+#' when a spatial object or shapefile is provided: 'int' to use only interior
+#' boundaries of spatial units, and 'all' to use entire boundaries, 
+#' including the boundaries to the exterior
 #' @param d - a matrix of the distances between spatial unit centroids
-#' @param dc - a numeric vector containing the distances between spatial units 
-#' centroids and the central spatial unit
 #' @param distin - input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
 #' @param distout - output metric conversion, based on  \pkg{bink} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
+#' @param dc - a numeric vector containing the distances between spatial units
+#' centroids and the central spatial unit
+#' @param center - a numeric value giving the number of the spatial unit that 
+#' represents the center in the table
 #' @param fdist - the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
+#' @param f - the distance function, f = 'exp' (by default) for negative 
+#' exponential function and f = 'rec' for reciprocal function
+#' @param spatmat - the method used for spatial calculations: 'c' for the 
+#' contiguity matrix (by default) or any other user spatial interaction matrix 
+#' and 'd' for the inverse exponential function of the distance. 
 #' @param diagval - when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
-#' to compute the diagonal as 0.6 * square root (spatial units area) (White, 1983) 
-#' @param b - a common boundaries matrix where each element \emph{Bij} 
-#' equals the shared boundary of \emph{i}-th and \emph{j}-th spatial units.
-#' @param p - a numeric vector containing the perimeters of spatial units
-#' @param ptype - a string variable giving two options for perimeter 
-#' calculation, when needed: 'int' to use only interior
-#' boundaries of spatial units, and 'all' to use entire boundaries, 
-#' including the boundaries to the exterior of the area
-#' @param a - a numeric vector containing the areas of spatial units
-#' @param center - a numeric value giving the number of the spatial unit that 
-#' represents the centre in the table
+#' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) 
+#' (White, 1983) 
+#' @param itype - a character string defining the index type:
+#' itype = 'multi' (by default) for the multi-group index (White, 1986)
+#' or itype = 'between' for the between groups version (White, 1983)
+#' @param variant - a character variable that allows to choose the index version: 
+#' variant = 's' for the dissimilarity index adjusted for contiguous spatial units
+#' boundary lengths and perimeter/area ratio (by default) and variant = 'w' 
+#' for the version without perimeter/area ratio
+#' @param delta - an inequality aversion parameter
+#' @param exact - a logical variable to specifiy the index version: 
+#' exact = FALSE (by default) for the approximate version of the index, 
+#' and exact = TRUE for the exact version
+#' @param polorder - order of the polynomial approximation (4 by default)
+#' @param pred  - a numerical vector with percentiles to be predicted. 
 #' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile with the geographic information 
-#' is located.
-#' @param shape - a character vector with the shape file name
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) containing 
+#' name indicating where the shapefile is located on the drive
+#' @param shape - a character vector with the name of the shapefile 
+#' (without the .shp extension).
+#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return A list with thre elements: index's name, a Summary of the simulation
-#' and index simulated distribution
+#' @param ... - other specific parameters
+#' @return A list with: 
+#' - index's name
+#' - simulation type 
+#' - statistics summary of the simulations
+#' - simulated index distribution
+#' - simulated population distribution
+#' - matrix with outliers (jackknife)
+#' - list with outliers values (jackknife)
+#' @references Efron, B., and Tibshirani, R. J. (1993). 
+#' \emph{An Introduction to the Bootstrap}. New York, Chapman and Hall
 #' @references Tivadar M., Schaeffer Y, Torre A. and Bray F. (2014) 
 #' \emph{OASIS - un Outil d'Analyse de la Segregation et des Inegalites 
 #' Spatiales}.  Cybergeo : European Journal of Geography, GeOpenMod, 
 #' document 699
-#' @description The Monte Carlo tests for one-group or multigroup 
-#' segregation indexes.
+#' @description Resampling tests for segregation indexes.
 #' @examples x <- segdata@data[ ,1:2]
-#' foldername <- system.file('extdata', package = 'OasisR')
-#' shapename <- 'segdata'
-#' ar <- area(segdata)
-#' probavector<-ar/sum(ar)
 #' 
-#' MCTest (x, fun='ISMorrill', simtype = 'perm', spatobj = segdata)
+#' xtest <- ResampleTest (x, fun ='ISMorrill', simtype = 'MonteCarlo', 
+#'                        sampleunit = 'ind', spatobj = segdata)
+#' xtest$Summary
 #' 
-#' MCTest (x, fun='ISMorrill', simtype = 'rand', spatobj = segdata)
+#' xtest <- ResampleTest (x, fun ='ISMorrill', simtype = 'Boot', 
+#'                        sampleunit = 'unit', spatobj = segdata)
+#' xtest$Summary
 #' 
-#' MCTest (x, fun='ISMorrill', simtype = 'area', spatobj = segdata)
+#' xtest <- ResampleTest (GreHSize@data[,3:5], fun='ISDuncan', simtype = 'Jack', 
+#'                        sampleunit = 'unit',  spatobj = GreHSize, 
+#'                        outl = TRUE, outmeth = 'sd', sdtimes = 3)
+#' xtest$Summary
+#' xtest$OutliersVal
 #' 
-#' MCTest (x, fun='ISMorrill', simtype='user', proba = probavector, 
-#' spatobj = segdata)
-#' 
-#' @seealso \code{\link{MCPlot}}
+#' @seealso \code{\link{ResamplePlot}}
 #' @importFrom stats density
 #' @importFrom graphics plot segments mtext
 #' @export
 
 
-MCTest <- function(x, fun, simtype = "rand", proba = NULL, delta = 0.5, ptype = "int", variant = "s", distin = "m", distout = "m", itype = "multi", exact = F, diagval = "0", 
-    spatmat = "c", c = NULL, queen = TRUE, b = NULL, p = NULL, a = NULL, d = NULL, dc = NULL, fdist = "e", center = 1, nsim = 99, spatobj = NULL, folder = NULL, shape = NULL) {
+ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit = "unit", samplesize = NULL, perc = c(0.05, 0.95), outl = FALSE, outmeth = "bp", 
+    sdtimes = 2, IQRrange = 1.5, proba = NULL, nsim = NULL, setseed = FALSE, spatobj = NULL, folder = NULL, shape = NULL, delta = 0.5, exact = FALSE, 
+    d = NULL, c = NULL, a = NULL, ck = NULL, f = "exp", b = NULL, p = NULL, spatmat = "c", queen = FALSE, distin = "m", distout = "m", diagval = "0", 
+    fdist = "e", itype = "multi", dc = NULL, center = 1, polorder = 4, pred = NULL, K = 2, ptype = "int", variant = "s", ...) {
+    
+    # INIT
+    
+    if (setseed) 
+        set.seed(0)
     x <- as.matrix(x)
+    cldata <- segdataclean(x, c = c, b = b, a = a, p = p, ck = ck, d = d, dc = dc, spatobj = spatobj)
+    x <- cldata$x
+    ck <- cldata$ck
+    c <- cldata$c
+    b <- cldata$b
+    a <- cldata$a
+    p <- cldata$p
+    d <- cldata$d
+    dc <- cldata$dc
+    spatobj <- cldata$spatobj
+    if (is.null(var)) 
+        var <- 1:ncol(x)
+    nvar <- length(var)
+    if (simtype == "Jack") {
+        if (sampleunit == "unit" & is.null(nsim)) 
+            nsim <- nrow(x)
+        if (sampleunit == "ind" & is.null(nsim)) 
+            nsim <- sum(x[, 1])
+        if (sampleunit == "ind" & nsim > sum(x[, 1])) 
+            nsim <- sum(x[, 1])
+        if (sampleunit == "unit" & nsim > nrow(x)) 
+            nsim <- nrow(x)
+    } else if (is.null(nsim)) 
+        nsim <- 99
+    ntot <- nsim + 1
+    if (is.element(fun, c("ACEDuncanPoly", "ACEPoly", "ACEDuncanPolyK"))) 
+        if (is.null(dc)) {
+            dc <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+            for (i in 1:ncol(dc)) dc[, i] <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center = center[i])
+        }
+    if (is.null(c) & (is.element(fun, c("ISMorrill", "DIMorrill", "ACL", "ISMorrillK", "DIMorrillK")))) 
+        c <- contig(spatobj = spatobj, folder = folder, shape = shape, queen = queen)
+    if (is.null(ck) & is.element(fun, c("ISMorrillK", "DIMorrillK"))) {
+        if (K > 1) {
+            if (is.null(spatobj)) 
+                spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
+            xx <- as.data.frame(x)
+            # row.names(xx) <- labels(spatobj@data) spatobj <- SpatialPolygonsDataFrame(spatobj, xx)@data
+            spatobj@data <- xx
+            spatobj <- subset(spatobj, rowSums(spatobj@data) != 0)
+            x <- segdataclean(spatobj@data)$x
+            ngb <- spdep::poly2nb(spatobj, queen = queen)
+            ngbk <- spdep::nblag(ngb, K)
+            ck <- vector("list", K)
+            for (k in 1:K) ck[[k]] <- spdep::nb2mat(ngbk[[k]], style = "B", zero.policy = TRUE)
+        }
+    }
+    if (is.null(b) & is.element(fun, c("ISWong", "DIWong"))) 
+        b <- boundaries(spatobj = spatobj, folder = folder, shape = shape)
+    if ((is.element(fun, c("ISWong", "DIWong", "Delta", "ACO", "RCO")) & variant == "s") & is.null(a)) 
+        a <- area(spatobj = spatobj, folder = folder, shape = shape)
+    if ((is.element(fun, c("ISWong", "DIWong")) & variant == "s") & is.null(p)) {
+        if (ptype == "all") 
+            p <- perimeter(spatobj = spatobj, folder = folder, shape = shape)
+        if (ptype == "int") 
+            p <- rowSums(b)
+    }
+    if (is.null(d) & (is.element(fun, c("DPxx", "DPxy", "Pxx", "Pxy", " Poo", "SP", "RCL", "")) || spatmat == "d")) 
+        d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
+    if (is.null(dc) & is.element(fun, c("RCE", "ACEDuncan", "ACE"))) 
+        dc <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center)
+    if (is.null(dc) & is.element(fun, c("RCEPoly", "ACEDuncanPoly", "ACEPoly", "RCEPolyK", "ACEDuncanPolyK"))) {
+        dc <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
+        for (i in 1:ncol(dc)) dc[, i] <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center = center[i])
+    }
+    ILmultiSimple <- c("HMulti", "PMulti", "GiniMulti", "DMulti", "RelDivers", "CMulti", "ordinalseg")
+    ILmultiAll <- c(ILmultiSimple, "spatmultiseg", "rankorderseg")
+    ILx <- c(ILmultiSimple, "ISDuncan", "Gini", "HTheil", "Gorard", "Eta2")
+    ILbetween <- c("DIDuncan", "Gini2", "DIMorrill", "DIMorrillK", "DIWong", "xPy", "DPxy", "RCO", "Pxy", "RCL", "RCE", "RCEPoly", "RCEPolyK")
+    if (is.element(fun, c(ILmultiSimple, "rankorderseg"))) {
+        nvar <- 1
+        var <- 1
+    }
+    if (is.element(fun, c("SP", "Poo")) && itype == "multi") {
+        nvar <- 1
+        var <- 1
+    }
+    if (fun == "ordinalseg") {
+        nvar <- 4
+        var <- 1:4
+    }
+    if (fun == "spatmultiseg") {
+        nvar <- 3
+        var <- 1:3
+    }
+    
+    IndTest <- matrix(nrow = nvar, ncol = 5)
+    between <- FALSE
+    if (is.element(fun, ILbetween) || (fun == "Poo" & itype == "between") || (fun == "SP" & itype == "between") || (fun == "spatinteract" & itype == "between")) 
+        between <- TRUE
+    
+    if (between) {
+        IndTest <- matrix(nrow = nvar * (nvar - 1), ncol = 5)
+        resim <- matrix(nrow = nvar * (nvar - 1), ncol = nsim)
+    } else {
+        IndTest <- matrix(nrow = nvar, ncol = 5)
+        resim <- matrix(nrow = nvar, ncol = nsim)
+    }
+    
+    IndTest <- as.data.frame(IndTest)
     assign("func", eval(parse(text = fun)))
     xdistr <- vector("list", nsim)
-    if (simtype == "perm") 
-        for (k in 1:nsim) {
-            xdistr[[k]] <- matrix(nrow = nrow(x), ncol = ncol(x))
-            neworder <- sample(c(1:nrow(x)), size = nrow(x))
-            for (i in 1:nrow(x)) for (j in 1:ncol(x)) xdistr[[k]][i, j] <- x[neworder[i], j]
-        }
-    if (simtype == "rand") 
-        proba <- rep(1/nrow(x), nrow(x))
-    if (simtype == "area") {
-        if (is.null(a)) 
-            a <- area(spatobj = spatobj, folder = folder, shape = shape)
-        proba <- a/sum(a)
-    }
-    if (simtype != "perm") 
-        for (i in 1:nsim) {
-            xdistr[[i]] <- matrix(0, nrow = nrow(x), ncol = ncol(x))
-            for (k in 1:ncol(x)) {
-                xprovi <- table(sample(nrow(x), size = sum(x[, k]), replace = T, prob = proba))
-                dimv <- as.numeric(dimnames(xprovi)[[1]])
-                xdistr[[i]][dimv, k] <- xprovi
+    
+    
+    # DISTRIBUTIONS
+    
+    if (simtype == "Jack") {
+        if (sampleunit == "unit") {
+            klist <- sort(sample(1:nrow(x), nsim))
+            cjack <- list(length = nsim)
+            djack <- list(length = nsim)
+            ajack <- list(length = nsim)
+            bjack <- list(length = nsim)
+            pjack <- list(length = nsim)
+            dcjack <- list(length = nsim)
+            ckjack <- list(length = nsim)
+            for (k in 1:nsim) {
+                xdistr[[k]] <- x[-klist[k], ]
+                if (!is.null(c)) 
+                  cjack[[k]] <- c[-k, -k]
+                if (!is.null(d)) 
+                  djack[[k]] <- d[-k, -k]
+                if (!is.null(b)) 
+                  bjack[[k]] <- b[-k, -k]
+                if (!is.null(a)) 
+                  ajack[[k]] <- a[-k]
+                if (!is.null(p)) 
+                  pjack[[k]] <- p[-k]
+                if (!is.null(dc) & is.vector(dc)) 
+                  dcjack[[k]] <- dc[-k]
+                if (!is.null(dc) & is.matrix(dc)) 
+                  dcjack[[k]] <- dc[-k, ]
+                if (!is.null(ck)) {
+                  ckprovi <- ck
+                  for (j in 1:length(ck)) ckprovi[[j]] <- ckprovi[[j]][-k, -k]
+                  ckjack[[k]] <- ckprovi
+                }
             }
-            xdistr[[i]] <- xdistr[[i]][rowSums(xdistr[[i]]) > 0, ]
         }
-    nvar <- ncol(x)
-    if (fun == "HMulti" || fun == "PMulti" || fun == "GiniMulti" || fun == "DMulti" || fun == "RelDivers" || fun == "CMulti") 
-        nvar <- 1
-    if (fun == "SP" && itype == "multi") 
-        nvar <- 1
-    if (fun == "Poo" && itype == "multi") 
-        nvar <- 1
-    IndTest <- matrix(nrow = nvar, ncol = 5)
-    IndTest <- as.data.frame(IndTest)
-    names(IndTest) <- c("Var", fun, "Simulated", "Rank", "P.Value")
-    IndTest$Var <- 1:nvar
-    resim <- matrix(nrow = nvar, ncol = nsim)
-    if (fun == "ISDuncan" || fun == "Gorard" || fun == "Gini" || fun == "HTheil" || fun == "Eta2" || fun == "GiniMulti" || fun == "DMulti" || fun == "PMulti" || fun == "RelDivers" || 
-        fun == "HMulti" || fun == "CMulti") {
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]])
-        IndTest[, 2] <- func(x)
+        if (sampleunit == "ind") {
+            x2 <- x
+            k <- 0
+            for (i in 1:nsim) {
+                loc <- sample(1:nrow(x), 1, prob = rowSums(x2)/sum(rowSums(x2)))
+                cat <- sample(1:ncol(x), 1, prob = x2[loc, ]/sum(x2[loc, ]))
+                x2[loc, cat] <- max(0, x2[loc, cat] - 1)
+                k <- k + 1
+                xdistr[[k]] <- x
+                xdistr[[k]][loc, cat] <- xdistr[[k]][loc, cat] - 1
+            }
+        }
     }
+    if (simtype == "MonteCarlo") {
+        if (sampleunit == "unit") 
+            for (k in 1:nsim) {
+                xdistr[[k]] <- matrix(nrow = nrow(x), ncol = ncol(x))
+                neworder <- sample(c(1:nrow(x)), size = nrow(x))
+                for (i in 1:nrow(x)) for (j in 1:ncol(x)) xdistr[[k]][i, j] <- x[neworder[i], j]
+            }
+        if (sampleunit == "ind") {
+            if (is.null(proba)) 
+                proba <- rep(1/nrow(x), nrow(x))
+            for (i in 1:nsim) {
+                xdistr[[i]] <- matrix(0, nrow = nrow(x), ncol = ncol(x))
+                for (k in 1:ncol(x)) {
+                  xprovi <- table(sample(nrow(x), size = sum(x[, k]), replace = T, prob = proba))
+                  dimv <- as.numeric(dimnames(xprovi)[[1]])
+                  xdistr[[i]][dimv, k] <- xprovi
+                }
+                xdistr[[i]] <- xdistr[[i]][rowSums(xdistr[[i]]) > 0, ]
+            }
+        }
+    }
+    if (simtype == "Boot") {
+        if (sampleunit == "unit") {
+            if (is.null(samplesize) || samplesize > nrow(x)) 
+                samplesize <- nrow(x)
+            for (k in 1:nsim) {
+                xdistr[[k]] <- matrix(nrow = samplesize, ncol = ncol(x))
+                neworder <- sample(c(1:samplesize), size = samplesize, replace = T, prob = proba)
+                for (i in 1:samplesize) for (j in 1:ncol(x)) xdistr[[k]][i, j] <- x[neworder[i], j]
+            }
+        }
+        if (sampleunit == "ind") {
+            if (is.null(samplesize) || samplesize > sum(x)) 
+                samplesize <- sum(x)
+            for (i in 1:nrow(x)) {
+                j <- 1
+                while (x[i, j] == 0) j <- j + 1
+                if (i == 1) {
+                  xprovi2 <- rep(j, x[i, j])
+                  xprovi1 <- rep(i, x[i, j])
+                } else {
+                  xprovi2 <- c(xprovi2, rep(j, x[i, j]))
+                  xprovi1 <- c(xprovi1, rep(i, x[i, j]))
+                }
+                j <- j + 1
+                if (j <= ncol(x)) 
+                  for (k in j:ncol(x)) if (x[i, k] > 0) {
+                    xprovi2 <- c(xprovi2, rep(k, x[i, k]))
+                    xprovi1 <- c(xprovi1, rep(i, x[i, k]))
+                  }
+            }
+            xprovi <- cbind(xprovi2, xprovi1)
+            for (k in 1:nsim) {
+                xprovi2 <- xprovi[sample(nrow(xprovi), samplesize, replace = T), ]
+                xdistr[[k]] <- t(table(xprovi2[, 1], xprovi2[, 2]))
+            }
+        }
+    }
+    
+    # FUNCTIONS
+    
+    
+    if (is.element(fun, ILx)) {
+        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]])[var]
+        IndTest[, 2] <- func(x)[var]
+    }
+    
+    if (fun == "DIDuncan" || fun == "Gini2") {
+        for (k in 1:nsim) {
+            xvect <- NULL
+            resprovi <- func(xdistr[[k]])
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
+    }
+    
+    
     if (fun == "Atkinson") {
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], delta)
-        IndTest[, 2] <- func(x, delta)
+        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], delta)[var]
+        IndTest[, 2] <- func(x, delta)[var]
     }
-    if (fun == "xPx") {
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], exact = exact)
-        IndTest[, 2] <- func(x, exact = exact)
-    }
+    
+    
     if (fun == "ISMorrill") {
-        if (is.null(c)) 
-            c <- contig(spatobj = spatobj, folder = folder, shape = shape, queen = queen)
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], c, queen = queen)
-        IndTest[, 2] <- func(x, c)
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit") 
+                c1 <- cjack[[k]] else c1 <- c
+            resim[, k] <- func(xdistr[[k]], c = c1, queen = queen, spatobj = spatobj, folder = folder, shape = shape)[var]
+        }
+        IndTest[, 2] <- func(x, c = c, queen = queen, spatobj = spatobj, folder = folder, shape = shape)[var]
     }
-    if (fun == "ACL") {
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], c = c, spatmat = spatmat, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, 
-            shape = shape)
-        IndTest[, 2] <- func(x, c = c, spatmat = spatmat, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)
+    
+    if (fun == "DIMorrill") {
+        for (k in 1:nsim) {
+            xvect <- NULL
+            if (simtype == "Jack" & sampleunit == "unit") 
+                c1 <- cjack[[k]] else c1 <- c
+            resprovi <- func(xdistr[[k]], c = c1, queen = queen, spatobj = spatobj, folder = folder, shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x, c = c, queen = queen, spatobj = spatobj, folder = folder, shape = shape)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
     }
+    
+    
+    if (fun == "ISMorrillK") {
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit") 
+                ck1 <- ckjack[[k]] else ck1 <- ck
+            resim[, k] <- func(xdistr[[k]], ck1 = ck, K = K, queen = queen, spatobj = spatobj, folder = folder, shape = shape)[var]
+        }
+        IndTest[, 2] <- func(x, ck = ck, K = K, queen = queen, spatobj = spatobj, folder = folder, shape = shape)[var]
+    }
+    
+    if (fun == "DIMorrillK") {
+        if (K == 1) {
+            for (k in 1:nsim) {
+                xvect <- NULL
+                if (simtype == "Jack" & sampleunit == "unit") 
+                  c1 <- cjack[[k]] else c1 <- c
+                resprovi <- DIMorrill(xdistr[[k]], c = c1, queen = queen, spatobj = spatobj, folder = folder, shape = shape)
+                for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+                resim[, k] <- xvect
+            }
+            xvect <- NULL
+            resprovi <- DIMorrill(x, c = c, queen = queen, spatobj = spatobj, folder = folder, shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            IndTest[, 2] <- xvect
+        } else {
+            for (k in 1:nsim) {
+                xvect <- NULL
+                if (simtype == "Jack" & sampleunit == "unit") 
+                  ck1 <- ckjack[[k]] else ck1 <- ck
+                resprovi <- func(xdistr[[k]], ck = ck1, K = K, queen = queen, spatobj = spatobj, folder = folder, shape = shape)
+                for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+                resim[, k] <- xvect
+            }
+            xvect <- NULL
+            resprovi <- func(x, ck = ck, K = K, queen = queen, spatobj = spatobj, folder = folder, shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            IndTest[, 2] <- xvect
+        }
+    }
+    
     if (fun == "ISWong") {
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], b = b, a = a, p = p, ptype = ptype, variant = variant, spatobj = spatobj, folder = folder, shape = shape)
-        IndTest[, 2] <- func(x, b = b, a = a, p = p, ptype = ptype, variant = variant, spatobj = spatobj, folder = folder, shape = shape)
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit") 
+                b1 <- bjack[[k]] else b1 <- b
+            if (simtype == "Jack" & sampleunit == "unit" & variant == "s") {
+                a1 <- ajack[[k]]
+                p1 <- pjack[[k]]
+            } else {
+                a1 <- a
+                p1 <- p
+            }
+            resim[, k] <- func(xdistr[[k]], b = b1, a = a, p = p, ptype = ptype, variant = variant, spatobj = spatobj, folder = folder, shape = shape)[var]
+        }
+        IndTest[, 2] <- func(x, b = b, a = a, p = p, ptype = ptype, variant = variant, spatobj = spatobj, folder = folder, shape = shape)[var]
     }
-    if (fun == "Delta" || fun == "ACO") {
-        if (is.null(a)) 
-            a <- area(spatobj = spatobj, folder = folder, shape = shape)
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], a)
-        IndTest[, 2] <- func(x, a)
+    
+    if (fun == "DIWong") {
+        for (k in 1:nsim) {
+            xvect <- NULL
+            if (simtype == "Jack" & sampleunit == "unit") 
+                b1 <- bjack[[k]] else b1 <- b
+            if (simtype == "Jack" & sampleunit == "unit" & variant == "s") {
+                a1 <- ajack[[k]]
+                p1 <- pjack[[k]]
+            } else {
+                a1 <- a
+                p1 <- p
+            }
+            resprovi <- func(xdistr[[k]], b = b, a = a, p = p, ptype = ptype, variant = variant, spatobj = spatobj, folder = folder, shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x, b = b, a = a, p = p, ptype = ptype, variant = variant, spatobj = spatobj, folder = folder, shape = shape)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
+    }
+    
+    if (fun == "xPx") {
+        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], exact = exact)[var]
+        IndTest[, 2] <- func(x, exact = exact)[var]
+    }
+    
+    if (fun == "xPy") {
+        for (k in 1:nsim) {
+            xvect <- NULL
+            resprovi <- func(xdistr[[k]], exact = exact)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x, exact = exact)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
     }
     
     if (fun == "DPxx") {
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], d = d, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)
-        IndTest[, 2] <- func(x, d = d, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit") 
+                d1 <- djack[[k]] else d1 <- d
+            resim[, k] <- func(xdistr[[k]], d = d1, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)[var]
+        }
+        IndTest[, 2] <- func(x, d = d, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)[var]
     }
     
+    if (fun == "DPxy") {
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit") 
+                d1 <- djack[[k]] else d1 <- d
+            xvect <- NULL
+            resprovi <- func(xdistr[[k]], d = d1, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x, d = d, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
+    }
+    
+    
+    if (fun == "spatinteract" & itype != "between") {
+        for (k in 1:nsim) resim[, k] <- diag(func(xdistr[[k]], spatobj = spatobj, folder = folder, shape = shape))[var]
+        IndTest[, 2] <- diag(func(x, spatobj = spatobj, folder = folder, shape = shape))[var]
+    }
+    
+    if (fun == "spatinteract" & itype == "between") {
+        for (k in 1:nsim) {
+            xvect <- NULL
+            resprovi <- func(xdistr[[k]], spatobj = spatobj, folder = folder, shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x, spatobj = spatobj, folder = folder, shape = shape)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
+    }
+    
+    if (fun == "Delta" || fun == "ACO") {
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit") 
+                a1 <- ajack[[k]] else a1 <- a
+            resim[, k] <- func(xdistr[[k]], a = a1, spatobj = spatobj, folder = folder, shape = shape)[var]
+        }
+        IndTest[, 2] <- func(x, a = a, spatobj = spatobj, folder = folder, shape = shape)[var]
+    }
+    
+    
+    if (fun == "RCO") {
+        for (k in 1:nsim) {
+            xvect <- NULL
+            if (simtype == "Jack" & sampleunit == "unit") 
+                a1 <- ajack[[k]] else a1 <- a
+            resprovi <- func(xdistr[[k]], a = a, spatobj = spatobj, folder = folder, shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x, a = a, spatobj = spatobj, folder = folder, shape = shape)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
+    }
+    
+    
+    if (fun == "ACL") {
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit" & spatmat == "c") 
+                c1 <- cjack[[k]] else c1 <- c
+            if (simtype == "Jack" & sampleunit == "unit" & spatmat == "d") 
+                d1 <- djack[[k]] else d1 <- d
+            resim[, k] <- func(xdistr[[k]], c = c1, d = d1, queen = queen, spatmat = spatmat, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, 
+                folder = folder, shape = shape)[var]
+        }
+        IndTest[, 2] <- func(x, c = c, d = d, queen = queen, spatmat = spatmat, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, 
+            folder = folder, shape = shape)[var]
+    }
+    
+    
+    if (fun == "RCL") {
+        for (k in 1:nsim) {
+            xvect <- NULL
+            if (simtype == "Jack" & sampleunit == "unit") 
+                d1 <- djack[[k]] else d1 <- d
+            resprovi <- func(xdistr[[k]], d = d1, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x, d = d, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
+    }
+    
+    
     if (fun == "Pxx") {
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], d = d, fdist = fdist, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, 
-            shape = shape)
-        IndTest[, 2] <- func(x, d = d, fdist = fdist, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit") 
+                d1 <- djack[[k]] else d1 <- d
+            resim[, k] <- func(xdistr[[k]], d = d1, fdist = fdist, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, 
+                shape = shape)[var]
+        }
+        IndTest[, 2] <- func(x, d = d, fdist = fdist, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)[var]
     }
-    if (fun == "Poo") {
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], d = d, fdist = fdist, itype = "multi", distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, 
-            folder = folder, shape = shape)
-        IndTest[, 2] <- func(x, d = d, fdist = fdist, itype = "multi", distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)
+    
+    
+    if (fun == "Pxy") {
+        for (k in 1:nsim) {
+            xvect <- NULL
+            if (simtype == "Jack" & sampleunit == "unit") 
+                d1 <- djack[[k]] else d1 <- d
+            resprovi <- func(xdistr[[k]], d = d1, fdist = fdist, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, 
+                shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x, d = d, fdist = fdist, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
     }
-    if (fun == "SP") {
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], d = d, fdist = fdist, itype = itype, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, 
-            shape = shape)
-        IndTest[, 2] <- func(x, d = d, fdist = fdist, itype = itype, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, shape = shape)
+    
+    if (fun == "Poo" || fun == "SP") {
+        if (itype != "between") {
+            for (k in 1:nsim) {
+                if (simtype == "Jack" & sampleunit == "unit") 
+                  d1 <- djack[[k]] else d1 <- d
+                resim[, k] <- func(xdistr[[k]], d = d1, fdist = fdist, itype = itype, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, 
+                  folder = folder, shape = shape)[var]
+            }
+            IndTest[, 2] <- func(x, d = d, fdist = fdist, itype = itype, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, 
+                shape = shape)[var]
+        } else {
+            for (k in 1:nsim) {
+                xvect <- NULL
+                if (simtype == "Jack" & sampleunit == "unit") 
+                  d1 <- djack[[k]] else d1 <- d
+                resprovi <- func(xdistr[[k]], d = d1, fdist = fdist, itype = itype, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, 
+                  folder = folder, shape = shape)
+                for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+                resim[, k] <- xvect
+            }
+            xvect <- NULL
+            resprovi <- func(x, d = d, fdist = fdist, itype = itype, distin = distin, distout = distout, diagval = diagval, spatobj = spatobj, folder = folder, 
+                shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            IndTest[, 2] <- xvect
+        }
     }
-    if (fun == "ACE") {
-        if (is.null(a)) 
-            a <- area(spatobj = spatobj, folder = folder, shape = shape)
-        if (is.null(dc)) 
-            dc <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center)
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], a, dc)
-        IndTest[, 2] <- func(x, a, dc)
-    }
+    
     if (fun == "ACEDuncan") {
-        if (is.null(dc)) 
-            dc <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center)
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], dc)
-        IndTest[, 2] <- func(x, dc)
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit") 
+                dc1 <- dcjack[[k]] else dc1 <- dc
+            resim[, k] <- func(xdistr[[k]], dc = dc1, center = center, spatobj = spatobj, folder = folder, shape = shape)[var]
+        }
+        IndTest[, 2] <- func(x, dc = dc, center = center, spatobj = spatobj, folder = folder, shape = shape)[var]
     }
-    for (i in 1:nvar) IndTest[i, 3] <- mean(resim[i, ])
-    for (i in 1:nvar) {
-        ncontor <- 0
-        for (k in 1:nsim) if (IndTest[i, 2] > resim[i, k]) 
-            ncontor <- ncontor + 1
-        IndTest[i, 4] <- ncontor + 1
-        IndTest[i, 5] <- max((nsim - ncontor)/(nsim + 1), 1/(nsim + 1))
+    
+    if (fun == "RCE") {
+        for (k in 1:nsim) {
+            xvect <- NULL
+            if (simtype == "Jack" & sampleunit == "unit") 
+                dc1 <- dcjack[[k]] else dc1 <- dc
+            resprovi <- func(xdistr[[k]], dc = dc1, center = center, spatobj = spatobj, folder = folder, shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x, dc = dc, center = center, spatobj = spatobj, folder = folder, shape = shape)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
     }
-    result <- list(fun, IndTest, resim)
-    names(result) <- c("Index", "Summary", "Distribution")
+    
+    
+    if (fun == "ACEDuncanPoly") {
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit") 
+                dc1 <- dcjack[[k]] else dc1 <- dc
+            resim[, k] <- func(xdistr[[k]], dc = dc1, center = center, spatobj = spatobj, folder = folder, shape = shape)[var]
+        }
+        IndTest[, 2] <- func(x, dc = dc, center = center, spatobj = spatobj, folder = folder, shape = shape)[var]
+    }
+    
+    
+    if (fun == "RCEPoly") {
+        for (k in 1:nsim) {
+            xvect <- NULL
+            if (simtype == "Jack" & sampleunit == "unit") 
+                dc1 <- dcjack[[k]] else dc1 <- dc
+            resprovi <- func(xdistr[[k]], dc = dc1, center = center, spatobj = spatobj, folder = folder, shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x, dc = dc, center = center, spatobj = spatobj, folder = folder, shape = shape)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
+    }
+    
+    if (fun == "ACEDuncanPolyK") {
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit") 
+                dc1 <- dcjack[[k]] else dc1 <- dc
+            resim[, k] <- func(xdistr[[k]], dc = dc1, K = K, center = center, spatobj = spatobj, folder = folder, shape = shape)[var]
+        }
+        IndTest[, 2] <- func(x, dc = dc, K = K, center = center, spatobj = spatobj, folder = folder, shape = shape)[var]
+    }
+    
+    if (fun == "RCEPolyK") {
+        for (k in 1:nsim) {
+            xvect <- NULL
+            if (simtype == "Jack" & sampleunit == "unit") 
+                dc1 <- dcjack[[k]] else dc1 <- dc
+            resprovi <- func(xdistr[[k]], dc = dc1, K = K, center = center, spatobj = spatobj, folder = folder, shape = shape)
+            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+            resim[, k] <- xvect
+        }
+        xvect <- NULL
+        resprovi <- func(x, dc = dc, K = K, center = center, spatobj = spatobj, folder = folder, shape = shape)
+        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
+        IndTest[, 2] <- xvect
+    }
+    
+    
+    if (fun == "ACE" || fun == "ACEPoly") {
+        for (k in 1:nsim) {
+            if (simtype == "Jack" & sampleunit == "unit") 
+                dc1 <- dcjack[[k]] else dc1 <- dc
+            resim[, k] <- func(xdistr[[k]], dc = dc, a = a, center = center, spatobj = spatobj, folder = folder, shape = shape)[var]
+        }
+        IndTest[, 2] <- func(x, dc = dc, a = a, center = center, spatobj = spatobj, folder = folder, shape = shape)[var]
+    }
+    
+    if (fun == "rankorderseg") {
+        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], polorder = polorder, pred = pred)$Hr
+        IndTest[, 2] <- func(x, polorder = polorder, pred = pred)$Hr
+    }
+    
+    if (fun == "spatmultiseg") {
+        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], spatobj = spatobj, folder = folder, shape = shape, ...)[var]
+        IndTest[, 2] <- func(x, spatobj = spatobj, folder = folder, shape = shape, ...)[var]
+    }
+    
+    # RESULTS
+    
+    
+    if (!between) 
+        IndTest[, 1] <- 1:nvar else {
+        contor <- 0
+        for (i in var) for (j in var) if (i != j) {
+            contor <- contor + 1
+            IndTest[contor, 1] <- paste0(i, "-", j)
+        }
+    }
+    
+    if (simtype == "MonteCarlo") {
+        names(IndTest) <- c("Var", fun, "Mean", "Rank", "P.Value")
+        if (fun == "ordinalseg" || fun == "spatmultiseg") 
+            names(IndTest)[1] <- "Index"
+        for (i in 1:nrow(IndTest)) {
+            IndTest[i, 3] <- round(mean(resim[i, ]), 4)
+            IndTest[i, 4] <- rank(c(IndTest[i, 2], resim[i, ]), ties.method = "min")[1]
+            IndTest[i, 5] <- (ntot - IndTest[i, 4] + 1)/ntot
+        }
+    }
+    
+    if (simtype == "Boot" || simtype == "Jack") {
+        term <- "th"
+        if (substr(as.character(perc[1]), 3, 4) == "01") 
+            term <- "st"
+        if (substr(as.character(perc[1]), 3, 4) == "02") 
+            term <- "nd"
+        if (substr(as.character(perc[1]), 3, 4) == "03") 
+            term <- "rd"
+        names(IndTest) <- c("Var", fun, paste0(substr(as.character(perc[1]), 4, 4), term, "_percentile"), "Median", paste0(substr(as.character(perc[2]), 
+            3, 4), "th_percentile"))
+        if (fun == "ordinalseg" || fun == "spatmultiseg") 
+            names(IndTest)[1] <- "Index"
+        for (i in 1:nrow(IndTest)) {
+            IndTest[i, 3] <- round(stats::quantile(resim[i, ], perc[1]), 4)
+            IndTest[i, 4] <- round(stats::quantile(resim[i, ], 0.5), 4)
+            IndTest[i, 5] <- round(stats::quantile(resim[i, ], perc[2]), 4)
+        }
+    }
+    if (simtype == "Jack") {
+        jack.bias <- vector(length = nvar)
+        jack.se <- vector(length = nvar)
+        for (i in 1:nvar) {
+            jack.bias[i] <- (nsim - 1) * (mean(resim[i, ]) - IndTest[i, 2])
+            jack.se[i] <- sqrt(((nsim - 1)/nsim) * sum((resim[i, ] - mean(resim[i, ]))^2))
+        }
+        IndTest$JackBias <- jack.bias
+        IndTest$JackSE <- jack.se
+    }
+    if (simtype == "Boot") {
+        boot.se <- vector(length = nvar)
+        for (i in 1:nvar) boot.se[i] <- sqrt(var(resim[i, ])/length(resim[i, ]))
+        IndTest$BootSE <- boot.se
+    }
+    sqrt(var(resim[i, ])/length(resim[i, ]))
+    stats::sd(resim[i, ])
+    
+    # OUTLIERS
+    
+    if (outl == TRUE & simtype == "Jack") {
+        outl <- matrix(FALSE, nrow = ncol(x), ncol = nsim)
+        if (outmeth == "sd") {
+            for (i in 1:nrow(resim)) outl[i, ] <- resim[i, ] >= mean(resim[i, ]) + sdtimes * stats::sd(resim[i, ]) | resim[i, ] < mean(resim[i, ]) - sdtimes * 
+                stats::sd(resim[i, ])
+        }
+        if (outmeth == "bp") {
+            for (i in 1:nrow(resim)) outl[i, ] <- is.element(resim[i, ], grDevices::boxplot.stats(resim[i, ], coef = IQRrange)$out)
+        }
+        if (is.element(outmeth, c("z", "t", "chisq", "mad"))) {
+            if (is.null(proba)) 
+                proba <- 0.9
+            for (i in 1:nrow(resim)) outl[i, ] <- outliers::scores(resim[i, ], type = outmeth, prob = proba)
+        }
+        outval <- vector("list", nrow(resim))
+        for (i in 1:length(outval)) outval[[i]] <- resim[i, ][outl[i, ]]
+        graphics::boxplot(t(resim))
+        outl <- t(outl)
+        if (sampleunit == "ind" & length(which(outl[, 1])) > 0) {
+            olist <- which(outl[, 1])
+            outl <- list(length(which(outl[, 1])))
+            for (i in 1:length(olist)) outl[[i]] <- xdistr[[olist[i]]]
+        }
+        result <- list(fun, simtype, IndTest, resim, xdistr, outl, outval)
+        names(result) <- c("Index", "SimType", "Summary", "IndexDist", "RandomDist", "Outliers", "OutliersVal")
+    } else {
+        result <- list(fun, simtype, IndTest, resim, xdistr)
+        names(result) <- c("Index", "SimType", "Summary", "IndexDist", "RandomDist")
+    }
     return(result)
 }
 
 
-
-
-#' A function to plot the results of Monte Carlo simulations
+#' A function to plot the results of resampling methods
 #'
-#' @usage MCPlot(MCTest = NULL, var = 1, dens = NULL, ind = NULL, pval = NULL, 
-#' indexname = 'Index', coldist = 'red', colind = 'blue', legend = T, 
-#' legendpos = 'top', cex.legend = 1, bty = 'o')
-#' @param MCTest - a MCTest object prodused with \code{\link{MCTest}} function
-#' to be tested (only one-group or multigroup indeces)
-#' @param var - the number of the group to be plot (if several groups are simulated)
-#' @param dens - a vector with the simulatated distribution of the index
-#' @param ind - index value
-#' @param pval - pseudo p-value
-#' @param indexname - a string with the name of the index
+#' @usage ResamplePlot(ResampleTest, var = 1, coldist = 'red', colind = 'blue', 
+#' legend = TRUE, legendpos = 'top', cex.legend = 1, bty = 'o')
+#' @param ResampleTest - a ResampleTest object prodused with \code{\link{ResampleTest}} function
+#' @param var - the number of the variable to be plot 
 #' @param coldist - color used to plot the simulated distribution 
 #' @param colind - color used to plot the index
+#' @param legend - logical parameter, to control the legend's plots
 #' @param legendpos - a character string giving the legend's position: 
-#' "bottomright", "bottom", "bottomleft", "left", "topleft", "top", 
-#' "topright", "right" and "center".
+#' 'bottomright', 'bottom', 'bottomleft', 'left', 'topleft', 'top', 
+#' 'topright', 'right' and 'center'.
 #' @param cex.legend - a numerical value giving the amount by which 
 #' plotting text and symbols in legend should be magnified relative to the default. 
 #' @param bty - a character string which determines the type of box 
-#' of the legend. If bty is one of "o" (the default), "l", "7", "c", 
-#' "u", or "]" the resulting box resembles the corresponding upper 
-#' case letter. A value of "n" suppresses the box.
-#' @param legend - logical parameter, to control the legend's plots
-#' @return A plot with Monte Carlo results
+#' of the legend. If bty is one of 'o' (the default), 'l', '7', 'c', 
+#' 'u', or ']' the resulting box resembles the corresponding upper 
+#' case letter. A value of 'n' suppresses the box.
+#' @return A plot with resampling distribution
 #' @references Tivadar M., Schaeffer Y, Torre A. and Bray F. (2014) 
 #' \emph{OASIS - un Outil d'Analyse de la Segregation et des Inegalites 
 #' Spatiales}.  Cybergeo : European Journal of Geography, GeOpenMod, 
 #' document 699
 #' @description Plot of Monte Carlo simulations results. The function can
-#' be used in two ways: buy providing a MCTest object, using \code{\link{MCTest}} 
+#' be used in two ways: buy providing a ResampleTest object, using \code{\link{ResampleTest}} 
 #' or a simulated distribution vector, a value and a name of the index
 #' @examples x <- segdata@data[ ,1:2]
-#' test <- MCTest (x, fun='ISMorrill', simtype = 'perm', spatobj = segdata)
 #' 
-#' MCPlot(test, cex.legend = 0.8)
+#' xtest <- ResampleTest (x, fun ='ISMorrill', simtype = 'MonteCarlo', 
+#'                        sampleunit = 'unit', spatobj = segdata)
+#'                        
+#' ResamplePlot(xtest, var = 1)
 #' 
-#' MCPlot(dens = test$Distribution[1,], ind = test$Summary$ISMorrill[1], 
-#' pval = test$Summary$P.Value[1], indexname = test$Index, cex.legend = 0.8)
-#' 
-#' @seealso \code{\link{MCTest}} 
+#' @seealso \code{\link{ResampleTest}} 
 #' @export
 
 
-MCPlot <- function(MCTest  = NULL, var = 1, dens = NULL, ind = NULL, pval = NULL, indexname = "Index", 
-                   coldist = "red", colind = "blue", legend = T, legendpos = "top", 
-                   cex.legend = 1, bty = "o") {
-    k <- var
-    if (!is.null(MCTest)) {
-        indexname <- MCTest$Index
-        dens <- MCTest$Distribution[k, ]
-        ind <- MCTest$Summary[k, 2]
-        pval <- MCTest$Summary[k, 5]
-    }
+ResamplePlot <- function(ResampleTest, var = 1, coldist = "red", colind = "blue", legend = TRUE, 
+                         legendpos = "top", cex.legend = 1, bty = "o") {
+    indexname <- ResampleTest$Index
+    dens <- ResampleTest$IndexDist[var, ]
+    ind <- ResampleTest$Summary[var, 2]
+    simtype <- ResampleTest$SimType
+    if (simtype == "Boot") 
+        simtype <- "Bootstrap"
+    if (simtype == "Jack") 
+        simtype <- "JackKnife"
+    if (simtype == "MonteCarlo") 
+        simtype <- "Monte Carlo"
     nsim <- length(dens)
-    if (is.null(pval)) {
-        ncontor <- 0
-        for (kk in 1:nsim) if (ind > dens[kk]) 
-            ncontor <- ncontor + 1
-        pval <- max((nsim - ncontor)/(nsim + 1), 1/(nsim + 1))
-    }
+    ntot <- nsim + 1
     dens2 <- density(dens)
     liminf <- min(dens2$x, ind)
     limsup <- max(dens2$x, ind)
     ylimit = c(0, ((max(dens2$y)) + 2))
-    esper <- mean(dens)
+    if (simtype == "Monte Carlo") {
+        statname <- "mean"
+        esper <- ResampleTest$Summary[var, 3]
+    } else {
+        statname <- "median"
+        esper <- ResampleTest$Summary[var, 4]
+    }
     plot(dens2, xlim = c(liminf, limsup), ylim = ylimit, lwd = 2, col = coldist, main = "", xlab = "Index values")
     segments(esper, 0, esper, max(dens2$y), lwd = 1, col = coldist)
     segments(ind, 0, ind, max(dens2$y), lwd = 3, col = colind)
-    mtext(paste0("Monte Carlo Test: ", indexname), side = 3, font = 2, line = 2)
-    mtext(paste(indexname, "=", ind, " P-Value =", pval, " NSim =", nsim), side = 3, font = 1, line = 1)
+    mtext(paste0(simtype, " Test: ", indexname), side = 3, font = 2, line = 2)
     if (legend) 
-        legend(legendpos, c("Simulated distribution", "Simulated expectation", indexname), 
-               col = c(coldist, coldist, colind), lty = 1, lwd = c(2, 1, 2), 
-               bty = bty, cex = cex.legend)
+        legend(legendpos, c("Simulated distribution", paste("Simulated", statname), indexname), col = c(coldist, coldist, colind), lty = 1, lwd = c(2, 
+            1, 2), bty = bty, cex = cex.legend)
 }
+
+
