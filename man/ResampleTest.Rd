@@ -8,11 +8,12 @@ ResampleTest(x, fun, var = NULL, simtype = "MonteCarlo",
   sampleunit = "unit", samplesize = NULL, perc = c(0.05, 0.95),
   outl = FALSE, outmeth = "bp", sdtimes = 2, IQRrange = 1.5,
   proba = NULL, nsim = NULL, setseed = FALSE, spatobj = NULL,
-  folder = NULL, shape = NULL, delta = 0.5, exact = FALSE, d = NULL,
-  c = NULL, a = NULL, ck = NULL, f = "exp", b = NULL, p = NULL,
-  spatmat = "c", queen = FALSE, distin = "m", distout = "m",
-  diagval = "0", fdist = "e", itype = "multi", dc = NULL, center = 1,
-  polorder = 4, pred = NULL, K = 2, ptype = "int", variant = "s", ...)
+  folder = NULL, shape = NULL, delta = 0.5, exact = FALSE,
+  d = NULL, c = NULL, a = NULL, ck = NULL, f = "exp", b = NULL,
+  p = NULL, spatmat = "c", queen = FALSE, distin = "m",
+  distout = "m", diagval = "0", fdist = "e", itype = "multi",
+  dc = NULL, center = 1, polorder = 4, pred = NULL, K = 2,
+  ptype = "int", variant = "s", ...)
 }
 \arguments{
 \item{x}{- an object of class matrix (or which can be coerced to that class), 
@@ -186,10 +187,9 @@ xtest$OutliersVal
 Efron, B., and Tibshirani, R. J. (1993). 
 \emph{An Introduction to the Bootstrap}. New York, Chapman and Hall
 
-Tivadar M., Schaeffer Y, Torre A. and Bray F. (2014) 
-\emph{OASIS - un Outil d'Analyse de la Segregation et des Inegalites 
-Spatiales}.  Cybergeo : European Journal of Geography, GeOpenMod, 
-document 699
+Tivadar M. (2019) 
+\emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+Journal of Statistical Software,  89 (7), pp 1-39
 }
 \seealso{
 \code{\link{ResamplePlot}}

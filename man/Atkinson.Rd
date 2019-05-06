@@ -31,7 +31,7 @@ Atkinson(x, 0.1)
 Atkinson(x, delta = 0.9)
 }
 \references{
-James, D. and K. E. Taeuber (1985)  \emph{ Measures 
+James, D. and K. E. Taeuber (1985)  \emph{Measures 
 of Segregation}. Sociological Methodology 15, pp. 1-32
 }
 \seealso{

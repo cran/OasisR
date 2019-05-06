@@ -1,14 +1,14 @@
-2c8177c7bbb3303f401d96d551a6b551 *DESCRIPTION
+30c4894fb96a90758803fd1a7a539512 *DESCRIPTION
 eb82f9acb957702a1ad77f75ac8be22f *NAMESPACE
 010096a8ed7f086a5c3460b9bfd49ccc *R/DataDoc.R
 0af7e4dccafe2ef6e15ac8e7110917a6 *R/GeoFunctions.R
-b3bee479cc9488c63da25619bd232cdc *R/SegFunctions.R
-9eeeb6abf705a94db5878f2b4b99e3da *build/vignette.rds
+0833a2491cb704960f83f65a71a9a3ac *R/SegFunctions.R
+bf4ef3781bd223f83e24a67fc00ceee6 *build/vignette.rds
 bc3b341ad004e0d283a21b710b5a3a04 *data/GreHSize.rda
 61405b4c82596be6086242b686c80e60 *data/segdata.rda
-3548485707368942b040d6683fc30d7f *inst/CITATION
+890c065ecd60263e5615556ccc5f4e24 *inst/CITATION
 25ceb942e8823cde4aa503b374f00496 *inst/doc/Dimensions_of_segregation.Rmd
-b28fff7a47caf35791ee14167ffe15de *inst/doc/Dimensions_of_segregation.html
+52713b7828d5d8d9e7a5561529e62dfa *inst/doc/Dimensions_of_segregation.html
 7ee4fa81ccc6e35c5bfceb0048dad719 *inst/extdata/GreHSize.dbf
 7464f323d80d4f92b7913e70abb8c14d *inst/extdata/GreHSize.prj
 5ea66b4ccbff505b80a683cffa60d049 *inst/extdata/GreHSize.shp
@@ -25,7 +25,7 @@ f07e285f1fdcf0c80271a89f61d992f6 *man/ACEDuncan.Rd
 445e6d72b40141420cc691f3b2d2bbce *man/ACEPoly.Rd
 327da8e291e0f0f2590edc78d99043cf *man/ACL.Rd
 0200b3043a7cf299957380ecd3b6177d *man/ACO.Rd
-dcc320f0aa84de5b58530cd51b1a09c4 *man/Atkinson.Rd
+81386ec0738ec681d6e3621356282372 *man/Atkinson.Rd
 617bfdf4461df9c7e61999feb6860651 *man/CMulti.Rd
 e8d4a727047646bbd703f8be311d6c09 *man/DIDuncan.Rd
 484d3ac9b6985426c58fbac38c64e57e *man/DIMorrill.Rd
@@ -64,8 +64,8 @@ e6849d44b83091f531cf1dd4cf46a0fe *man/RCEPoly.Rd
 94c7f5e27d903bf297b1c00819107014 *man/RCL.Rd
 7ae2a8fd7293ed1f740874669424e7d0 *man/RCO.Rd
 a39528df15f536d47ba29d5a56d1d3b1 *man/RelDivers.Rd
-7f12ec8b0d9edb8344a3e41264f45a1f *man/ResamplePlot.Rd
-71e8d6cc76a5a147539406b8022f3488 *man/ResampleTest.Rd
+981e280cffa2758859683d2231f47e9b *man/ResamplePlot.Rd
+0d62b9110e25be83764a59d58fac470b *man/ResampleTest.Rd
 bc85725789b6f17c0f729b26675fbf00 *man/SP.Rd
 acf8c1b73e1eddc6b61650e29f7116b7 *man/area.Rd
 ba95c3cbfaf6d29535cac2c9d122fc45 *man/boundaries.Rd
@@ -82,4 +82,3 @@ c1facf364ba2120cfe243f5b1104f7f3 *man/spatmultiseg.Rd
 092fb6636c39e28719d161914705ac2b *man/xPx.Rd
 4ba690d563f6ec77deb667f82d320b55 *man/xPy.Rd
 25ceb942e8823cde4aa503b374f00496 *vignettes/Dimensions_of_segregation.Rmd
-ceb2d8d30300457a64e4438d9e808792 *vignettes/Dimensions_of_segregation.md

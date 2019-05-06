@@ -48,10 +48,9 @@ ResamplePlot(xtest, var = 1)
 
 }
 \references{
-Tivadar M., Schaeffer Y, Torre A. and Bray F. (2014) 
-\emph{OASIS - un Outil d'Analyse de la Segregation et des Inegalites 
-Spatiales}.  Cybergeo : European Journal of Geography, GeOpenMod, 
-document 699
+Tivadar M. (2019) 
+\emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+Journal of Statistical Software,  89 (7), pp 1-39
 }
 \seealso{
 \code{\link{ResampleTest}}

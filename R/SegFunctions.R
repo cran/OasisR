@@ -71,7 +71,7 @@ ISDuncan <- function(x) {
 #' @param delta - an inequality aversion parameter
 #' @return a numeric vector containing the Atkinson's segregation index value for 
 #' each group 
-#' @references James, D. and K. E. Taeuber (1985)  \emph{ Measures 
+#' @references James, D. and K. E. Taeuber (1985)  \emph{Measures 
 #' of Segregation}. Sociological Methodology 15, pp. 1-32
 #' @description The spatial version of Atkinson inequality index is based on 
 #' Lorenz curves. The user can decide wich part of the curve contributes more 
@@ -652,9 +652,9 @@ DIMorrill <- function(x, c = NULL, queen = FALSE, spatobj = NULL, folder = NULL,
     x <- as.matrix(x)
     if (is.null(c)) 
         c <- contig(spatobj = spatobj, folder = folder, shape = shape, queen = queen)
-    cldata <- segdataclean(x, c = c)
-    x <- cldata$x
-    c <- cldata$c
+#    cldata <- segdataclean(x, c = c)
+#    x <- cldata$x
+#    c <- cldata$c
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     DI <- DIDuncan(x)
     pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
@@ -728,11 +728,11 @@ DIMorrillK <- function(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NUL
         if (is.null(ck)) {
             if (is.null(spatobj)) 
                 spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
-            xx <- as.data.frame(x)
+            #xx <- as.data.frame(x)
             # row.names(xx) <- labels(spatobj@data) spatobj <- SpatialPolygonsDataFrame(spatobj, xx)@data
-            spatobj@data <- xx
-            spatobj <- subset(spatobj, rowSums(spatobj@data) != 0)
-            x <- segdataclean(spatobj@data)$x
+            # spatobj@data <- xx
+            # spatobj <- subset(spatobj, rowSums(spatobj@data) != 0)
+            #x <- segdataclean(spatobj@data)$x
             ngb <- spdep::poly2nb(spatobj, queen = queen)
             ngbk <- spdep::nblag(ngb, K)
             if (sum(spdep::card(ngbk[[K]])) == 0) {
@@ -848,11 +848,11 @@ DIWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
     }
     if (is.null(a)) 
         a <- area(spatobj = spatobj, folder = folder, shape = shape)
-    cldata <- segdataclean(x, b = b, p = p, a = a)
-    x <- cldata$x
-    b <- cldata$b
-    p <- cldata$p
-    a <- cldata$a
+    #cldata <- segdataclean(x, b = b, p = p, a = a)
+    # x <- cldata$x
+    #b <- cldata$b
+    #p <- cldata$p
+    #a <- cldata$a
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     DI <- DIDuncan(x)
     pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
@@ -3718,10 +3718,9 @@ segdataclean <- function(x, c = NULL, b = NULL, a = NULL, p = NULL,
 #' - list with outliers values (jackknife)
 #' @references Efron, B., and Tibshirani, R. J. (1993). 
 #' \emph{An Introduction to the Bootstrap}. New York, Chapman and Hall
-#' @references Tivadar M., Schaeffer Y, Torre A. and Bray F. (2014) 
-#' \emph{OASIS - un Outil d'Analyse de la Segregation et des Inegalites 
-#' Spatiales}.  Cybergeo : European Journal of Geography, GeOpenMod, 
-#' document 699
+#' @references Tivadar M. (2019) 
+#' \emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+#' Journal of Statistical Software,  89 (7), pp 1-39
 #' @description Resampling tests for segregation indexes.
 #' @examples x <- segdata@data[ ,1:2]
 #' 
@@ -4475,10 +4474,9 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
 #' 'u', or ']' the resulting box resembles the corresponding upper 
 #' case letter. A value of 'n' suppresses the box.
 #' @return A plot with resampling distribution
-#' @references Tivadar M., Schaeffer Y, Torre A. and Bray F. (2014) 
-#' \emph{OASIS - un Outil d'Analyse de la Segregation et des Inegalites 
-#' Spatiales}.  Cybergeo : European Journal of Geography, GeOpenMod, 
-#' document 699
+#' @references Tivadar M. (2019) 
+#' \emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+#' Journal of Statistical Software,  89 (7), pp 1-39
 #' @description Plot of Monte Carlo simulations results. The function can
 #' be used in two ways: buy providing a ResampleTest object, using \code{\link{ResampleTest}} 
 #' or a simulated distribution vector, a value and a name of the index

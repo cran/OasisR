@@ -1,15 +1,15 @@
-citHeader("To cite in publications use:")
+bibentry(bibtype = "Article",
+  title        = "{OasisR}: An {R} Package to Bring Some Order to the World of Segregation Measurement",
+  author       = person(given = "Mihai",
+                        family = "Tivadar",
+                        email = "mihai.tivadar@irstea.fr"),
+  journal      = "Journal of Statistical Software",
+  year         = "2019",
+  volume       = "89",
+  number       = "7",
+  pages        = "1--39",
+  doi          = "10.18637/jss.v089.i07",
 
-citEntry(entry = "Article",
-  title        = "OASIS - un Outil d'Analyse de la Segregation et des Inegalites Spatiales",
-  author       = "Mihai Tivadar et al.",
-  journal      = "Cybergeo: European Journal of Geography",
-  year         = "2014",
-  url          = "http://cybergeo.revues.org/26579",
-
-  textVersion  =
-  paste("Mihai Tivadar et al. (2014).",
-        "OASIS - un Outil d'Analyse de la Segregation et des Inegalites Spatiales.",
-        "Cybergeo: European Journal of Geography",
-        "URL http://cybergeo.revues.org/26579.")
+  header       = "To cite OasisR in publications use:"
 )
+
