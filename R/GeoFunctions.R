@@ -156,7 +156,7 @@ distance <- function(spatobj = NULL, folder = NULL, shape = NULL, distin = "m", 
     dist <- dist + t(dist)
     if (diagval == "a") {
         a <- area(spatobj = spatobj, folder = folder, shape = shape)
-        diag(dist) <- sqrt(a) * 0.6
+        diag(dist) <- sqrt(a * 0.6)
     }
     dist <- measurements::conv_unit(dist, from = distin, to = distout)
     return(dist)
