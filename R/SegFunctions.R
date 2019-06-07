@@ -3486,7 +3486,7 @@ LSimpson <- function(x) {
     x <- as.matrix(x)
     x <- segdataclean(x)$x
     p <- x/rowSums(x)
-    result <- rowSums(p * (1 - p))
+    result <- rowSums(p * p)
     result[is.na(result)] <- 0
     return(round(result, 4))
 }
