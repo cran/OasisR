@@ -2787,7 +2787,7 @@ ISimpson <- function(x) {
     x <- as.matrix(x)
     x <- segdataclean(x)$x
     pTotal <- colSums(x)/sum(x)
-    result <- sum(pTotal * (1 - pTotal))
+    result <- sum(pTotal * pTotal)
     return(round(result, 4))
 }
 
