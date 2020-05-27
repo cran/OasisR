@@ -4,7 +4,9 @@
 \name{GreHSize}
 \alias{GreHSize}
 \title{Households distribution by  size in Grenoble urban area in 2011}
-\format{A Spatial object including 52 polygons corresponding to each municipality of Grenoble Urban Area (Insee definition) and following data attributes:}
+\format{
+A Spatial object including 52 polygons corresponding to each municipality of Grenoble Urban Area (Insee definition) and following data attributes:
+}
 \source{
 Insee: Resultats du recensement de la population 2011, \href{http://www.insee.fr/}{Insee}
 }

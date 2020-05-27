@@ -43,8 +43,6 @@ name indicating where the shapefile is located on the drive}
 (without the .shp extension).}
 
 \item{warnings}{- warning alert (by default TRUE)}
-
-\item{...}{- specific geographic vectors or matrices to be cleaned}
 }
 \value{
 The objects (data matrix, geographical vectors/matrices, spatial objects)

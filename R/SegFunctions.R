@@ -45,20 +45,15 @@ library(spdep)
 #' @export
 
 
+
 ISDuncan <- function(x) {
-    x <- as.matrix(x)
-    x <- segdataclean(x)$x
-    result <- vector(length = ncol(x))
-    Total <- sum(x)
-    pTotal <- colSums(x)/Total
-    tx <- rowSums(x)
-    px <- x/tx
-    for (i in 1:ncol(x)) {
-        px[, i] <- tx * abs(px[, i] - pTotal[i])
-        result[i] <- sum(px[, i])/(2 * Total * pTotal[i] * (1 - pTotal[i]))
-    }
-    return(round(result, 4))
+  x <- segdataclean(as.matrix(x))$x
+  result <- vector(length = ncol(x))
+  for (i in 1:ncol(x))
+    result[i] <- 0.5 * sum(abs((x[,i]/sum(x[,i])) - ((rowSums(x)-x[,i])/sum((rowSums(x)-x[,i])))))
+  return(round(result, 4))
 }
+
 
 #' A function to compute Atkinson segregation index
 #'
@@ -90,20 +85,18 @@ ISDuncan <- function(x) {
 #' @export
 
 Atkinson <- function(x, delta = 0.5) {
-    x <- as.matrix(x)
-    x <- segdataclean(x)$x
-    result <- vector(length = ncol(x))
-    Total <- sum(x)
-    pTotal <- colSums(x)/Total
-    tx <- rowSums(x)
-    px <- x/tx
-    provi <- px
-    for (k in 1:ncol(x)) {
-        provi[, k] <- (((1 - px[, k])^(1 - delta) * px[, k]^delta * tx)/(pTotal[k] * Total))
-        result[k] <- 1 - (pTotal[k]/(1 - pTotal[k])) * sum(provi[, k])^(1/(1 - delta))
-    }
-    return(round(result, 4))
+  x <- segdataclean(as.matrix(x))$x
+  result <- vector(length = ncol(x))
+  pTotal <- colSums(x)/sum(x)
+  px <- x/rowSums(x)
+  provi <- px
+  for (k in 1:ncol(x)) {
+    provi[, k] <- (((1 - px[, k])^(1 - delta) * px[, k]^delta * rowSums(x))/(pTotal[k] * sum(x)))
+    result[k] <- 1 - (pTotal[k]/(1 - pTotal[k])) * sum(provi[, k])^(1/(1 - delta))
+  }
+  return(round(result, 4))
 }
+
 
 #' A function to compute Theil's entropy segregation index
 #'
@@ -133,23 +126,20 @@ Atkinson <- function(x, delta = 0.5) {
 
 
 HTheil <- function(x) {
-    x <- as.matrix(x)
-    x <- segdataclean(x)$x
-    result <- vector(length = ncol(x))
-    E <- matrix(data = 0, nrow = nrow(x), ncol = ncol(x))
-    Total <- sum(x)
-    pTotal <- colSums(x)/Total
-    tx <- rowSums(x)
-    px <- x/tx
-    Etot <- rep(0, ncol(x))
-    for (k in 1:ncol(x)) Etot[k] <- pTotal[k] * log(1/pTotal[k]) + (1 - pTotal[k]) * log(1/(1 - pTotal[k]))
-    for (k in 1:ncol(x)) {
-        E[, k] <- px[, k] * log(1/px[, k]) + (1 - px[, k]) * log(1/(1 - px[, k]))
-        if (any(is.nan(E[, k]))) 
-            E[, k][is.nan(E[, k])] <- 0
-        result[k] <- sum((tx * (Etot[k] - E[, k]))/(Etot[k] * Total))
-    }
-    return(round(result, 4))
+  x <- segdataclean(as.matrix(x))$x
+  result <- vector(length = ncol(x))
+  E <- matrix(data = 0, nrow = nrow(x), ncol = ncol(x))
+  pTotal <- colSums(x)/sum(x)
+  px <- x/rowSums(x)
+  Etot <- rep(0, ncol(x))
+  for (k in 1:ncol(x)) Etot[k] <- pTotal[k] * log(1/pTotal[k]) + (1 - pTotal[k]) * log(1/(1 - pTotal[k]))
+  for (k in 1:ncol(x)) {
+    E[, k] <- px[, k] * log(1/px[, k]) + (1 - px[, k]) * log(1/(1 - px[, k]))
+    if (any(is.nan(E[, k]))) 
+      E[, k][is.nan(E[, k])] <- 0
+    result[k] <- sum((rowSums(x) * (Etot[k] - E[, k]))/(Etot[k] * sum(x)))
+  }
+  return(round(result, 4))
 }
 
 
@@ -216,7 +206,6 @@ ISMorrillK <- function(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NUL
             if (is.null(spatobj)) 
                 spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
             xx <- as.data.frame(x)
-            # row.names(xx) <- labels(spatobj) row.names(xx) <- labels(spatobj@data) spatobj <- SpatialPolygonsDataFrame(spatobj, xx)@data
             spatobj@data <- xx
             x <- segdataclean(spatobj@data)$x
             ngb <- spdep::poly2nb(spatobj, queen = queen)
@@ -301,25 +290,24 @@ ISMorrillK <- function(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NUL
 
 
 ISMorrill <- function(x, c = NULL, queen = FALSE, spatobj = NULL, folder = NULL, shape = NULL) {
-    x <- as.matrix(x)
-    if (is.null(c)) 
-        c <- contig(spatobj = spatobj, folder = folder, shape = shape, queen = queen)
-    cldata <- segdataclean(x, c = c)
-    x <- cldata$x
-    c <- cldata$c
-    IS <- ISDuncan(x)
-    result <- vector(length = ncol(x))
-    pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
-    t <- rowSums(x)
-    p <- x/t
-    for (k in 1:ncol(x)) {
-        for (i in 1:nrow(x)) pij[k, , i] <- p[i, k]
-        for (i in 1:nrow(x)) pij[k, i, ] <- abs(pij[k, i, ] - p[i, k])
-        matprovi <- c %*% pij[k, , ]
-        matprovi <- matprovi * diag(nrow(x))
-        result[k] <- IS[k] - sum(matprovi)/sum(c)
-    }
-    return(round(result, 4))
+  x <- as.matrix(x)
+  if (is.null(c)) 
+    c <- contig(spatobj = spatobj, folder = folder, shape = shape, queen = queen)
+  cldata <- segdataclean(x, c = c)
+  x <- cldata$x
+  c <- cldata$c
+  IS <- ISDuncan(x)
+  result <- vector(length = ncol(x))
+  pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
+  p <- x/rowSums(x)
+  for (k in 1:ncol(x)) {
+    for (i in 1:nrow(x)) pij[k, , i] <- p[i, k]
+    for (i in 1:nrow(x)) pij[k, i, ] <- abs(pij[k, i, ] - p[i, k])
+    matprovi <- c %*% pij[k, , ]
+    matprovi <- matprovi * diag(nrow(x))
+    result[k] <- IS[k] - sum(matprovi)/sum(c)
+  }
+  return(round(result, 4))
 }
 
 
@@ -406,7 +394,6 @@ ISWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
     pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
     pp <- x/rowSums(x)
     w <- b/sum(b)
-    # w <- b/ rowSums (b) w <- w/sum(w)
     if (variant == "w") 
         for (k in 1:ncol(x)) {
             for (i in 1:nrow(x)) pij[k, , i] <- pp[i, k]
@@ -462,14 +449,11 @@ ISWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
 
 
 Gorard <- function(x) {
-    x <- as.matrix(x)
-    x <- segdataclean(x)$x
-    result <- vector(length = ncol(x))
-    tx <- rowSums(x)
-    varTotal <- colSums(x)
-    Total <- sum(x)
-    for (k in 1:ncol(x)) result[k] <- 0.5 * sum(abs(x[, k]/varTotal[k] - tx/Total))
-    return(round(result, 4))
+  x <- segdataclean(as.matrix(x))$x
+  result <- vector(length = ncol(x))
+  varTotal <- colSums(x)
+  for (k in 1:ncol(x)) result[k] <- 0.5 * sum(abs(x[, k]/varTotal[k] - rowSums(x)/sum(x)))
+  return(round(result, 4))
 }
 
 #' A function to compute Spatial Gini's segregation index 
@@ -501,22 +485,20 @@ Gorard <- function(x) {
 
 
 Gini <- function(x) {
-    x <- as.matrix(x)
-    x <- segdataclean(x)$x
-    result <- vector(length = ncol(x))
-    pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
-    t <- rowSums(x)
-    p <- x/t
-    Total <- sum(x)
-    pTotal <- colSums(x)/Total
-    for (k in 1:ncol(x)) {
-        for (i in 1:nrow(x)) pij[k, , i] <- p[i, k]
-        for (i in 1:nrow(x)) pij[k, i, ] <- abs(pij[k, i, ] - p[i, k])
-        matprovi <- (t %*% t(t)) * pij[k, , ]
-        result[k] <- sum(matprovi)/(2 * Total * Total * pTotal[k] * (1 - pTotal[k]))
-    }
-    return(round(result, 4))
+  x <- segdataclean(as.matrix(x))$x
+  result <- vector(length = ncol(x))
+  pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
+  p <- x/rowSums(x)
+  pTotal <- colSums(x)/sum(x)
+  for (k in 1:ncol(x)) {
+    for (i in 1:nrow(x)) pij[k, , i] <- p[i, k]
+    for (i in 1:nrow(x)) pij[k, i, ] <- abs(pij[k, i, ] - p[i, k])
+    matprovi <- (rowSums(x) %*% t(rowSums(x))) * pij[k, , ]
+    result[k] <- sum(matprovi)/(2 * sum(x)^2 * pTotal[k] * (1 - pTotal[k]))
+  }
+  return(round(result, 4))
 }
+
 
 
 #' A function to compute Spatial Gini's between group index 
@@ -546,15 +528,14 @@ Gini <- function(x) {
 #' @export
 
 Gini2 <- function(x) {
-    x <- as.matrix(x)
-    x <- segdataclean(x)$x
+    x <- segdataclean(as.matrix(x))$x
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     for (k1 in 1:(ncol(x) - 1)) for (k2 in (k1 + 1):ncol(x)) {
         xprovi <- x[, c(k1, k2)]
         xprovi <- xprovi[rowSums(xprovi) > 0, ]
         result[k1, k2] <- Gini(xprovi)[1]
-        result[k2, k1] <- result[k1, k2]
     }
+    result <- result + t(result)
     return(round(result, 4))
 }
 
@@ -588,18 +569,19 @@ Gini2 <- function(x) {
 #' \code{\link{DIMorrill}}, \code{\link{DIMorrillK}}, \code{\link{DIWong}}
 #' @export
 
+
+
 DIDuncan <- function(x) {
-    x <- as.matrix(x)
-    x <- segdataclean(x)$x
-    result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
-    pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
-    varTotal <- colSums(x)
-    for (k1 in 1:(ncol(x) - 1)) for (k2 in (k1 + 1):ncol(x)) {
-        result[k1, k2] <- 0.5 * sum(abs(x[, k1]/varTotal[k1] - x[, k2]/varTotal[k2]))
-        result[k2, k1] <- result[k1, k2]
-    }
-    return(round(result, 4))
+  x <- segdataclean(as.matrix(x))$x
+  result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
+  varTotal <- colSums(x)
+  for (k1 in 1:(ncol(x) - 1)) for (k2 in (k1 + 1):ncol(x)) 
+    result[k1, k2] <- 0.5 * sum(abs(x[, k1]/varTotal[k1] - x[, k2]/varTotal[k2]))
+  result <- result+t(result)
+  return(round(result, 4))
 }
+
+
 
 
 #' A function to compute Morrill's dissimilarity index
@@ -652,9 +634,9 @@ DIMorrill <- function(x, c = NULL, queen = FALSE, spatobj = NULL, folder = NULL,
     x <- as.matrix(x)
     if (is.null(c)) 
         c <- contig(spatobj = spatobj, folder = folder, shape = shape, queen = queen)
-#    cldata <- segdataclean(x, c = c)
-#    x <- cldata$x
-#    c <- cldata$c
+    cldata <- segdataclean(x, c = c)
+    x <- cldata$x
+    c <- cldata$c
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     DI <- DIDuncan(x)
     pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
@@ -728,11 +710,6 @@ DIMorrillK <- function(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NUL
         if (is.null(ck)) {
             if (is.null(spatobj)) 
                 spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
-            #xx <- as.data.frame(x)
-            # row.names(xx) <- labels(spatobj@data) spatobj <- SpatialPolygonsDataFrame(spatobj, xx)@data
-            # spatobj@data <- xx
-            # spatobj <- subset(spatobj, rowSums(spatobj@data) != 0)
-            #x <- segdataclean(spatobj@data)$x
             ngb <- spdep::poly2nb(spatobj, queen = queen)
             ngbk <- spdep::nblag(ngb, K)
             if (sum(spdep::card(ngbk[[K]])) == 0) {
@@ -848,16 +825,15 @@ DIWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
     }
     if (is.null(a)) 
         a <- area(spatobj = spatobj, folder = folder, shape = shape)
-    #cldata <- segdataclean(x, b = b, p = p, a = a)
-    # x <- cldata$x
-    #b <- cldata$b
-    #p <- cldata$p
-    #a <- cldata$a
+    cldata <- segdataclean(x, b = b, p = p, a = a)
+    x <- cldata$x
+    b <- cldata$b
+    p <- cldata$p
+    a <- cldata$a
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     DI <- DIDuncan(x)
     pij <- array(0, dim = c(ncol(x), nrow(x), nrow(x)))
     w <- b/sum(b)
-    # w <- b/ rowSums (b) w <- w/sum(w)
     if (variant == "w") 
         for (k1 in 1:(ncol(x) - 1)) for (k2 in (k1 + 1):ncol(x)) {
             for (i in 1:nrow(x)) pij[k1, , i] <- x[i, k1]/(x[i, k1] + x[i, k2])
@@ -924,17 +900,16 @@ DIWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
 #' @export
 
 xPx <- function(x, exact = FALSE) {
-    x <- as.matrix(x)
-    x <- segdataclean(x)$x
-    result <- vector(length = ncol(x))
-    varTotal <- colSums(x)
-    t <- rowSums(x)
-    if (exact == FALSE) 
-        for (k in 1:ncol(x)) result[k] <- sum(x[, k]/varTotal[k] * x[, k]/t)
-    if (exact == TRUE) 
-        for (k in 1:ncol(x)) result[k] <- sum(x[, k]/varTotal[k] * (x[, k] - 1)/(t - 1))
-    return(round(result, 4))
+  x <- segdataclean(as.matrix(x))$x
+  result <- vector(length = ncol(x))
+  varTotal <- colSums(x)
+  if (exact == FALSE) 
+    for (k in 1:ncol(x)) result[k] <- sum(x[, k]/varTotal[k] * x[, k]/rowSums(x))
+  if (exact == TRUE) 
+    for (k in 1:ncol(x)) result[k] <- sum(x[, k]/varTotal[k] * (x[, k] - 1)/(rowSums(x) - 1))
+  return(round(result, 4))
 }
+
 
 
 #' A function to compute the distance-decay isolation index (DPxx)
@@ -991,26 +966,26 @@ xPx <- function(x, exact = FALSE) {
 
 
 DPxx <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", beta = 1, spatobj = NULL, folder = NULL, shape = NULL) {
-    x <- as.matrix(x)
-    if (is.null(d)) 
-        d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
-    cldata <- segdataclean(x, d = d)
-    x <- cldata$x
-    d <- cldata$d
-    result <- vector(length = ncol(x))
-    varTotal <- colSums(x)
-    t <- rowSums(x)
-    dd <- exp(-beta * d)
-    K1 <- dd %*% t
-    K2 <- dd * t
-    K <- K2/as.vector(K1)
-    for (k in 1:ncol(x)) {
-        X1 <- K %*% (x[, k]/t)
-        X2 <- (x[, k]/varTotal[k]) * X1
-        result[k] <- sum(X2)
-    }
-    return(round(result, 4))
+  x <- as.matrix(x)
+  if (is.null(d)) 
+    d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
+  cldata <- segdataclean(x, d = d)
+  x <- cldata$x
+  d <- cldata$d
+  result <- vector(length = ncol(x))
+  varTotal <- colSums(x)
+  dd <- exp(-beta * d)
+  K1 <- dd %*% rowSums(x)
+  K2 <- dd * rowSums(x)
+  K <- K2/as.vector(K1)
+  for (k in 1:ncol(x)) {
+    X1 <- K %*% (x[, k]/rowSums(x))
+    X2 <- (x[, k]/varTotal[k]) * X1
+    result[k] <- sum(X2)
+  }
+  return(round(result, 4))
 }
+
 
 
 
@@ -1050,20 +1025,18 @@ DPxx <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", beta =
 
 
 Eta2 <- function(x) {
-    x <- as.matrix(x)
-    x <- segdataclean(x)$x
-    result <- vector(length = ncol(x))
-    varTotal <- colSums(x)
-    Total <- sum(x)
-    pTotal <- colSums(x)/Total
-    t <- rowSums(x)
-    
-    for (k in 1:ncol(x)) {
-        result[k] <- sum(x[, k]/varTotal[k] * x[, k]/t)
-        result[k] <- (result[k] - pTotal[k])/(1 - pTotal[k])
-    }
-    return(round(result, 4))
+  x <- segdataclean(as.matrix(x))$x
+  result <- vector(length = ncol(x))
+  varTotal <- colSums(x)
+  pTotal <- colSums(x)/sum(x)
+  for (k in 1:ncol(x)) {
+    result[k] <- sum(x[, k]/varTotal[k] * x[, k]/ rowSums(x))
+    result[k] <- (result[k] - pTotal[k])/(1 - pTotal[k])
+  }
+  return(round(result, 4))
 }
+
+
 
 #' A function to compute interaction index (xPy)
 #'
@@ -1095,8 +1068,7 @@ Eta2 <- function(x) {
 
 
 xPy <- function(x, exact = FALSE) {
-    x <- as.matrix(x)
-    x <- segdataclean(x)$x
+    x <- segdataclean(as.matrix(x))$x
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     varTotal <- colSums(x)
     t <- rowSums(x)
@@ -1105,10 +1077,7 @@ xPy <- function(x, exact = FALSE) {
     if (exact == T) 
         for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) if (k1 != k2) {
             result[k1, k2] <- sum(x[, k1]/varTotal[k1] * x[, k2]/(t - 1))
-        } else {
-            result[k1, k2] <- sum(x[, k1]/varTotal[k1] * (x[, k2] - 1)/(t - 1))
-        }
-    
+        } else result[k1, k2] <- sum(x[, k1]/varTotal[k1] * (x[, k2] - 1)/(t - 1))
     return(round(result, 4))
 }
 
@@ -1175,17 +1144,14 @@ DPxy <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", beta =
     cldata <- segdataclean(x, d = d)
     x <- cldata$x
     d <- cldata$d
-    t <- rowSums(x)
     varTotal <- colSums(x)
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
-    varTotal <- colSums(x)
     dd <- exp(-beta * d)
-    K1 <- dd %*% t
-    K2 <- dd * t
+    K1 <- dd %*% rowSums(x)
+    K2 <- dd * rowSums(x)
     K <- K2/as.vector(K1)
-    
     for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) {
-        X1 <- K %*% (x[, k2]/t)
+        X1 <- K %*% (x[, k2]/rowSums(x))
         X2 <- (x[, k1]/varTotal[k1]) * X1
         result[k1, k2] <- sum(X2)
     }
@@ -1242,7 +1208,6 @@ spatinteract <- function(x, spatobj = NULL, folder = NULL, shape = NULL, ...) {
     spatobj <- subset(spatobj, rowSums(spatobj@data) != 0)
     x <- segdataclean(spatobj@data)$x
     result <- seg::spseg(spatobj, x, ...)
-    
     return(round(result@p, 4))
 }
 
@@ -1306,8 +1271,7 @@ Delta <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
     a <- cldata$a
     result <- vector(length = ncol(x))
     varTotal <- colSums(x)
-    areaTotal <- sum(a)
-    for (k in 1:ncol(x)) result[k] <- 0.5 * sum(abs(x[, k]/varTotal[k] - a/areaTotal))
+    for (k in 1:ncol(x)) result[k] <- 0.5 * sum(abs(x[, k]/varTotal[k] - a/sum(a)))
     return(round(result, 4))
 }
 
@@ -1356,48 +1320,44 @@ Delta <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
 
 
 ACO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
-    x <- as.matrix(x)
-    if (is.null(a)) 
-        a <- area(spatobj = spatobj, folder = folder, shape = shape)
-    cldata <- segdataclean(x, a = a)
-    x <- cldata$x
-    a <- cldata$a
-    varTotal <- colSums(x)
-    xprovi <- as.data.frame(cbind(x, a))
-    xprovi <- xprovi[order(xprovi$a), ]
-    xprovi$Total <- rowSums(xprovi) - xprovi$a
-    areaTotal <- sum(a)
-    result <- vector(length = ncol(x))
-    n1 <- vector(length = ncol(x))
-    n2 <- vector(length = ncol(x))
-    T1 <- vector(length = ncol(x))
-    T2 <- vector(length = ncol(x))
-    # t <- rowSums(xprovi)
-    
-    for (k in 1:ncol(x)) {
-        T1[k] <- 0
-        i <- 0
-        while (T1[k] < varTotal[k]) {
-            i <- i + 1
-            T1[k] <- T1[k] + xprovi$Total[i]
-        }
-        n1[k] <- i
-        T2[k] <- 0
-        i <- nrow(xprovi) + 1
-        while (T2[k] < varTotal[k]) {
-            i <- i - 1
-            T2[k] <- T2[k] + xprovi$Total[i]
-        }
-        n2[k] <- i
+  x <- as.matrix(x)
+  if (is.null(a)) 
+    a <- area(spatobj = spatobj, folder = folder, shape = shape)
+  cldata <- segdataclean(x, a = a)
+  x <- cldata$x
+  a <- cldata$a
+  varTotal <- colSums(x)
+  xprovi <- as.data.frame(cbind(x, a))
+  xprovi <- xprovi[order(xprovi$a), ]
+  xprovi$Total <- rowSums(xprovi) - xprovi$a
+  result <- vector(length = ncol(x))
+  n1 <- vector(length = ncol(x))
+  n2 <- vector(length = ncol(x))
+  T1 <- vector(length = ncol(x))
+  T2 <- vector(length = ncol(x))
+  for (k in 1:ncol(x)) {
+    T1[k] <- 0
+    i <- 0
+    while (T1[k] < varTotal[k]) {
+      i <- i + 1
+      T1[k] <- T1[k] + xprovi$Total[i]
     }
-    for (k in 1:ncol(x)) {
-        vartemp1 <- sum(xprovi[, k] * xprovi$a/varTotal[k])
-        vartemp2 <- sum(xprovi$Total[1:n1[k]] * xprovi$a[1:n1[k]]/T1[k])
-        vartemp3 <- sum(xprovi$Total[n2[k]:nrow(xprovi)] * xprovi$a[n2[k]:nrow(xprovi)]/T2[k])
-        result[k] <- 1 - (vartemp1 - vartemp2)/(vartemp3 - vartemp2)
+    n1[k] <- i
+    T2[k] <- 0
+    i <- nrow(xprovi) + 1
+    while (T2[k] < varTotal[k]) {
+      i <- i - 1
+      T2[k] <- T2[k] + xprovi$Total[i]
     }
-    
-    return(round(result, 4))
+    n2[k] <- i
+  }
+  for (k in 1:ncol(x)) {
+    vartemp1 <- sum(xprovi[, k] * xprovi$a/varTotal[k])
+    vartemp2 <- sum(xprovi$Total[1:n1[k]] * xprovi$a[1:n1[k]]/T1[k])
+    vartemp3 <- sum(xprovi$Total[n2[k]:nrow(xprovi)] * xprovi$a[n2[k]:nrow(xprovi)]/T2[k])
+    result[k] <- 1 - (vartemp1 - vartemp2)/(vartemp3 - vartemp2)
+  }
+  return(round(result, 4))
 }
 
 
@@ -1452,7 +1412,6 @@ RCO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
     xprovi <- as.data.frame(cbind(x, a))
     xprovi <- xprovi[order(xprovi$a), ]
     xprovi$Total <- rowSums(xprovi) - xprovi$a
-    areaTotal <- sum(a)
     n1 <- vector(length = ncol(x))
     n2 <- vector(length = ncol(x))
     T1 <- vector(length = ncol(x))
@@ -1732,26 +1691,26 @@ Pxx <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #' @export
 
 
-
 Poo <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", itype = "multi", beta = 1, spatobj = NULL, folder = NULL, shape = NULL) {
-    x <- as.matrix(x)
-    if (is.null(d)) 
-        d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
-    cldata <- segdataclean(x, d = d)
-    x <- cldata$x
-    d <- cldata$d
-    tx <- rowSums(x)
-    varTotal <- colSums(x)
-    if (fdist == "e") 
-        d <- exp(-beta * d)
-    if (itype == "between") {
-        result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
-        for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) result[k1, k2] <- sum((d %*% (x[, k1] + x[, k2])) * (x[, k1] + x[, k2])/(varTotal[k1] + varTotal[k2])^2)
-    }
-    if (itype == "multi") 
-        result <- sum((d %*% tx) * tx/(sum(tx))^2)
-    return(round(result, 4))
+  x <- as.matrix(x)
+  if (is.null(d)) 
+    d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
+  cldata <- segdataclean(x, d = d)
+  x <- cldata$x
+  d <- cldata$d
+  varTotal <- colSums(x)
+  if (fdist == "e") 
+    d <- exp(-beta * d)
+  if (itype == "between") {
+    result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
+    for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) result[k1, k2] <- sum((d %*% (x[, k1] + x[, k2])) * (x[, k1] + x[, k2])/(varTotal[k1] + varTotal[k2])^2)
+  }
+  if (itype == "multi") 
+    result <- sum((d %*% rowSums(x)) * rowSums(x)/(sum(rowSums(x)))^2)
+  return(round(result, 4))
 }
+
+
 
 #' A function to compute the mean proximity between 
 #' persons of different groups (Pxy)
@@ -1894,35 +1853,35 @@ Pxy <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 
 
 SP <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = "0", itype = "multi", beta = 1, spatobj = NULL, folder = NULL, shape = NULL) {
-    x <- as.matrix(x)
-    if (is.null(d)) 
-        d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
-    cldata <- segdataclean(x, d = d)
-    x <- cldata$x
-    d <- cldata$d
-    if (fdist == "e") 
-        d <- exp(-beta * d)
-    varTotal <- colSums(x)
-    tx <- rowSums(x)
-    if (itype == "between") {
-        Poo1 <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
-        for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) Poo1[k1, k2] <- sum((d %*% (x[, k1] + x[, k2])) * (x[, k1] + x[, k2])/(varTotal[k1] + varTotal[k2])^2)
-    }
-    if (itype == "multi" || itype == "one") 
-        Poo1 <- sum((d %*% tx) * tx/(sum(tx))^2)
-    Pxx1 <- vector(length = ncol(x))
-    for (k in 1:ncol(x)) Pxx1[k] <- sum((d %*% x[, k]) * x[, k]/(varTotal[k])^2)
-    if (itype == "multi") 
-        result <- sum(Pxx1 * varTotal)/(sum(x) * Poo1)
-    if (itype == "one") 
-        result <- Pxx1/Poo1
-    if (itype == "between") {
-        result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
-        for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) result[k1, k2] <- (varTotal[k1] * Pxx1[k1] + varTotal[k2] * Pxx1[k2])/((varTotal[k1] + varTotal[k2]) * 
-            Poo1[k1, k2])
-    }
-    return(round(result, 4))
+  x <- as.matrix(x)
+  if (is.null(d)) 
+    d <- distance(spatobj = spatobj, folder = folder, shape = shape, distin = distin, distout = distout, diagval = diagval)
+  cldata <- segdataclean(x, d = d)
+  x <- cldata$x
+  d <- cldata$d
+  if (fdist == "e") 
+    d <- exp(-beta * d)
+  varTotal <- colSums(x)
+  if (itype == "between") {
+    Poo1 <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
+    for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) Poo1[k1, k2] <- sum((d %*% (x[, k1] + x[, k2])) * (x[, k1] + x[, k2])/(varTotal[k1] + varTotal[k2])^2)
+  }
+  if (itype == "multi" || itype == "one") 
+    Poo1 <- sum((d %*% rowSums(x)) * rowSums(x)/(sum(rowSums(x)))^2)
+  Pxx1 <- vector(length = ncol(x))
+  for (k in 1:ncol(x)) Pxx1[k] <- sum((d %*% x[, k]) * x[, k]/(varTotal[k])^2)
+  if (itype == "multi") 
+    result <- sum(Pxx1 * varTotal)/(sum(x) * Poo1)
+  if (itype == "one") 
+    result <- Pxx1/Poo1
+  if (itype == "between") {
+    result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
+    for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) result[k1, k2] <- (varTotal[k1] * Pxx1[k1] + varTotal[k2] * Pxx1[k2])/((varTotal[k1] + varTotal[k2]) * 
+                                                                                                                         Poo1[k1, k2])
+  }
+  return(round(result, 4))
 }
+
 
 
 
@@ -2066,11 +2025,10 @@ ACEDuncan <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, s
     x <- cldata$x
     dc <- cldata$dc
     result <- vector(length = ncol(x))
-    t <- rowSums(x)
     varTotal <- colSums(x)
     prop <- varTotal/sum(varTotal)
     for (k in 1:ncol(x)) {
-        provi <- RCE(cbind(x[, k], t), dc = dc, center = center, spatobj = spatobj, folder = folder, shape = shape)/(1 - prop[k])
+        provi <- RCE(cbind(x[, k], rowSums(x)), dc = dc, center = center, spatobj = spatobj, folder = folder, shape = shape)/(1 - prop[k])
         result[k] <- provi[1, 2]
     }
     return(round(result, 4))
@@ -2143,13 +2101,8 @@ ACEDuncanPoly <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NUL
     x <- cldata$x
     dc <- cldata$dc
     result <- vector(length = ncol(x))
-    t <- rowSums(x)
-    varTotal <- colSums(x)
-    prop <- varTotal/sum(varTotal)
-    for (k in 1:ncol(x)) {
-        provi <- RCE(as.matrix(cbind(x[, k], t - x[, k])), dc = dc, center = center, spatobj = spatobj, folder = folder, shape = shape)
-        result[k] <- provi[1, 2]
-    }
+    for (k in 1:ncol(x))
+        result[k] <- RCE(as.matrix(cbind(x[, k], rowSums(x) - x[, k])), dc = dc, center = center, spatobj = spatobj, folder = folder, shape = shape)[1, 2]
     return(round(result, 4))
 }
 
@@ -2212,14 +2165,10 @@ ACEDuncanPolyK <- function(x, dc = NULL, K = NULL, kdist = NULL, center = 1, spa
     x <- as.matrix(x)
     if (is.null(K) & is.null(kdist)) 
         K <- round(sqrt(nrow(x)^2 + ncol(x)^2))
-    
-    # Calcul DistMin
-    
     if (is.null(dc)) {
         dc <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
         for (i in 1:ncol(dc)) dc[, i] <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center = center[i])
     }
-  #  for (i in 1:nrow(dc)) distmin[i] <- min(dc[i, 1:ncol(dc)])
     cldata <- segdataclean(x, dc = dc)
     x <- cldata$x
     dc <- cldata$dc
@@ -2291,8 +2240,7 @@ RCE <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape =
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     varTotal <- colSums(x)
     xprovi <- cbind(x, dc)
-    xprovi <- xprovi[order(xprovi[, ncol(xprovi)]), ]
-    xprovi <- as.data.frame(xprovi)
+    xprovi <- as.data.frame(xprovi[order(xprovi[, ncol(xprovi)]), ])
     xprovi2 <- xprovi[1:length(unique(xprovi$dc)), ]
     xprovi2$dc <- unique(xprovi$dc)
     for (i in 1:ncol(x)) xprovi2[, i] <- tapply(xprovi[, i], xprovi$dc, sum)
@@ -2452,9 +2400,6 @@ RCEPolyK <- function(x, dc = NULL, K = NULL, kdist = NULL, center = 1, spatobj =
     x <- as.matrix(x)
     if (is.null(K) & is.null(kdist)) 
         K <- round(sqrt(nrow(x)^2 + ncol(x)^2))
-    
-    # Calcul DistMin
-    
     if (is.null(dc)) {
         dc <- matrix(data = NA, nrow = nrow(x), ncol = length(center))
         for (i in 1:ncol(dc)) dc[, i] <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center = center[i])
@@ -2465,11 +2410,8 @@ RCEPolyK <- function(x, dc = NULL, K = NULL, kdist = NULL, center = 1, spatobj =
     x <- cldata$x
     dc <- cldata$dc
     distmin <- dc
-    
-    # Asamblare dist egale
     xprovi <- cbind(x, distmin)
-    xprovi <- xprovi[order(xprovi[, ncol(xprovi)]), ]
-    xprovi <- as.data.frame(xprovi)
+    xprovi <- as.data.frame(xprovi[order(xprovi[, ncol(xprovi)]), ])
     xprovi2 <- xprovi[1:length(unique(xprovi$distmin)), ]
     xprovi2$distmin <- unique(xprovi$distmin)
     for (i in 1:ncol(x)) xprovi2[, i] <- tapply(xprovi[, i], xprovi$distmin, sum)
@@ -2483,8 +2425,6 @@ RCEPolyK <- function(x, dc = NULL, K = NULL, kdist = NULL, center = 1, spatobj =
         xprovi <- xprovi[xprovi$distmin <= kdist, ]
     result <- matrix(data = 0, nrow = ncol(x), ncol = ncol(x))
     xprovi <- xprovi[, -ncol(xprovi)]
-    
-    # Calcul indice
     varTotal <- colSums(xprovi)
     test <- 0
     if (sum(varTotal) == 0) 
@@ -3526,7 +3466,6 @@ LSimpson <- function(x) {
 #' (without the .shp extension).
 #' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @param ... - specific geographic vectors or matrices to be cleaned
 #' @return The objects (data matrix, geographical vectors/matrices, spatial objects)
 #' cleaned from null rows or columns 
 #' @description The function cleans and prepares the data for segregation analysis 
