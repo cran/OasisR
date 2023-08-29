@@ -7,7 +7,7 @@
 contig(spatobj = NULL, folder = NULL, shape = NULL, queen = FALSE)
 }
 \arguments{
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{spatobj}{- a spatial object (class sf, sfc or sfg) containing 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
@@ -25,9 +25,9 @@ element [\emph{i,j}] equals 1 if \emph{i}-th  and \emph{j}-th
 spatial units are adjacent, 0 otherwise (queen or rook criteria)
 }
 \description{
-The function is based on \pkg{rgdal} and 
-\pkg{spdep} packages and can be used with a shape file 
-or an R spatial object (SpatialPolygonsDataFrame).
+The function is based on \pkg{sf}  
+package and can be used with a shape file 
+or an R spatial object (class sf, sfc or sfg).
 }
 \examples{
  contig(segdata) 

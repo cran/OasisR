@@ -7,7 +7,7 @@
 perimeter(spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{spatobj}{- a spatial object (class sf, sfc or sfg) containing 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
@@ -21,9 +21,9 @@ is located.}
 A perimeter vector
 }
 \description{
-The function is based on on \pkg{rgdal} and \pkg{rgeos}  
+The function is based on on \pkg{sf} and \pkg{lwgeom}  
 packages and can be used with a shape file or an R spatial object 
-(SpatialPolygonsDataFrame).
+(class sf, sfc or sfg).
 }
 \examples{
  perimeter(segdata)  

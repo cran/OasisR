@@ -45,7 +45,6 @@ library(spdep)
 #' @export
 
 
-
 ISDuncan <- function(x) {
   x <- segdataclean(as.matrix(x))$x
   result <- vector(length = ncol(x))
@@ -204,10 +203,7 @@ ISMorrillK <- function(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NUL
     if (K > 1) {
         if (is.null(ck)) {
             if (is.null(spatobj)) 
-                spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
-            xx <- as.data.frame(x)
-            spatobj@data <- xx
-            x <- segdataclean(spatobj@data)$x
+                spatobj <- sf::st_read(dsn = folder, layer = shape)
             ngb <- spdep::poly2nb(spatobj, queen = queen)
             ngbk <- spdep::nblag(ngb, K)
             ck <- vector("list", K)
@@ -709,7 +705,7 @@ DIMorrillK <- function(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NUL
     if (K > 1) {
         if (is.null(ck)) {
             if (is.null(spatobj)) 
-                spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
+                spatobj <- sf::st_read(dsn = folder, layer = shape)
             ngb <- spdep::poly2nb(spatobj, queen = queen)
             ngbk <- spdep::nblag(ngb, K)
             if (sum(spdep::card(ngbk[[K]])) == 0) {
@@ -1203,10 +1199,8 @@ DPxy <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", beta =
 spatinteract <- function(x, spatobj = NULL, folder = NULL, shape = NULL, ...) {
     
     if (is.null(spatobj) & !is.null(folder) & !is.null(shape)) 
-        spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
-    spatobj@data <- as.data.frame(x)
-    spatobj <- subset(spatobj, rowSums(spatobj@data) != 0)
-    x <- segdataclean(spatobj@data)$x
+        spatobj <- sf::st_read(dsn = folder, layer = shape)
+    if (class(spatobj)[1]!="SpatialPolygonsDataFrame") spatobj <- sf::as_Spatial(spatobj)
     result <- seg::spseg(spatobj, x, ...)
     return(round(result@p, 4))
 }
@@ -3267,7 +3261,8 @@ rankorderseg <- function(x, polorder = 4, pred = NULL) {
 spatmultiseg <- function(x, spatobj = NULL, folder = NULL, shape = NULL, ...) {
     x <- as.matrix(x)
     if (is.null(spatobj)) 
-        spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
+        spatobj <- sf::st_read(dsn = folder, layer = shape)
+    if (class(spatobj)[1]!="SpatialPolygonsDataFrame") spatobj <- sf::as_Spatial(spatobj)
     cldata <- segdataclean(x, spatobj = spatobj)
     x <- cldata$x
     spatobj <- cldata$spatobj
@@ -3514,7 +3509,7 @@ segdataclean <- function(x, c = NULL, b = NULL, a = NULL, p = NULL,
         for (k in 1:length(ck)) ck[[k]] <- ck[[k]][x2[, ncol(x2)], x2[, ncol(x2)]]
     
     if (is.null(spatobj) & !is.null(folder) & !is.null(shape)) 
-        spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
+        spatobj <- sf::st_read(dsn = folder, layer = shape)
     if (!is.null(spatobj)) {
         xx <- matrix(0, nrow = nrow(x), ncol = ncol(x))
         for (i in 1:ncol(x)) xx[, i] <- as.numeric(x[, i])
@@ -3728,7 +3723,7 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
     if (is.null(ck) & is.element(fun, c("ISMorrillK", "DIMorrillK"))) {
         if (K > 1) {
             if (is.null(spatobj)) 
-                spatobj <- rgdal::readOGR(dsn = folder, layer = shape)
+                spatobj <- sf::st_read(dsn = folder, layer = shape)
             xx <- as.data.frame(x)
             # row.names(xx) <- labels(spatobj@data) spatobj <- SpatialPolygonsDataFrame(spatobj, xx)@data
             spatobj@data <- xx

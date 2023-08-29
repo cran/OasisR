@@ -9,7 +9,7 @@ distance(spatobj = NULL, folder = NULL, shape = NULL,
 distin = 'm',  distout = 'm', diagval = '0')
 }
 \arguments{
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{spatobj}{- a spatial object (class sf, sfc or sfg) containing 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
@@ -33,9 +33,9 @@ to compute  the diagonal as 0.6 * square root (spatial units area) (White, 1983)
 A matrix with the distance between centroids
 }
 \description{
-The function is based on \pkg{rgdal} and \pkg{rgeos} 
-packages and can be used with a shape file or an R spatial object 
-(SpatialPolygonsDataFrame).
+The function is based on \pkg{sf} 
+package and can be used with a shape file or an R spatial object 
+(class sf, sfc or sfg).
 }
 \examples{
  distance(segdata) 

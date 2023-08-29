@@ -14,7 +14,7 @@
 #' 
 #' @docType data
 #' @keywords datasets
-#' @source Insee: Resultats du recensement de la population 2011, \href{http://www.insee.fr/}{Insee}
+#' @source Insee: Resultats du recensement de la population 2011, \href{https://www.insee.fr/fr/accueil}{Insee}
 #' @name GreHSize
 #' @usage data(GreHSize)
 #' @format A Spatial object including 52 polygons corresponding to each municipality of Grenoble Urban Area (Insee definition) and following data attributes: 

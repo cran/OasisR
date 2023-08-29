@@ -7,7 +7,7 @@
 boundaries(spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{spatobj}{- a spatial object (class sf, sfc or sfg) containing 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
@@ -21,9 +21,9 @@ is located.}
 A common boundaries matrix
 }
 \description{
-The function is based on \pkg{rgdal} and \pkg{rgeos} 
-packages and it can be used with a shape file 
-or an R spatial object (SpatialPolygonsDataFrame).
+The function is based on \pkg{sf}  
+package and it can be used with a shape file 
+or an R spatial object (class sf, sfc or sfg).
 }
 \examples{
  boundaries(segdata) 

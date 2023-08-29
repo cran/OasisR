@@ -9,7 +9,7 @@ distcenter(spatobj = NULL, folder = NULL, shape = NULL,
 center = 1, distin = 'm',  distout = 'm')
 }
 \arguments{
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) containing 
+\item{spatobj}{- a spatial object (class sf, sfc or sfg) containing 
 geographic information}
 
 \item{folder}{- a character vector with the folder (directory) 
@@ -31,9 +31,9 @@ includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.}
 A vector with the distance to the center's centroid
 }
 \description{
-The function is based on \pkg{rgdal} and \pkg{rgeos} 
-packages and it can be used with a shape file or an R 
-spatial object (SpatialPolygonsDataFrame).
+The function is based on \pkg{sf} 
+package and it can be used with a shape file or an R 
+spatial object (class sf, sfc or sfg).
 }
 \examples{
  distcenter(segdata, center = 46) 
