@@ -8,30 +8,30 @@ ISMorrill(x, c = NULL, queen = FALSE,
 spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 
-\item{c}{- a standard binary contiguity (adjacency) symmetric matrix where 
+\item{c}{a standard binary contiguity (adjacency) symmetric matrix where 
 each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 units are adjacent, and 0 otherwise.}
 
-\item{queen}{- a logical parameter difining criteria used for the contiguity 
+\item{queen}{a logical parameter difining criteria used for the contiguity 
 matrix computation, TRUE for queen, FALSE (by default) for rook}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
+\item{spatobj}{a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile is located on the drive}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension) .}
 }
 \value{
-a numeric vector containing the Morrill's segregation index value for 
+A numeric vector containing Morrill's segregation index values for 
 each group
 }
 \description{

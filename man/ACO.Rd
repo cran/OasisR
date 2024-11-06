@@ -7,26 +7,26 @@
 ACO(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 
-\item{a}{- a numeric vector containing spatial unit areas}
+\item{a}{a numeric vector containing spatial unit areas}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
+\item{spatobj}{a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile is located on the drive}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension).}
 }
 \value{
-a numeric vector containing Absolute Concentration index value for 
-each group
+A numeric vector containing the Absolute Concentration index 
+values for each group
 }
 \description{
 The absolute concentration index, ACO, computes 

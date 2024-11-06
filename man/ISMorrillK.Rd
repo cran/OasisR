@@ -8,39 +8,40 @@ ISMorrillK(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NULL,
 shape = NULL, K = 2, f = 'exp', beta = 1, prec = NULL)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greaterTR than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 
-\item{ck}{- a list containing contiguity matrices coresponding to each order 
+\item{ck}{a list containing contiguity matrices coresponding to each order 
 (from 1 to K)}
 
-\item{queen}{- logical parameter defining criteria used for contiguity 
+\item{queen}{logical parameter defining criteria used for contiguity 
 matrix computation, TRUE for queen, FALSE (by default) for rook}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
+\item{spatobj}{a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile is located on the driveis located.}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension).}
 
-\item{K}{- the order of the contiguity matrix}
+\item{K}{the order of the contiguity matrix}
 
-\item{f}{- the distance function, f = 'exp' (by default) for negative 
+\item{f}{the distance function, f = 'exp' (by default) for negative 
 exponential function and f = 'rec' for reciprocal function}
 
-\item{beta}{- distance decay parameter}
+\item{beta}{distance decay parameter}
 
-\item{prec}{- precision parameter. If not NULL, the function stop computing
+\item{prec}{precision parameter. If not NULL, the function stop computing
 the spatial interaction when the impact on the indice is bellow 10 ^ (-prec)}
 }
 \value{
-a matrix with Generalized Morrill's dissimilarity index values
+A numeric vector containing Generalized Morrill's segregation index 
+values for each group
 }
 \description{
 This function computes an adaptation of Morrill's segregation 
@@ -63,6 +64,10 @@ ISMorrillK(x, folder = foldername, shape = shapename, K = 4, f = 'rec')
 \references{
 Morrill B. (1991) \emph{On the measure of geographic 
 segregation}. Geography research forum, 11, pp. 25-36.
+
+Tivadar M. (2019) 
+\emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+Journal of Statistical Software,  89 (7), pp 1-39
 }
 \seealso{
 One-group evenness indices: 

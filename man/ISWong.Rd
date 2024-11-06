@@ -8,41 +8,40 @@ ISWong(x, b = NULL,  a = NULL, p = NULL, ptype = 'int', variant = 's',
 spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 totals because this will be interpreted as a group}
 
-\item{b}{- a common boundaries matrix where each element \emph{Bij} 
+\item{b}{a common boundaries matrix where each element \emph{Bij} 
 equals the shared boundary of \emph{i}-th and \emph{j}-th spatial units.}
 
-\item{a}{- a numeric vector containing spatial unit areas}
+\item{a}{a numeric vector containing spatial unit areas}
 
-\item{p}{- a numeric vector containing spatial units perimeters.}
+\item{p}{a numeric vector containing spatial units perimeters.}
 
-\item{ptype}{- a string variable giving two options for perimeter calculation
+\item{ptype}{a string variable giving two options for perimeter calculation
 when a spatial object or shapefile is provided: 'int' to use only interior
 boundaries of spatial units, and 'all' to use entire boundaries, 
 including the boundaries to the exterior}
 
-\item{variant}{- a character variable that allows to choose the index version: 
+\item{variant}{a character variable that allows to choose the index version: 
 variant = 's' for the index adjusted for contiguous spatial/organizational units
 boundary lengths and perimeter/area ratio (by default) and variant = 'w' 
 for the version based only on shared boundaries length}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
+\item{spatobj}{a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile is located on the drive}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension).}
 }
 \value{
-a numeric vector containing the Wong's segregation index value for 
-each group
+A numeric vector containing Wong's segregation index values for each group
 }
 \description{
 Wong's segregation index is a development of 

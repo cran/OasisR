@@ -2,12 +2,12 @@
 % Please edit documentation in R/SegFunctions.R
 \name{ordinalseg}
 \alias{ordinalseg}
-\title{A function to compute Reardon multi-group ordinal segregation indices}
+\title{A function to compute Reardon multigroup ordinal segregation indices}
 \usage{
 ordinalseg(x)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
@@ -16,11 +16,11 @@ represent the nominal categories (spatial units) and the columns the ordinal
 categories.}
 }
 \value{
-A vector with Reardon multi-group ordinal segregation indices:
-Lambda1 - ordinal generalization of the information theory index
-Lambda2 - ordinal generalization of the variation ratio index
-Lambda3 - ordinal square root index
-Lambda4 - ordinal absolute difference index
+A vector containing Reardon's multigroup ordinal segregation indices: 
+Lambda1 (the ordinal generalization of the information theory index), 
+Lambda2 (the ordinal generalization of the variation ratio index), 
+Lambda3 (the ordinal square root index), and
+Lambda4 (the ordinal absolute difference index)
 }
 \description{
 A function to compute Reardon (2009) ordinal indices

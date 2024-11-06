@@ -2,22 +2,22 @@
 % Please edit documentation in R/SegFunctions.R
 \name{HMulti}
 \alias{HMulti}
-\title{A function to compute multi-group entropy segregation index}
+\title{A function to compute multigroup entropy segregation index}
 \usage{
 HMulti(x)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 }
 \value{
-multi-group entropy segregation index
+The multigroup entropy segregation index value (numeric)
 }
 \description{
-The multi-group version of Theil's entropy index \code{\link{HTheil}}
+The multigroup version of Theil's entropy index \code{\link{HTheil}}
 }
 \examples{
 x <- segdata@data[ ,1:2]
@@ -28,7 +28,7 @@ Theil H. (1972)  \emph{Statistical decomposition analysis: with
 applications in the social and administrative.} Amsterdam, North-Holland, 337 p.
 }
 \seealso{
-Multi-group indices: 
+multigroup indices: 
 \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 \code{\link{CMulti}}, \code{\link{RelDivers}}
 

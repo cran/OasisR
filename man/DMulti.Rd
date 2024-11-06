@@ -2,22 +2,22 @@
 % Please edit documentation in R/SegFunctions.R
 \name{DMulti}
 \alias{DMulti}
-\title{A function to compute multi-group dissimilarity index}
+\title{A function to compute multigroup dissimilarity index}
 \usage{
 DMulti(x)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 }
 \value{
-multi-group dissimilarity index
+The multigroup dissimilarity index value (numeric)
 }
 \description{
-Multi-group dissimilarity index, is a multi-group 
+multigroup dissimilarity index, is a multigroup 
 version of  Duncan's dissimilarity index (\code{\link{DIDuncan}})
 }
 \examples{
@@ -29,7 +29,7 @@ Sakoda J. N. (1981) \emph{A generalized Index of
 dissimilarity}. Demography,18, 245-250
 }
 \seealso{
-Multi-group indices: 
+multigroup indices: 
 \code{\link{PMulti}}, \code{\link{GiniMulti}},   
 \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 

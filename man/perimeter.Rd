@@ -7,22 +7,22 @@
 perimeter(spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
-\item{spatobj}{- a spatial object (class sf, sfc or sfg) containing 
+\item{spatobj}{a spatial object (class sf, sfc or sfg) containing 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile with the geographic information 
 is located.}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension) which contains the geographic information}
 }
 \value{
-A perimeter vector
+A vector containing the perimeter of spatial units
 }
 \description{
-The function is based on on \pkg{sf} and \pkg{lwgeom}  
-packages and can be used with a shape file or an R spatial object 
+The function is based on on \pkg{sf} package
+and can be used with a shape file or an R spatial object 
 (class sf, sfc or sfg).
 }
 \examples{

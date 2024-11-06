@@ -7,9 +7,6 @@
 \format{
 A 10x10 grid Spatial object and following data attributes:
 }
-\source{
-Hong S-Y (2014): R package 'seg', \href{https://sites.google.com/site/hongseongyun/seg/}{Hong's page}
-}
 \usage{
 data(segdata)
 }

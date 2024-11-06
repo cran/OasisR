@@ -2,19 +2,22 @@
 % Please edit documentation in R/SegFunctions.R
 \name{GiniMulti}
 \alias{GiniMulti}
-\title{A function to compute multi-group Gini index}
+\title{A function to compute multigroup Gini index}
 \usage{
 GiniMulti(x)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 }
+\value{
+The multigroup Gini index value (numeric)
+}
 \description{
-Multi-group Gini is a multi-group version of 
+multigroup Gini is a multigroup version of 
 the \code{\link{Gini}} index
 }
 \examples{
@@ -23,12 +26,12 @@ GiniMulti(x)
 }
 \references{
 Reardon S. F. (1998) \emph{Measures of racial 
-diversity and segregation in multi-group and hierarchical 
+diversity and segregation in multigroup and hierarchical 
 structured Populations}. Annual meeting of the Eastern 
 Sociological Society, Philadelphia
 }
 \seealso{
-Multi-group indices: 
+multigroup indices: 
 \code{\link{PMulti}}, \code{\link{GiniMulti}},   
 \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 

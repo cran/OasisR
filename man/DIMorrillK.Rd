@@ -8,38 +8,39 @@ DIMorrillK(x, ck = NULL, queen = FALSE, spatobj = NULL,
 folder = NULL, shape = NULL, K = 2, f = 'exp', beta = 1, prec = NULL)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 
-\item{ck}{- a list with contiguity matrix for each order (from 1 to K)}
+\item{ck}{a list with contiguity matrix for each order (from 1 to K)}
 
-\item{queen}{- logical parameter difining criteria used for contiguity 
+\item{queen}{logical parameter difining criteria used for contiguity 
 matrix computation, TRUE for queen, FALSE (by default) for rook}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
+\item{spatobj}{a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile is located on the drive}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension) .}
 
-\item{K}{- contiguity matrix order}
+\item{K}{contiguity matrix order}
 
-\item{f}{- the distance function, f = 'exp' (by default) for negative 
+\item{f}{the distance function, f = 'exp' (by default) for negative 
 exponential function and f = 'rec' for reciprocal function}
 
-\item{beta}{- distance decay parameter}
+\item{beta}{distance decay parameter}
 
-\item{prec}{- precision parameter. If not NULL, the function stop computing
+\item{prec}{precision parameter. If not NULL, the function stop computing
 the spatial interaction when the impact on the indice is bellow 10 ^ (-prec)}
 }
 \value{
-a matrix with Generalized Morrill's dissimilarity index values
+A matrix containing the Generalized Morrill's dissimilarity index 
+values for each pair of groups
 }
 \description{
 This function compute an adaptation of Morrill's dissimilarity 

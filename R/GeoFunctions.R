@@ -1,5 +1,4 @@
 library(sf)
-library(lwgeom)
 library(measurements)
 
 
@@ -13,14 +12,14 @@ library(measurements)
 #' A function to compute the spatial units' areas
 #'
 #' @usage area(spatobj = NULL, folder = NULL, shape = NULL)
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile with the geographic information 
 #' is located.
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (class sf, sfc or sfg) containing 
+#' @param spatobj a spatial object (class sf, sfc or sfg) containing 
 #' geographic information
-#' @return A area vector
+#' @return A vector containing the areas of spatial units
 #' @description The function is based on \pkg{sf} package and can be 
 #' used with a shape file or an R spatial object (class sf, sfc or sfg).
 #' @examples  area(segdata) 
@@ -46,12 +45,12 @@ area <- function (spatobj = NULL, folder = NULL, shape = NULL)
 #' A function to compute the contiguity matrix
 #'
 #' @usage contig(spatobj = NULL, folder = NULL, shape = NULL, queen = FALSE)
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile with the geographic information 
 #' is located.
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (class sf, sfc or sfg) containing 
+#' @param spatobj a spatial object (class sf, sfc or sfg) containing 
 #' geographic information
 #' @param queen = TRUE for queen criteria, FALSE (by default)  for rook criteria
 #' @return A first order contiguity (adjacency) matrix, where each 
@@ -84,16 +83,16 @@ contig <- function (spatobj = NULL, folder = NULL, shape = NULL, queen = FALSE)
 #' A function to compute the spatial units' perimeters
 #'
 #' @usage perimeter(spatobj = NULL, folder = NULL, shape = NULL)
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile with the geographic information 
 #' is located.
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (class sf, sfc or sfg) containing 
+#' @param spatobj a spatial object (class sf, sfc or sfg) containing 
 #' geographic information
-#' @return A perimeter vector 
-#' @description The function is based on on \pkg{sf} and \pkg{lwgeom}  
-#' packages and can be used with a shape file or an R spatial object 
+#' @return A vector containing the perimeter of spatial units
+#' @description The function is based on on \pkg{sf} package
+#' and can be used with a shape file or an R spatial object 
 #' (class sf, sfc or sfg).
 #' @examples  perimeter(segdata)  
 #' foldername <- system.file('extdata', package = 'OasisR')
@@ -108,7 +107,7 @@ contig <- function (spatobj = NULL, folder = NULL, shape = NULL, queen = FALSE)
 perimeter <- function (spatobj = NULL, folder = NULL, shape = NULL) 
 {
     if (is.null(spatobj)) spatobj <- sf::st_read(dsn = folder, layer = shape) else spatobj <- sf::st_as_sf(spatobj)
-    perim <- lwgeom::st_perimeter(spatobj)
+    perim <- sf::st_length(sf::st_cast(spatobj,"MULTILINESTRING"))
     units(perim) <- NULL
     return(perim)
 }
@@ -121,21 +120,21 @@ perimeter <- function (spatobj = NULL, folder = NULL, shape = NULL)
 #'
 #' @usage distance(spatobj = NULL, folder = NULL, shape = NULL,
 #' distin = 'm',  distout = 'm', diagval = '0')
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile with the geographic information 
 #' is located.
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (class sf, sfc or sfg) containing 
+#' @param spatobj a spatial object (class sf, sfc or sfg) containing 
 #' geographic information
-#' @param distin - input metric conversion, based on  \pkg{measurements} package and 
+#' @param distin input metric conversion, based on  \pkg{measurements} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{measurements} package and 
+#' @param distout output metric conversion, based on  \pkg{measurements} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param diagval -  the user has the choice of the definition of the diagonal: 
+#' @param diagval the user has the choice of the definition of the diagonal: 
 #' diagval = '0'  (by default) for an 'empty' diagonal and diagval = 'a'
 #' to compute  the diagonal as 0.6 * square root (spatial units area) (White, 1983) 
-#' @return A matrix with the distance between centroids
+#' @return A matrix with the distance between spatial units centroids
 #' @description The function is based on \pkg{sf} 
 #' package and can be used with a shape file or an R spatial object 
 #' (class sf, sfc or sfg).
@@ -170,23 +169,23 @@ distance <- function (spatobj = NULL, folder = NULL, shape = NULL, distin = "m",
 #'
 #' @usage distcenter(spatobj = NULL, folder = NULL, shape = NULL, 
 #' center = 1, distin = 'm',  distout = 'm')
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile with the geographic information 
 #' is located.
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (class sf, sfc or sfg) containing 
+#' @param spatobj a spatial object (class sf, sfc or sfg) containing 
 #' geographic information
-#' @param center - the row number of the center
-#' @param distin - input metric conversion, based on  \pkg{measurements} package and 
+#' @param center the row number of the center
+#' @param distin input metric conversion, based on  \pkg{measurements} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{measurements} package and 
+#' @param distout output metric conversion, based on  \pkg{measurements} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
 #' @return A vector with the distance to the center's centroid
 #' @description The function is based on \pkg{sf} 
 #' package and it can be used with a shape file or an R 
 #' spatial object (class sf, sfc or sfg).
-#' @examples  distcenter(segdata, center = 46) 
+#' @examples distcenter(segdata, center = 46) 
 #' foldername <- system.file('extdata', package = 'OasisR')
 #' shapename <- 'segdata'
 #' distcenter(folder = foldername, shape = shapename, center = 19)
@@ -213,12 +212,12 @@ distcenter <- function (spatobj = NULL, folder = NULL, shape = NULL, center = 1,
 #' A function to compute the matrix of common boundaries
 #'
 #' @usage boundaries(spatobj = NULL, folder = NULL, shape = NULL)
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile with the geographic information 
 #' is located.
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension) which contains the geographic information
-#' @param spatobj - a spatial object (class sf, sfc or sfg) containing 
+#' @param spatobj a spatial object (class sf, sfc or sfg) containing 
 #' geographic information
 #' @return A common boundaries matrix
 #' @description The function is based on \pkg{sf}  

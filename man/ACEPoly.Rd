@@ -2,38 +2,38 @@
 % Please edit documentation in R/SegFunctions.R
 \name{ACEPoly}
 \alias{ACEPoly}
-\title{A function to compute Massey's Polycentric Absolute Centralisation Index}
+\title{A function to compute the Massey and Denton Polycentric Absolute Centralisation Index}
 \usage{
 ACEPoly(x, a = NULL, dc = NULL, center = 1, 
 spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 
-\item{a}{- a numeric vector containing spatial unit areas}
+\item{a}{a numeric vector containing spatial unit areas}
 
-\item{dc}{- a numeric matrix containing the distances between spatial units
+\item{dc}{a numeric matrix containing the distances between spatial units
 centroids and the central spatial units}
 
-\item{center}{- a numeric vector giving the number of the spatial units that 
+\item{center}{a numeric vector giving the number of the spatial units that 
 represent the centers in the table}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
+\item{spatobj}{a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile is located on the drive}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension).}
 }
 \value{
-a numeric vector containing asolute centralisation index value for 
-each group
+A numeric vector containing the Massey and Denton absolute 
+polycentric centralisation index values for each group
 }
 \description{
 The absolute centralization index measures a group
@@ -68,6 +68,10 @@ ACE(x, a = ar, dc = distmin)
 Massey D. S. and Denton N. A. (1988) \emph{
 The dimensions of residential segregation}. 
 Social Forces 67(2),  pp. 281-315.
+
+Tivadar M. (2019) 
+\emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+Journal of Statistical Software,  89 (7), pp 1-39
 }
 \seealso{
 \code{\link{ACE}}, \code{\link{RCE}},

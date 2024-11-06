@@ -2,23 +2,23 @@
 % Please edit documentation in R/SegFunctions.R
 \name{PMulti}
 \alias{PMulti}
-\title{A function to compute multi-group normalised exposure (PMulti)}
+\title{A function to compute multigroup normalised exposure (PMulti)}
 \usage{
 PMulti(x)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 }
 \value{
-multi-group normalised isolation index
+The multigroup normalised isolation index value (numeric)
 }
 \description{
-The multi-group normalised isolation index is a 
-multi-group version of the isolation index (\code{\link{xPx}})
+The multigroup normalised isolation index is a 
+multigroup version of the isolation index (\code{\link{xPx}})
 }
 \examples{
 x <- segdata@data[ ,1:2]
@@ -29,10 +29,10 @@ James, F. J. (1986) \emph{A New Generalized 'Exposure-Based'
 Segregation Index}. Sociological Methods and Research, 14, pp. 301-316
 
 Reardon S. F. and G. Firebaugh (2002) \emph{Measures of 
-multi-group Segregation}. Sociological Methodology, 32(1), pp 33-67
+multigroup Segregation}. Sociological Methodology, 32(1), pp 33-67
 }
 \seealso{
-Multi-group indices: 
+multigroup indices: 
 \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 

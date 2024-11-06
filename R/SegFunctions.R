@@ -1,4 +1,3 @@
-library(seg)
 library(outliers)
 library(spdep)
 
@@ -17,12 +16,12 @@ library(spdep)
 #' A function to compute Duncan & Duncan segregation index
 #'
 #' @usage ISDuncan (x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return a numeric vector with values of the Duncan's segregation index 
+#' @return A numeric vector containing Duncan's segregation index values 
 #' for each group
 #' @references Duncan O. D. and Duncan B. (1955) \emph{ 
 #' Residential Distribution and Occupational Stratification}. 
@@ -57,14 +56,13 @@ ISDuncan <- function(x) {
 #' A function to compute Atkinson segregation index
 #'
 #' @usage Atkinson (x, delta = 0.5) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param delta - an inequality aversion parameter
-#' @return a numeric vector containing the Atkinson's segregation index value for 
-#' each group 
+#' @param delta an inequality aversion parameter
+#' @return A numeric vector containing Atkinson's segregation index values for each group
 #' @references James, D. and K. E. Taeuber (1985)  \emph{Measures 
 #' of Segregation}. Sociological Methodology 15, pp. 1-32
 #' @description The spatial version of Atkinson inequality index is based on 
@@ -100,13 +98,12 @@ Atkinson <- function(x, delta = 0.5) {
 #' A function to compute Theil's entropy segregation index
 #'
 #' @usage HTheil (x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return a numeric vector containing Theils's entropy index value for 
-#' each group 
+#' @return A numeric vector containing Theils's segregation index values for each group
 #' @references Theil H. (1972)  \emph{Statistical decomposition analysis: with 
 #' applications in the social and administrative.} Amsterdam, North-Holland, 337 p.
 #' @description The entropy index (also called information index) measures
@@ -148,30 +145,34 @@ HTheil <- function(x) {
 #'
 #' @usage ISMorrillK(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NULL, 
 #' shape = NULL, K = 2, f = 'exp', beta = 1, prec = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greaterTR than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param ck - a list containing contiguity matrices coresponding to each order 
+#' @param ck  a list containing contiguity matrices coresponding to each order 
 #' (from 1 to K)
-#' @param queen - logical parameter defining criteria used for contiguity 
+#' @param queen logical parameter defining criteria used for contiguity 
 #' matrix computation, TRUE for queen, FALSE (by default) for rook 
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the driveis located.
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @param K - the order of the contiguity matrix
-#' @param f - the distance function, f = 'exp' (by default) for negative 
+#' @param K the order of the contiguity matrix
+#' @param f the distance function, f = 'exp' (by default) for negative 
 #' exponential function and f = 'rec' for reciprocal function
-#' @param prec - precision parameter. If not NULL, the function stop computing
+#' @param prec precision parameter. If not NULL, the function stop computing
 #' the spatial interaction when the impact on the indice is bellow 10 ^ (-prec)
-#' @param beta - distance decay parameter
-#' @return a matrix with Generalized Morrill's dissimilarity index values 
+#' @param beta distance decay parameter
+#' @return A numeric vector containing Generalized Morrill's segregation index 
+#' values for each group
 #' @references Morrill B. (1991) \emph{On the measure of geographic 
 #' segregation}. Geography research forum, 11, pp. 25-36.
+#' @references Tivadar M. (2019) 
+#' \emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+#' Journal of Statistical Software,  89 (7), pp 1-39
 #' @description This function computes an adaptation of Morrill's segregation 
 #' index which takes into account the interactions between spatial units 
 #' defined by K-th ordered contiguity matrix. The index can be used in two   
@@ -238,23 +239,23 @@ ISMorrillK <- function(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NUL
 #'
 #' @usage ISMorrill(x, c = NULL, queen = FALSE, 
 #' spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param c - a standard binary contiguity (adjacency) symmetric matrix where 
+#' @param c a standard binary contiguity (adjacency) symmetric matrix where 
 #' each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 #' units are adjacent, and 0 otherwise.
-#' @param queen - a logical parameter difining criteria used for the contiguity 
+#' @param queen a logical parameter difining criteria used for the contiguity 
 #' matrix computation, TRUE for queen, FALSE (by default) for rook 
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension) .
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing the Morrill's segregation index value for 
+#' @return A numeric vector containing Morrill's segregation index values for 
 #' each group
 #' @examples x <- segdata@data[ ,1:2]
 #' contiguity <- contig(segdata)
@@ -311,31 +312,30 @@ ISMorrill <- function(x, c = NULL, queen = FALSE, spatobj = NULL, folder = NULL,
 #'
 #' @usage ISWong(x, b = NULL,  a = NULL, p = NULL, ptype = 'int', variant = 's', 
 #' spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' totals because this will be interpreted as a group
-#' @param b - a common boundaries matrix where each element \emph{Bij} 
+#' @param b a common boundaries matrix where each element \emph{Bij} 
 #' equals the shared boundary of \emph{i}-th and \emph{j}-th spatial units.
-#' @param p - a numeric vector containing spatial units perimeters.
-#' @param ptype - a string variable giving two options for perimeter calculation
+#' @param p a numeric vector containing spatial units perimeters.
+#' @param ptype a string variable giving two options for perimeter calculation
 #' when a spatial object or shapefile is provided: 'int' to use only interior
 #' boundaries of spatial units, and 'all' to use entire boundaries, 
 #' including the boundaries to the exterior
-#' @param a - a numeric vector containing spatial unit areas
-#' @param variant - a character variable that allows to choose the index version: 
+#' @param a a numeric vector containing spatial unit areas
+#' @param variant a character variable that allows to choose the index version: 
 #' variant = 's' for the index adjusted for contiguous spatial/organizational units
 #' boundary lengths and perimeter/area ratio (by default) and variant = 'w' 
 #' for the version based only on shared boundaries length
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing the Wong's segregation index value for 
-#' each group
+#' @return A numeric vector containing Wong's segregation index values for each group
 #' @examples x <- segdata@data[ ,1:2]
 #' bound <- boundaries(segdata)
 #' per <- perimeter(segdata)
@@ -420,13 +420,12 @@ ISWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
 #' A function to compute Gorard's segregation index 
 #'
 #' @usage Gorard(x)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' totals because this will be interpreted as a group
-#' @return a numeric vector containing the Gorard's segregation index value for 
-#' each group
+#' @return A numeric vector containing Gorard's segregation index values for each group
 #' @examples x <- segdata@data[ ,1:2]
 #' Gorard(x)
 #' @references Gorard S. (2000) \emph{Education and Social Justice}. 
@@ -452,22 +451,21 @@ Gorard <- function(x) {
   return(round(result, 4))
 }
 
-#' A function to compute Spatial Gini's segregation index 
+#' A function to compute Gini's segregation index 
 #'
 #' @usage Gini(x)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return a numeric vector containing the Gini's segregation index value for 
-#' each group
+#' @return A numeric vector containing Gini's segregation index values for each group
 #' @examples x <- segdata@data[ ,1:2]
 #' Gini(x)
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A Methodological 
 #' Analysis of Segregation Indexes}. American Sociological Review 41, 
 #' pp. 210-217
-#' @description The spatial version of the Gini index can be derived from 
+#' @description The segregation version of the Gini index can be derived from 
 #' the Lorenz curve as the area between the segregation curve and the 
 #' diagonal. 
 #' @seealso Other one-group  evenness indices: 
@@ -497,20 +495,24 @@ Gini <- function(x) {
 
 
 
-#' A function to compute Spatial Gini's between group index 
+#' A function to compute the between group version of segregation Gini index 
 #'
 #' @usage Gini2(x)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return a matrix with between group Gini index 
+#' @return A matrix containing the between-group Gini index values for 
+#' each pair of groups
 #' @examples x <- segdata@data[ ,1:2]
 #' Gini2(x)
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A Methodological 
 #' Analysis of Segregation Indexes}. American Sociological Review 41, 
 #' pp. 210-217
+#' @references Tivadar M. (2019) 
+#' \emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+#' Journal of Statistical Software,  89 (7), pp 1-39
 #' @description The between group version of Gini index is obtained 
 #' by computing the index for a subpopulation formed by each pair of groups 
 #' @seealso Other one-group  evenness indices: 
@@ -536,15 +538,16 @@ Gini2 <- function(x) {
 }
 
 
-#' A function to compute Duncan dissimilarity segregation index
+#' A function to compute Duncan's dissimilarity segregation index
 #'
 #' @usage DIDuncan(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return a matrix containing dissimilarity index values
+#' @return A matrix containing the dissimilarity index values for each 
+#' pair of groups
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A Methodological 
 #' Analysis of Segregation Indexes}. American Sociological Review 41, 
 #' pp. 210-217
@@ -583,23 +586,24 @@ DIDuncan <- function(x) {
 #' A function to compute Morrill's dissimilarity index
 #'
 #' @usage DIMorrill(x, c = NULL, queen = FALSE, spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param c - a standard binary contiguity (adjacency) symmetric matrix where 
+#' @param c a standard binary contiguity (adjacency) symmetric matrix where 
 #' each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 #' units are adjacent, and 0 otherwise.
-#' @param queen - a logical parameter difining criteria used for contiguity 
+#' @param queen a logical parameter difining criteria used for contiguity 
 #' matrix computation, TRUE for queen, FALSE (by default) for rook 
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension) .
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a matrix with Morrill's dissimilarity index values 
+#' @return A matrix containing the Morrill's dissimilarity index values 
+#' for each pair of groups
 #' @references Morrill B. (1991) \emph{On the measure of geographic 
 #' segregation}. Geography research forum, 11, pp. 25-36.
 #' @description Morrill's dissimilarity index is a development of 
@@ -654,27 +658,28 @@ DIMorrill <- function(x, c = NULL, queen = FALSE, spatobj = NULL, folder = NULL,
 #'
 #' @usage DIMorrillK(x, ck = NULL, queen = FALSE, spatobj = NULL, 
 #' folder = NULL, shape = NULL, K = 2, f = 'exp', beta = 1, prec = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param ck - a list with contiguity matrix for each order (from 1 to K)
-#' @param queen - logical parameter difining criteria used for contiguity 
+#' @param ck  a list with contiguity matrix for each order (from 1 to K)
+#' @param queen logical parameter difining criteria used for contiguity 
 #' matrix computation, TRUE for queen, FALSE (by default) for rook 
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension) .
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @param K - contiguity matrix order
-#' @param f - the distance function, f = 'exp' (by default) for negative 
+#' @param K contiguity matrix order
+#' @param f the distance function, f = 'exp' (by default) for negative 
 #' exponential function and f = 'rec' for reciprocal function
-#' @param beta - distance decay parameter
-#' @param prec - precision parameter. If not NULL, the function stop computing
+#' @param beta distance decay parameter
+#' @param prec precision parameter. If not NULL, the function stop computing
 #' the spatial interaction when the impact on the indice is bellow 10 ^ (-prec)
-#' @return a matrix with Generalized Morrill's dissimilarity index values 
+#' @return A matrix containing the Generalized Morrill's dissimilarity index 
+#' values for each pair of groups
 #' @references Morrill B. (1991) \emph{On the measure of geographic 
 #' segregation}. Geography research forum, 11, pp. 25-36.
 #' @description This function compute an adaptation of Morrill's dissimilarity 
@@ -756,30 +761,31 @@ DIMorrillK <- function(x, ck = NULL, queen = FALSE, spatobj = NULL, folder = NUL
 #'
 #' @usage DIWong(x, b = NULL,  a = NULL, p = NULL, ptype = 'int', variant = 's', 
 #' spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' totals because this will be interpreted as a group
-#' @param b - a common boundaries matrix where each element \emph{Bij} 
+#' @param b a common boundaries matrix where each element \emph{Bij} 
 #' equals the shared boundary of \emph{i}-th and \emph{j}-th spatial units.
-#' @param p - a numeric vector containing spatial units perimeters.
-#' @param ptype - a string variable giving two options for perimeter calculation
+#' @param p a numeric vector containing spatial units perimeters.
+#' @param ptype a string variable giving two options for perimeter calculation
 #' when a spatial object or shapefile is provided: 'int' to use only interior
 #' borders of spatial units, and 'all' to use entire borders, including to
 #' the exterior of the area
-#' @param a - a numeric vector containing spatial unit areas
-#' @param variant - a character variable that allows to choose the index version: 
+#' @param a a numeric vector containing spatial unit areas
+#' @param variant a character variable that allows to choose the index version: 
 #' variant = 's' for the dissimilarity index adjusted for contiguous spatial units
 #' boundary lengths and perimeter/area ratio (by default) and variant = 'w' 
 #' for the version without perimeter/area ratio
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a matrix containing Wong's dissimilarity index values 
+#' @return A matrix containing the Wong's dissimilarity index values 
+#' for each pair of groups
 #' @references Wong D. W. S. (1993) \emph{Spatial Indices of Segregation}. 
 #' Urban Studies, 30 (3), pp. 559-572.
 #' @description Wong's dissimilarity index is a development of 
@@ -862,23 +868,22 @@ DIWong <- function(x, b = NULL, a = NULL, p = NULL, ptype = "int", variant = "s"
 
 #################### 
 
-# EXPOSITION INDEXES
+# EXPOSURE INDEXES
 
 #################### 
 
 #' A function to compute Bell's isolation index (xPx)
 #'
 #' @usage xPx(x, exact = FALSE) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param exact - a logical variable to specifiy the index version: 
+#' @param exact a logical variable to specifiy the index version: 
 #' exact = FALSE (by default) for the approximate version of the index, 
 #' and exact = TRUE for the exact version
-#' @return a numeric vector containing the isolation index value for 
-#' each group
+#' @return A numeric vector containing the isolation index values for each group
 #' @references Bell W. (1954) \emph{A probability model for the 
 #' measurement of ecological segregation}. Social Forces 32(4), 
 #' pp. 357-364
@@ -912,30 +917,30 @@ xPx <- function(x, exact = FALSE) {
 #'
 #' @usage DPxx(x, d = NULL, distin = 'm',  distout = 'm', diagval = '0', beta = 1, 
 #' spatobj = NULL, folder = NULL, shape = NULL) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param d - a matrix of the distances between spatial unit centroids
-#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' @param d a matrix of the distances between spatial unit centroids
+#' @param distin input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' @param distout output metric conversion, based on  \pkg{bink} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param diagval - when providing a spatial object or a shape file, 
+#' @param diagval when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
 #' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) 
 #' (White, 1983) 
-#' @param beta - distance decay parameter
-#' @param folder - a character vector with the folder (directory) 
+#' @param beta distance decay parameter
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing the distance-decay isolation index 
-#' value for each group
+#' @return A numeric vector containing the distance-decay isolation index values 
+#' for each group
 #' @references Morgan, B. S. (1983) \emph{A Distance-Decay Based Interaction 
 #' Index to Measure Residential Segregation}. Area 15(3),  pp. 211-217.
 #' @description The distance decay isolation index, DPxx, is a spatial
@@ -988,13 +993,13 @@ DPxx <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", beta =
 #' A function to compute adjusted isolation index (Eta2)
 #'
 #' @usage Eta2(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return a numeric vector containing the adjusted isolation index value for 
-#' each group
+#' @return A numeric vector containing the adjusted isolation index values 
+#' for each group
 #' @references Bell W. (1954) \emph{A probability model for the 
 #' measurement of ecological segregation}. Social Forces 32(4), 
 #' pp. 357-364
@@ -1037,15 +1042,16 @@ Eta2 <- function(x) {
 #' A function to compute interaction index (xPy)
 #'
 #' @usage xPy(x, exact = FALSE) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param exact - a logical variable to specifiy the index version: 
+#' @param exact a logical variable to specifiy the index version: 
 #' exact = FALSE (by default) for the approximate version of the index, 
 #' and exact = TRUE for the exact version
-#' @return a matrix with interaction index values
+#' @return A matrix containing the interaction index values for each 
+#' pair of groups
 #' @references Bell W. (1954) \emph{A probability model for the 
 #' measurement of ecological segregation}. Social Forces 32(4),
 #'  pp. 357-364
@@ -1070,7 +1076,7 @@ xPy <- function(x, exact = FALSE) {
     t <- rowSums(x)
     if (exact == FALSE) 
         for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) result[k1, k2] <- sum(x[, k1]/varTotal[k1] * x[, k2]/t)
-    if (exact == T) 
+    if (exact == TRUE) 
         for (k1 in 1:ncol(x)) for (k2 in 1:ncol(x)) if (k1 != k2) {
             result[k1, k2] <- sum(x[, k1]/varTotal[k1] * x[, k2]/(t - 1))
         } else result[k1, k2] <- sum(x[, k1]/varTotal[k1] * (x[, k2] - 1)/(t - 1))
@@ -1085,29 +1091,29 @@ xPy <- function(x, exact = FALSE) {
 #'
 #' @usage DPxy(x, d = NULL, distin = 'm',  distout = 'm', diagval = '0', 
 #' beta = 1, spatobj = NULL, folder = NULL, shape = NULL) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param d - a matrix of the distances between spatial unit centroids
-#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' @param d a matrix of the distances between spatial unit centroids
+#' @param distin input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' @param distout output metric conversion, based on  \pkg{bink} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param diagval - when providing a spatial object or a shape file, 
+#' @param diagval when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
 #' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
-#' @param beta - distance decay parameter
-#' @param folder - a character vector with the folder (directory) 
+#' @param beta distance decay parameter
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric matrix containing the distance-decay isolation index 
-#' values
+#' @return A matrix containing the distance-decay interaction index values 
+#' for each pair of groups
 #' @references Morgan, B. S. (1983) \emph{An Alternate Approach to the 
 #' Development of a Distance-Based Measure of Racial Segregation}. 
 #' American Journal of Sociology 88,  pp. 1237-1249.
@@ -1155,56 +1161,6 @@ DPxy <- function(x, d = NULL, distin = "m", distout = "m", diagval = "0", beta =
 }
 
 
-#' A function adapted from seg package to compute spatial exposure/isolation indices
-#'
-#' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a group within 
-#' spatial units. The number of columns should be greater than 1 (at least 2 
-#' groups are required). You should not include a column with total 
-#' population, because this will be interpreted as a group.
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
-#' geographic information
-#' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) .
-#' @param ... - other parameters of spseg function from seg package.
-#' @return A matrix with Reardon's spatial exposure/isolation indices
-#' @references Reardon, S. F. and O'Sullivan, D. (2004) 
-#' \emph{Measures of spatial segregation}.
-#' Sociological Methodology, 34, 121-162.
-#' @references Hong S.Y., O'Sullivan D., Sadahiro Y. (2014) 
-#' \emph{Implementing Spatial Segregation Measures in R'}.
-#' PLoS ONE, 9(11)
-#' @description  A function adapted from seg package (Hong et al. 2014) 
-#' to compute spatial exposure/isolation indices developed by 
-#' Reardon and O'Sullivan (2004)
-#' @examples x <- segdata@data[ ,1:2]
-#' foldername <- system.file('extdata', package = 'OasisR')
-#' shapename <- 'segdata'
-#' 
-#' spatinteract(x, spatobj = segdata)
-#' 
-#' spatinteract(x, folder = foldername, shape = shapename) 
-#' 
-#' @seealso Multi-group indices: 
-#' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
-#' \code{\link{HMulti}}, \code{\link{RelDivers}}
-#' @seealso  Social diversity indices: 
-#' \code{\link{HShannon}}, \code{\link{NShannon}}, 
-#' \code{\link{ISimpson}}, 
-#' @export 
-
-
-spatinteract <- function(x, spatobj = NULL, folder = NULL, shape = NULL, ...) {
-    
-    if (is.null(spatobj) & !is.null(folder) & !is.null(shape)) 
-        spatobj <- sf::st_read(dsn = folder, layer = shape)
-    if (class(spatobj)[1]!="SpatialPolygonsDataFrame") spatobj <- sf::as_Spatial(spatobj)
-    result <- seg::spseg(spatobj, x, ...)
-    return(round(result@p, 4))
-}
-
 
 
 ####################### 
@@ -1217,20 +1173,19 @@ spatinteract <- function(x, spatobj = NULL, folder = NULL, shape = NULL, ...) {
 #' A function to compute Delta index
 #'
 #' @usage Delta(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param a - a numeric vector containing spatial unit areas
-#' @param folder - a character vector with the folder (directory) 
+#' @param a a numeric vector containing spatial unit areas
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing Delta index value for 
-#' each group
+#' @return A numeric vector containing the Delta index values for each group
 #' @references Duncan O. D., Cuzzoert  and Duncan B. (1961) 
 #' \emph{Problems in analyzing areal data}. Statistical geography, 
 #' Glencoe, Illinois: The free press of Glencoe
@@ -1274,20 +1229,20 @@ Delta <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
 #' A function to compute Absolute Concentration index (ACO)
 #'
 #' @usage ACO(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param a - a numeric vector containing spatial unit areas
-#' @param folder - a character vector with the folder (directory) 
+#' @param a a numeric vector containing spatial unit areas
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing Absolute Concentration index value for 
-#' each group
+#' @return A numeric vector containing the Absolute Concentration index 
+#' values for each group
 #' @references Massey D. S. and Denton N. A. (1988) \emph{
 #' The dimensions of residential segregation}. 
 #' Social Forces 67(2),  pp. 281-315.
@@ -1358,19 +1313,20 @@ ACO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
 #' A function to compute Relative Concentration index (RCO)
 #'
 #' @usage RCO(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param a - a numeric vector containing spatial unit areas
-#' @param folder - a character vector with the folder (directory) 
+#' @param a a numeric vector containing spatial unit areas
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a matrix containing relative concentration index values
+#' @return A matrix containing the relative concentration index values 
+#' for each pair of groups
 #' @references Massey D. S. and Denton N. A. (1988) \emph{
 #' The dimensions of residential segregation}. 
 #' Social Forces 67(2),  pp. 281-315.
@@ -1447,37 +1403,37 @@ RCO <- function(x, a = NULL, spatobj = NULL, folder = NULL, shape = NULL) {
 #'
 #' @usage ACL(x, spatmat = 'c', c = NULL, queen = FALSE, d = NULL, distin = 'm',  
 #' distout = 'm', diagval = '0', beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param spatmat - the method used for spatial calculations: 'c' for the 
+#' @param spatmat the method used for spatial calculations: 'c' for the 
 #' contiguity matrix (by default) or any other user spatial interaction matrix 
 #' and 'd' for the inverse exponential function of the distance. 
-#' @param c - a modified binary contiguity (adjacency) symmetric matrix where 
+#' @param c a modified binary contiguity (adjacency) symmetric matrix where 
 #' each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 #' units are adjacent or identical, and 0 otherwise.
-#' @param d - a matrix of the distances between spatial unit centroids
-#' @param queen - logical parameter difining criteria used for contiguity 
+#' @param d a matrix of the distances between spatial unit centroids
+#' @param queen logical parameter difining criteria used for contiguity 
 #' matrix computation, TRUE for queen, FALSE (by default) for rook 
-#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' @param distin input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' @param distout output metric conversion, based on  \pkg{bink} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param diagval - when providing a spatial object or a shape file, 
+#' @param diagval when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
 #' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
-#' @param beta - distance decay parameter
-#' @param folder - a character vector with the folder (directory) 
+#' @param beta distance decay parameter
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing Absolute Clustering index value for 
-#' each group
+#' @return A numeric vector containing the Absolute Clustering index values 
+#' for each group
 #' @references Massey D. S. and Denton N. A. (1988) \emph{
 #' The dimensions of residential segregation}. 
 #' Social Forces 67(2),  pp. 281-315.
@@ -1548,31 +1504,30 @@ ACL <- function(x, spatmat = "c", c = NULL, queen = FALSE, d = NULL, distin = "m
 #'
 #' @usage Pxx(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
 #' beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param d - a matrix of the distances between spatial unit centroids
-#' @param fdist - the method used for distance interaction matrix: 
+#' @param d a matrix of the distances between spatial unit centroids
+#' @param fdist the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
-#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' @param distin input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' @param distout output metric conversion, based on  \pkg{bink} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param diagval - when providing a spatial object or a shape file, 
+#' @param diagval when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
 #' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983)
-#' @param beta - distance decay parameter 
-#' @param folder - a character vector with the folder (directory) 
+#' @param beta distance decay parameter 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing Pxx index value for 
-#' each group
+#' @return A numeric vector containing the Pxx index values for each group
 #' @references White M. J. (1983) \emph{The Measurement of Spatial 
 #' Segregation}. American Journal of Sociology, 88, p. 1008-1019
 #' @description  Mean proximity, Pxx, computes the mean distance 
@@ -1627,33 +1582,33 @@ Pxx <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #'
 #' @usage Poo(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
 #' itype = 'multi', beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param d - a matrix of the distances between spatial unit centroids
-#' @param fdist - the method used for distance interaction matrix: 
+#' @param d a matrix of the distances between spatial unit centroids
+#' @param fdist the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
-#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' @param distin input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' @param distout output metric conversion, based on  \pkg{bink} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param diagval - when providing a spatial object or a shape file, 
+#' @param diagval when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
 #' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
-#' @param itype - a character string defining the index type:
-#' itype = 'multi' (by default) for the multi-group index (White, 1986)
+#' @param itype a character string defining the index type:
+#' itype = 'multi' (by default) for the multigroup index (White, 1986)
 #' or itype = 'between' for the between groups version (White, 1983)
-#' @param beta - distance decay parameter
-#' @param folder - a character vector with the folder (directory) 
+#' @param beta distance decay parameter
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return Poo index value(s) 
+#' @return The Poo index value (numeric) 
 #' @references White M. J. (1983) \emph{The Measurement of Spatial 
 #' Segregation}. American Journal of Sociology, 88, p. 1008-1019
 #' @references  White, M. J. (1986) \emph{Segregation and Diversity Measures 
@@ -1711,30 +1666,30 @@ Poo <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #'
 #' @usage Pxy(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
 #' beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param d - a matrix of the distances between spatial unit centroids
-#' @param fdist - the method used for distance interaction matrix: 
+#' @param d a matrix of the distances between spatial unit centroids
+#' @param fdist the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
-#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' @param distin input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' @param distout output metric conversion, based on  \pkg{bink} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param diagval - when providing a spatial object or a shape file, 
+#' @param diagval when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
 #' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
-#' @param beta - distance decay parameter
-#' @param folder - a character vector with the folder (directory) 
+#' @param beta distance decay parameter
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a matrix containing Pxy index values for each pair of groups
+#' @return A matrix containing the Pxy index values for each pair of groups
 #' @references White M. J. (1983) \emph{The Measurement of 
 #' Spatial Segregation}. American Journal of Sociology, 88, p. 1008-1019
 #' @description Mean proximity, Pxy, computes the mean distance 
@@ -1783,34 +1738,38 @@ Pxy <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #'
 #' @usage SP(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
 #' itype = 'multi', beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param d - a matrix of the distances between spatial unit centroids
-#' @param fdist - the method used for distance interaction matrix: 
+#' @param d a matrix of the distances between spatial unit centroids
+#' @param fdist the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
-#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' @param distin input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' @param distout output metric conversion, based on  \pkg{bink} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param diagval - when providing a spatial object or a shape file, 
+#' @param diagval when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
 #' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
-#' @param itype - a character string defining the index type:
-#' itype = 'multi' (by default) for the multi-group index (White, 1986),
+#' @param itype a character string defining the index type:
+#' itype = 'multi' (by default) for the multigroup index (White, 1986),
 #' itype = 'between' for the between groups version (White, 1983), or
 #' itype = 'one' for the one-group version (Apparicio et al, 2008)
-#' @param beta - distance decay parameter
-#' @param folder - a character vector with the folder (directory) 
+#' @param beta distance decay parameter
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return spatial proximity index value(s) 
+#' @return If itype = 'multi' the function returns the multigroup
+#' spatial proximity index value (numeric). If itype = 'between', the 
+#' function returns a matrix containing the between group values of the 
+#' index. If itype = 'one', the function's  output is a numeric vector 
+#' containing the index values for each group 
 #' @references White M. J. (1983) \emph{The Measurement of Spatial 
 #' Segregation}. American Journal of Sociology, 88, p. 1008-1019.
 #' @references  White, M. J. (1986) \emph{Segregation and Diversity Measures 
@@ -1884,30 +1843,31 @@ SP <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval = 
 #'
 #' @usage RCL(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0', 
 #' beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param d - a matrix of the distances between spatial unit centroids
-#' @param fdist - the method used for distance interaction matrix: 
+#' @param d a matrix of the distances between spatial unit centroids
+#' @param fdist the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
-#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' @param distin input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' @param distout output metric conversion, based on  \pkg{bink} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param diagval - when providing a spatial object or a shape file, 
+#' @param diagval when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
 #' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983) 
-#' @param beta - distance decay parameter
-#' @param folder - a character vector with the folder (directory) 
+#' @param beta distance decay parameter
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a matrix containing relative clustering index values for each pair of groups
+#' @return A matrix containing the relative clustering index values for 
+#' each pair of groups
 #' @references Massey D. S. and Denton N. A. (1988) \emph{The dimensions 
 #' of residential segregation}. Social Forces 67(2),  pp. 281-315.
 #' @description The relative clustering index, RCL, compares the mean 
@@ -1968,23 +1928,23 @@ RCL <- function(x, d = NULL, fdist = "e", distin = "m", distout = "m", diagval =
 #'
 #' @usage ACEDuncan(x, dc = NULL, center = 1, 
 #' spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param dc - a numeric vector containing the distances between spatial units
+#' @param dc a numeric vector containing the distances between spatial units
 #' centroids and the central spatial unit
-#' @param center - a numeric value giving the number of the spatial unit that 
+#' @param center a numeric value giving the number of the spatial unit that 
 #' represents the center in the table
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing Duncan's asolute centralisation index 
-#' value for each group
+#' @return A numeric vector containing the Duncan's absolute centralisation index 
+#' values for each group
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A 
 #' Methodological Analysis of Segregation Indexes}. 
 #' American Sociological Review 41, pp. 210-217
@@ -2033,26 +1993,29 @@ ACEDuncan <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, s
 #'
 #' @usage ACEDuncanPoly(x, dc = NULL, center = 1, 
 #' spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param dc - a numeric matrix/vector containing the distances between spatial units
+#' @param dc a numeric matrix/vector containing the distances between spatial units
 #' centroids and the central spatial unit(s). 
-#' @param center - a numeric vector giving the number of the spatial/organizational units that 
+#' @param center a numeric vector giving the number of the spatial/organizational units that 
 #' represents the centers in the table
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing Duncan's asolute centralisation index 
-#' value for each group
+#' @return A numeric vector containing the Duncan's absolute polycentric 
+#' centralisation index value for each group
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A 
 #' Methodological Analysis of Segregation Indexes}. 
 #' American Sociological Review 41, pp. 210-217
+#' @references Tivadar M. (2019) 
+#' \emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+#' Journal of Statistical Software,  89 (7), pp 1-39
 #' @description Polycentric version of Duncan's absolute centralization index. 
 #' The function can be used in two ways: to provide a vector containing 
 #' the distances between spatial/organizational unit centroids or a 
@@ -2105,31 +2068,35 @@ ACEDuncanPoly <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NUL
 #'
 #' @usage ACEDuncanPolyK(x, dc = NULL,  K = NULL, kdist = NULL, center = 1,
 #'                 spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param dc - a numeric matrix/vector containing the distances between spatial units
+#' @param dc a numeric matrix/vector containing the distances between spatial units
 #' centroids and the central spatial unit(s). 
-#' @param center - a numeric vector  giving the number of the spatial units that 
+#' @param center a numeric vector  giving the number of the spatial units that 
 #' represent the centers in the table
-#' @param K - the number of neighbourhoods under the influence of a center
-#' @param kdist - the maximal distance that defines the neighbourhoods influenced
+#' @param K the number of neighbourhoods under the influence of a center
+#' @param kdist the maximal distance that defines the neighbourhoods influenced
 #' by a center
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a matrix containing relative centralisation index values 
+#' @return A numeric vector containing the Duncan's constrainted absolute 
+#' centralisation index value for each group
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A 
 #' Methodological Analysis of Segregation Indexes}. 
 #' American Sociological Review 41, pp. 210-217
 #' @references Folch D.C and Rey S. J (2016) \emph{The centralization index: 
 #' A measure of local spatial segregation}. Papers in Regional 
 #' Science 95 (3), pp. 555-576
+#' @references Tivadar M. (2019) 
+#' \emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+#' Journal of Statistical Software,  89 (7), pp 1-39
 #' @description Constrained (local) version of Duncan's centralization index.
 #' The function can be used in two ways: to provide a matrix containing 
 #' the distances between spatial/organizational unit centroids or a external geographic 
@@ -2179,25 +2146,26 @@ ACEDuncanPolyK <- function(x, dc = NULL, K = NULL, kdist = NULL, center = 1, spa
 
 
 
-#' A function to compute Relatice Centralisation Index (RCE)
+#' A function to compute Duncan's Relative Centralisation Index (RCE)
 #'
 #' @usage RCE(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param dc - a numeric vector containing the distances between spatial units
+#' @param dc a numeric vector containing the distances between spatial units
 #' centroids and the central spatial unit
-#' @param center - a numeric value giving the number of the spatial unit that 
+#' @param center a numeric value giving the number of the spatial unit that 
 #' represents the center in the table
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a matrix containing relative centralisation index values 
+#' @return A matrix containing the relative centralisation index values 
+#' for each pair of groups
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A 
 #' Methodological Analysis of Segregation Indexes}. 
 #' American Sociological Review 41, pp. 210-217
@@ -2251,28 +2219,32 @@ RCE <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape =
 
 
 
-#' A function to compute Polycentric Relative Centralisation Index
+#' A function to compute Duncan's Polycentric Relative Centralisation Index
 #'
 #' @usage RCEPoly(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param dc - a numeric matrix/vector containing the distances between spatial units
+#' @param dc a numeric matrix/vector containing the distances between spatial units
 #' centroids and the central spatial unit(s). 
-#' @param center - a numeric vector  giving the number of the spatial units that 
+#' @param center a numeric vector  giving the number of the spatial units that 
 #' represent the centers in the table
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a matrix containing relative centralisation index values 
+#' @return A matrix containing the polycentric relative centralisation index values 
+#' for each pair of groups
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A 
 #' Methodological Analysis of Segregation Indexes}. 
 #' American Sociological Review 41, pp. 210-217
+#' @references Tivadar M. (2019) 
+#' \emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+#' Journal of Statistical Software,  89 (7), pp 1-39
 #' @description The polycentric version of the relative centralisation index. 
 #' The function can be used in two ways: to provide a matrix containing 
 #' the distances between spatial/organizational unit centroids or a external  
@@ -2335,35 +2307,39 @@ RCEPoly <- function(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, sha
 
 
 
-#' A function to compute Constrained Relative Centralisation Index
+#' A function to compute Constrained Polyentric Relative Centralisation Index
 #'
 #' @usage RCEPolyK(x, dc = NULL,  K = NULL, kdist = NULL, center = 1,
 #'                 spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param dc - a numeric matrix/vector containing the distances between spatial units
+#' @param dc a numeric matrix/vector containing the distances between spatial units
 #' centroids and the central spatial unit(s). 
-#' @param center - a numeric vector  giving the number of the spatial units that 
+#' @param center a numeric vector  giving the number of the spatial units that 
 #' represent the centers in the table
-#' @param K - the number of neighbourhoods under the influence of a center
-#' @param kdist - the maximal distance that defines the neighbourhoods influenced
+#' @param K the number of neighbourhoods under the influence of a center
+#' @param kdist the maximal distance that defines the neighbourhoods influenced
 #' by a center
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a matrix containing relative centralisation index values 
+#' @return a matrix containing the constrainted polycentric relative centralisation 
+#' index values for each pair of groups
 #' @references Duncan O. D. and Duncan B. (1955) \emph{A 
 #' Methodological Analysis of Segregation Indexes}. 
 #' American Sociological Review 41, pp. 210-217
 #' @references Folch D.C and Rey S. J (2016) \emph{The centralization index: 
 #' A measure of local spatial segregation}. Papers in Regional 
 #' Science 95 (3), pp. 555-576
+#' @references Tivadar M. (2019) 
+#' \emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+#' Journal of Statistical Software,  89 (7), pp 1-39
 #' @description The constrained (local) version of relative centralization index.
 #' The function can be used in two ways: to provide a matrix containing 
 #' the distances between spatial unit centroids or a external geographic 
@@ -2444,28 +2420,28 @@ RCEPolyK <- function(x, dc = NULL, K = NULL, kdist = NULL, center = 1, spatobj =
 }
 
 
-#' A function to compute Massey Absolute Centralisation Index (ACE)
+#' A function to compute the Massey and Denton Absolute Centralisation Index (ACE)
 #'
 #' @usage ACE(x, a = NULL, dc = NULL, center = 1, 
 #' spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param a - a numeric vector containing spatial unit areas
-#' @param dc - a numeric vector containing the distances between spatial units
+#' @param a a numeric vector containing spatial unit areas
+#' @param dc a numeric vector containing the distances between spatial units
 #' centroids and the central spatial unit
-#' @param center - a numeric value giving the number of the spatial unit that 
+#' @param center a numeric value giving the number of the spatial unit that 
 #' represents the center in the table
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing asolute centralisation index value for 
-#' each group
+#' @return A numeric vector containing the Massey and Denton absolute 
+#' centralisation index values for each group
 #' @references Massey D. S. and Denton N. A. (1988) \emph{
 #' The dimensions of residential segregation}. 
 #' Social Forces 67(2),  pp. 281-315.
@@ -2527,32 +2503,34 @@ ACE <- function(x, a = NULL, dc = NULL, center = 1, spatobj = NULL, folder = NUL
 
 
 
-#' A function to compute Massey's Polycentric Absolute Centralisation Index
+#' A function to compute the Massey and Denton Polycentric Absolute Centralisation Index
 #'
 #' @usage ACEPoly(x, a = NULL, dc = NULL, center = 1, 
 #' spatobj = NULL, folder = NULL, shape = NULL)
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param a - a numeric vector containing spatial unit areas
-#' @param dc - a numeric matrix containing the distances between spatial units
+#' @param a a numeric vector containing spatial unit areas
+#' @param dc a numeric matrix containing the distances between spatial units
 #' centroids and the central spatial units
-#' @param center - a numeric vector giving the number of the spatial units that 
+#' @param center a numeric vector giving the number of the spatial units that 
 #' represent the centers in the table
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @return a numeric vector containing asolute centralisation index value for 
-#' each group
+#' @return A numeric vector containing the Massey and Denton absolute 
+#' polycentric centralisation index values for each group
 #' @references Massey D. S. and Denton N. A. (1988) \emph{
 #' The dimensions of residential segregation}. 
 #' Social Forces 67(2),  pp. 281-315.
+#' @references Tivadar M. (2019) 
+#' \emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+#' Journal of Statistical Software,  89 (7), pp 1-39
 #' @description The absolute centralization index measures a group
 #' spatial distribution compared to the distribution of land area 
 #' around the city center. The function can be used in two ways: to provide 
@@ -2623,7 +2601,7 @@ ACEPoly <- function(x, a = NULL, dc = NULL, center = 1, spatobj = NULL, folder =
 
 ######################## 
 
-# MULTI-GROUP INDEXES
+# MULTIGROUP INDEXES
 
 ######################## 
 
@@ -2631,12 +2609,12 @@ ACEPoly <- function(x, a = NULL, dc = NULL, center = 1, spatobj = NULL, folder =
 #' A function to compute Shannon-Wiener diversity (entropy) index
 #'
 #' @usage HShannon(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return Shannon-Wiener diversity index 
+#' @return The Shannon-Wiener diversity index value (numeric)
 #' @references Shannon C. E. (1948) \emph{A mathematical theory 
 #' of communication}. Bell System Technical Journal (27) 
 #' @description The Shannon-Wiener diversity index is based on 
@@ -2645,7 +2623,7 @@ ACEPoly <- function(x, a = NULL, dc = NULL, center = 1, spatobj = NULL, folder =
 #' HShannon(x) 
 #' @seealso  Social diversity indices: 
 #' \code{\link{NShannon}}, \code{\link{ISimpson}}, 
-#' @seealso Multi-group indices: 
+#' @seealso multigroup indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @export
@@ -2663,23 +2641,23 @@ HShannon <- function(x) {
 #' A function to compute Shannon-Wiener diversity normalized index
 #'
 #' @usage NShannon(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return Shannon-Wiener normalized diversity index 
+#' @return The Shannon-Wiener normalized diversity index value (numeric)
 #' @references Shannon C. E. (1948) \emph{A mathematical theory 
 #' of communication}. Bell System Technical Journal (27) 
 #' @description The Shannon-Wiener diversity index is based on 
 #' the notion of entropy and measures population heterogeneity.
 #' @examples x <- segdata@data[ ,1:2]
 #' NShannon(x) 
-#' @seealso  Other multi-group eveness indices: 
+#' @seealso  Other multigroup eveness indices: 
 #' \code{\link{HShannon}}, \code{\link{ISimpson}}, 
 #' \code{\link{GiniMulti}}, \code{\link{DMulti}}, \code{\link{HMulti}}, 
 #' \code{\link{CMulti}}
-#' @seealso Other multi-group indices: \code{\link{PMulti}}, 
+#' @seealso Other multigroup indices: \code{\link{PMulti}}, 
 #' \code{\link{RelDivers}}
 #' @export
 
@@ -2696,12 +2674,12 @@ NShannon <- function(x) {
 #' A function to compute Simpson's interaction index
 #'
 #' @usage ISimpson(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return Simpson's interaction index 
+#' @return The Simpson's interaction index value (numeric) 
 #' @references Simpson E. H. (1949) \emph{Measurement of diversity}. 
 #' Nature 163:688 
 #' @description Simpson's interaction index measures the probability 
@@ -2710,7 +2688,7 @@ NShannon <- function(x) {
 #' ISimpson(x) 
 #' @seealso  Social diversity indices: 
 #' \code{\link{HShannon}}, \code{\link{NShannon}}, 
-#' @seealso Multi-group indices: 
+#' @seealso multigroup indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @export
@@ -2727,23 +2705,24 @@ ISimpson <- function(x) {
 
 
 
-#' A function to compute multi-group Gini index
+#' A function to compute multigroup Gini index
 #'
 #' @usage GiniMulti(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
+#' @return The multigroup Gini index value (numeric)
 #' @references Reardon S. F. (1998) \emph{Measures of racial 
-#' diversity and segregation in multi-group and hierarchical 
+#' diversity and segregation in multigroup and hierarchical 
 #' structured Populations}. Annual meeting of the Eastern 
 #' Sociological Society, Philadelphia 
-#' @description Multi-group Gini is a multi-group version of 
+#' @description multigroup Gini is a multigroup version of 
 #' the \code{\link{Gini}} index 
 #' @examples x <- segdata@data[ ,1:2]
 #' GiniMulti(x) 
-#' @seealso Multi-group indices: 
+#' @seealso multigroup indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}},   
 #' \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @seealso  Social diversity indices: 
@@ -2776,22 +2755,22 @@ GiniMulti <- function(x) {
 
 
 
-#' A function to compute multi-group dissimilarity index
+#' A function to compute multigroup dissimilarity index
 #'
 #' @usage DMulti(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return multi-group dissimilarity index 
+#' @return The multigroup dissimilarity index value (numeric)
 #' @references Sakoda J. N. (1981) \emph{A generalized Index of 
 #' dissimilarity}. Demography,18, 245-250 
-#' @description Multi-group dissimilarity index, is a multi-group 
+#' @description multigroup dissimilarity index, is a multigroup 
 #' version of  Duncan's dissimilarity index (\code{\link{DIDuncan}})
 #' @examples x <- segdata@data[ ,1:2]
 #' DMulti(x) 
-#' @seealso Multi-group indices: 
+#' @seealso multigroup indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}},   
 #' \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @seealso  Social diversity indices: 
@@ -2818,24 +2797,24 @@ DMulti <- function(x) {
 
 
 
-#' A function to compute multi-group normalised exposure (PMulti)
+#' A function to compute multigroup normalised exposure (PMulti)
 #'
 #' @usage PMulti(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return multi-group normalised isolation index 
+#' @return The multigroup normalised isolation index value (numeric)
 #' @references  James, F. J. (1986) \emph{A New Generalized 'Exposure-Based' 
 #' Segregation Index}. Sociological Methods and Research, 14, pp. 301-316
 #' @references  Reardon S. F. and G. Firebaugh (2002) \emph{Measures of 
-#' multi-group Segregation}. Sociological Methodology, 32(1), pp 33-67
-#' @description The multi-group normalised isolation index is a 
-#' multi-group version of the isolation index (\code{\link{xPx}})
+#' multigroup Segregation}. Sociological Methodology, 32(1), pp 33-67
+#' @description The multigroup normalised isolation index is a 
+#' multigroup version of the isolation index (\code{\link{xPx}})
 #' @examples x <- segdata@data[ ,1:2]
 #' PMulti(x) 
-#' @seealso Multi-group indices: 
+#' @seealso multigroup indices: 
 #' \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @seealso  Social diversity indices: 
@@ -2859,23 +2838,23 @@ PMulti <- function(x) {
 }
 
 
-#' A function to compute multi-group relative diversity index
+#' A function to compute multigroup relative diversity index
 #'
 #' @usage RelDivers(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return multi-group relative diversity index 
+#' @return The multigroup relative diversity index value (numeric)
 #' @references Carlson S. M. (1992) \emph{Trends in race/sex 
 #' occupational inequality:  conceptual and measurement issues}. 
 #' Social Problems, 39, p. 269-290
-#' @description The relative diversity index is a multi-group 
+#' @description The relative diversity index is a multigroup 
 #' index based on Simpson's interaction index \code{\link{ISimpson}} 
 #' @examples x <- segdata@data[ ,1:2]
 #' RelDivers(x) 
-#' @seealso Multi-group indices: 
+#' @seealso multigroup indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{HMulti}}, \code{\link{CMulti}}
 #' @seealso  Social diversity indices: 
@@ -2899,21 +2878,21 @@ RelDivers <- function(x) {
     return(round(result, 4))
 }
 
-#' A function to compute multi-group entropy segregation index
+#' A function to compute multigroup entropy segregation index
 #'
 #' @usage HMulti(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group. 
-#' @return multi-group entropy segregation index
+#' @return The multigroup entropy segregation index value (numeric)
 #' @references Theil H. (1972)  \emph{Statistical decomposition analysis: with 
 #' applications in the social and administrative.} Amsterdam, North-Holland, 337 p.
-#' @description The multi-group version of Theil's entropy index \code{\link{HTheil}} 
+#' @description The multigroup version of Theil's entropy index \code{\link{HTheil}} 
 #' @examples x <- segdata@data[ ,1:2]
 #' HMulti(x) 
-#' @seealso Multi-group indices: 
+#' @seealso multigroup indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{CMulti}}, \code{\link{RelDivers}}
 #' @seealso  Social diversity indices: 
@@ -2943,23 +2922,23 @@ HMulti <- function(x) {
 }
 
 
-#' A function to compute multi-group squared coefficient of variation index
+#' A function to compute multigroup squared coefficient of variation index
 #'
 #' @usage CMulti(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return multi-group entropy segregation index
-#' @references Reardon S. F. and Firebaugh G. (2002) \emph{Measures of multi-group 
+#' @return The multigroup entropy segregation index value (numeric)
+#' @references Reardon S. F. and Firebaugh G. (2002) \emph{Measures of multigroup 
 #' segregation}. Sociological Methodology, 32, pp. 33-67.
 #' @description The index can be interpreted as a measure of the variance of the 
 #' spatial representation of the groups accros spatial unite, or as a normalized 
 #' chi-squared measure of association between groups and units. 
 #' @examples x <- segdata@data[ ,1:2]
 #' CMulti(x) 
-#' @seealso Multi-group indices: 
+#' @seealso multigroup indices: 
 #' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 #' \code{\link{HMulti}}, \code{\link{RelDivers}}
 #' @seealso  Social diversity indices: 
@@ -2976,28 +2955,28 @@ CMulti <- function(x) {
     pTotal <- colSums(x)/Total
     tx <- rowSums(x)
     px <- x/tx
-    pTotal2 <- matrix(rep(pTotal, nrow(x)), nrow = nrow(x), ncol = ncol(x), byrow = T)
+    pTotal2 <- matrix(rep(pTotal, nrow(x)), nrow = nrow(x), ncol = ncol(x), byrow = TRUE)
     result <- sum((tx/Total) * ((px - pTotal2)^2)/((ncol(x) - 1) * pTotal2))
     return(round(result, 4))
 }
 
 
 
-#' A function to compute Reardon multi-group ordinal segregation indices
+#' A function to compute Reardon multigroup ordinal segregation indices
 #'
 #' @usage ordinalseg(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group. The rows
 #' represent the nominal categories (spatial units) and the columns the ordinal 
 #' categories.
-#' @return A vector with Reardon multi-group ordinal segregation indices:
-#' Lambda1 - ordinal generalization of the information theory index
-#' Lambda2 - ordinal generalization of the variation ratio index
-#' Lambda3 - ordinal square root index
-#' Lambda4 - ordinal absolute difference index
+#' @return A vector containing Reardon's multigroup ordinal segregation indices: 
+#' Lambda1 (the ordinal generalization of the information theory index), 
+#' Lambda2 (the ordinal generalization of the variation ratio index), 
+#' Lambda3 (the ordinal square root index), and
+#' Lambda4 (the ordinal absolute difference index)
 #' @references Reardon S. F. (2009) \emph{Measures of ordinal segregation}. 
 #' Research on Economic Inequality, 17, pp. 129-155.
 #' @description  A function to compute Reardon (2009) ordinal indices
@@ -3087,29 +3066,29 @@ ordinalseg <- function(x) {
 #' A function to compute rank-ordered segregation indices
 #'
 #' @usage rankorderseg(x, polorder = 4, pred = NULL) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group. The rows
 #' represent the nominal categories (spatial units) and the columns the population
 #' distribution as ordered groups divided by thresholds
-#' @param polorder - order of the polynomial approximation (4 by default)
-#' @param pred  - a numerical vector with percentiles to be predicted. 
+#' @param polorder order of the polynomial approximation (4 by default)
+#' @param pred  a numerical vector with percentiles to be predicted. 
 #' If NULL, the predictions are made at threshold levels
 #' @return A list containing the results for three rank-ordered indices: 
 #' rank-order information theory index (Hr), rank-order variation ratio 
 #' index (Rr) and rank-order square root index (Sr). For each index, a sublist 
 #' is provided, containing: 
-#' Index - the rank-ordered index value
-#' Hp/Rp/Sp - a vector with ordinal information theory/variance ratio/square root 
-#' segregation index values at thresholds
-#' Coefficients - Coefficients extracted from the polynomial estimation model,
-#' including basic statistics
-#' Predict - a list contining predicted values of the coresponding ordinal index (fit); 
+#' Index (the rank-ordered index value), 
+#' Hp/Rp/Sp (a vector containing the ordinal information theory/variance 
+#' ratio/square root segregation index values at thresholds), 
+#' Coefficients (the coefficients extracted from the polynomial estimation model,
+#' including basic statistics), 
+#' Predict (a list containing predicted values of the corresponding ordinal index (fit); 
 #' standard error of predicted means (se.fit); degrees of freedom for residual (df); 
 #' and residual standard deviations (residuale.scale). If pred is NULL, the function 
-#' will return the the statistics at thresholds
+#' will return the statistics at thresholds)
 #' @references Reardon S. F. (2011) \emph{Measures of Income Segregation
 #' }. The Stanford Center on Poverty and Inequality
 #' @description  A function computing Reardon (2011) rank-ordered 
@@ -3161,11 +3140,11 @@ rankorderseg <- function(x, polorder = 4, pred = NULL) {
     result2[[2]] <- Rp
     result3[[2]] <- Sp
     
-    estim <- stats::lm(Hp ~ poly(Pk, polorder, raw = T))
+    estim <- stats::lm(Hp ~ poly(Pk, polorder, raw = TRUE))
     result1[[3]] <- stats::coefficients(summary(estim))
-    estim <- stats::lm(Rp ~ poly(Pk, polorder, raw = T))
+    estim <- stats::lm(Rp ~ poly(Pk, polorder, raw = TRUE))
     result2[[3]] <- stats::coefficients(summary(estim))
-    estim <- stats::lm(Sp ~ poly(Pk, polorder, raw = T))
+    estim <- stats::lm(Sp ~ poly(Pk, polorder, raw = TRUE))
     result3[[3]] <- stats::coefficients(summary(estim))
     
     if (is.null(pred)) 
@@ -3176,11 +3155,11 @@ rankorderseg <- function(x, polorder = 4, pred = NULL) {
     x <- Pk
     
     y <- Hp
-    result1[[4]] <- stats::predict(stats::lm(y ~ poly(x, polorder, raw = T)), newdata = pred, se.fit = T)
+    result1[[4]] <- stats::predict(stats::lm(y ~ poly(x, polorder, raw = TRUE)), newdata = pred, se.fit = TRUE)
     y <- Rp
-    result2[[4]] <- stats::predict(stats::lm(y ~ poly(x, polorder, raw = T)), newdata = pred, se.fit = T)
+    result2[[4]] <- stats::predict(stats::lm(y ~ poly(x, polorder, raw = TRUE)), newdata = pred, se.fit = TRUE)
     y <- Sp
-    result3[[4]] <- stats::predict(stats::lm(y ~ poly(x, polorder, raw = T)), newdata = pred, se.fit = T)
+    result3[[4]] <- stats::predict(stats::lm(y ~ poly(x, polorder, raw = TRUE)), newdata = pred, se.fit = TRUE)
     
     coef1 <- as.vector(result1[[3]][, 1])
     coef2 <- as.vector(result2[[3]][, 1])
@@ -3207,73 +3186,6 @@ rankorderseg <- function(x, polorder = 4, pred = NULL) {
 }
 
 
-
-
-
-
-
-
-
-#' A function from seg package to compute spatial multi-group segregation indices
-#'
-#' @param x - an object of class matrix (or which can be coerced to that class), 
-#' where each column represents the distribution of a group within 
-#' spatial units. The number of columns should be greater than 1 (at least 2 
-#' groups are required). You should not include a column with total 
-#' population, because this will be interpreted as a group.
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
-#' geographic information
-#' @param folder - a character vector with the folder (directory) 
-#' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
-#' (without the .shp extension) .
-#' @param ... - other parameters of spseg function from seg package.
-#' @return A vector with Reardon's spatial multi-group segregation indices:
-#' D* - spatial multi-group dissimilarity index
-#' R* - spatial multi-group relative diversity index
-#' H* - spatial multi-group information theory index 
-#' @references Reardon, S. F. and O'Sullivan, D. (2004) 
-#' \emph{Measures of spatial segregation}.
-#' Sociological Methodology, 34, 121-162.
-#' @references Hong S.Y., O'Sullivan D., Sadahiro Y. (2014) 
-#' \emph{Implementing Spatial Segregation Measures in R'}.
-#' PLoS ONE, 9(11)
-#' @description  A function adapted from seg package (Hong et al. 2014) 
-#' to compute spatial multi-group segregation indices developed by 
-#' Reardon and O'Sullivan (2004)
-#' @examples x <- segdata@data[ ,1:2]
-#' foldername <- system.file('extdata', package = 'OasisR')
-#' shapename <- 'segdata'
-#' 
-#' spatmultiseg(x, spatobj = segdata)
-#' 
-#' spatmultiseg(x, folder = foldername, shape = shapename) 
-#' 
-#' @seealso Multi-group indices: 
-#' \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
-#' \code{\link{HMulti}}, \code{\link{RelDivers}}
-#' @seealso  Social diversity indices: 
-#' \code{\link{HShannon}}, \code{\link{NShannon}}, 
-#' \code{\link{ISimpson}}, 
-#' @export 
-
-
-spatmultiseg <- function(x, spatobj = NULL, folder = NULL, shape = NULL, ...) {
-    x <- as.matrix(x)
-    if (is.null(spatobj)) 
-        spatobj <- sf::st_read(dsn = folder, layer = shape)
-    if (class(spatobj)[1]!="SpatialPolygonsDataFrame") spatobj <- sf::as_Spatial(spatobj)
-    cldata <- segdataclean(x, spatobj = spatobj)
-    x <- cldata$x
-    spatobj <- cldata$spatobj
-    result <- vector(length = 3)
-    provi <- seg::spseg(spatobj, x, ...)
-    result[1] <- provi@d
-    result[2] <- provi@r
-    result[3] <- provi@h
-    return(result)
-}
-
 ######################## 
 
 # LOCAL INDEXES
@@ -3283,12 +3195,12 @@ spatmultiseg <- function(x, spatobj = NULL, folder = NULL, shape = NULL, ...) {
 #' A function to compute location quotients (LQs)
 #'
 #' @usage LQ(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return a matrix of location quotiens 
+#' @return A matrix containing the location quotients for each group in each spatial unit
 #' @references Isard W. (1960) \emph{Methods of regional analysis: 
 #' an introduction to regional science}. The MIT Press, Cambridge
 #' @description Location quotients compare the relative part of a 
@@ -3316,13 +3228,13 @@ LQ <- function(x) {
 #' A function to compute local diversity index
 #'
 #' @usage HLoc(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return a numeric vector containing  diversity index value for 
-#' each group
+#' @return A numeric matrix containing the local diversity index values for 
+#' each spatial unit
 #' @references Theil H. (1972) \emph{Statistical Decomposition Analysis}. 
 #' North-Holland, Amsterdam
 #' @description Local diversity index, HLoc, is a local 
@@ -3358,12 +3270,13 @@ HLoc <- function(x) {
 #' A function to compute Shannon-Wiener local diversity (entropy) index
 #'
 #' @usage LShannon(x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return Local Shannon-Wiener diversity index 
+#' @return A vector containing the local Shannon-Wiener diversity index 
+#' values for each spatial unit
 #' @references Shannon C. E. (1948) \emph{A mathematical theory 
 #' of communication}. Bell System Technical Journal (27) 
 #' @description The Shannon-Wiener diversity index is based on 
@@ -3399,12 +3312,13 @@ LShannon <- function(x) {
 #' A function to compute local Simpson's index
 #'
 #' @usage LSimpson (x) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @return Local Simpson's interaction index 
+#' @return A vector containing the local Simpson's interaction index values 
+#' for each spatial unit
 #' @references Simpson E. H. (1949) \emph{Measurement of diversity}. 
 #' Nature 163:688 
 #' @description Local Simpson's interaction index measures the probability 
@@ -3437,29 +3351,29 @@ LSimpson <- function(x) {
 #'
 #' @usage segdataclean (x, c = NULL, b = NULL, a = NULL, p = NULL, 
 #' ck = NULL, d = NULL, dc = NULL, spatobj = NULL, folder = NULL, shape = NULL, 
-#' warnings = T) 
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' warnings = TRUE) 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param c - a standard binary contiguity (adjacency) symmetric matrix where 
+#' @param c a standard binary contiguity (adjacency) symmetric matrix where 
 #' each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 #' units are adjacent, and 0 otherwise.
-#' @param b - a common boundaries matrix where each element \emph{Bij} 
-#' @param a - a numeric vector containing spatial unit areas
-#' @param p - a numeric vector containing spatial units perimeters.
-#' @param ck - a list containing contiguity matrices coresponding to each order 
+#' @param b a common boundaries matrix where each element \emph{Bij} 
+#' @param a a numeric vector containing spatial unit areas
+#' @param p a numeric vector containing spatial units perimeters.
+#' @param ck  a list containing contiguity matrices coresponding to each order 
 #' (from 1 to K)
-#' @param d - a matrix of the distances between spatial unit centroids
-#' @param dc - a numeric vector containing the distances between spatial units
+#' @param d a matrix of the distances between spatial unit centroids
+#' @param dc a numeric vector containing the distances between spatial units
 #' centroids and the central spatial unit
 #' @param warnings - warning alert (by default TRUE)
-#' @param folder - a character vector with the folder (directory) 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
 #' @return The objects (data matrix, geographical vectors/matrices, spatial objects)
 #' cleaned from null rows or columns 
@@ -3482,7 +3396,7 @@ LSimpson <- function(x) {
 
 segdataclean <- function(x, c = NULL, b = NULL, a = NULL, p = NULL, 
                          ck = NULL, d = NULL, dc = NULL, spatobj = NULL, 
-                         folder = NULL, shape = NULL, warnings = T) {
+                         folder = NULL, shape = NULL, warnings = TRUE) {
     x <- as.matrix(x)
     spatobj2 <- NULL
     x <- x[, colSums(x) != 0]
@@ -3546,110 +3460,108 @@ segdataclean <- function(x, c = NULL, b = NULL, a = NULL, p = NULL,
 
 
 #' A function to test segregation indices by resampling 
-#'
-#' @param x - an object of class matrix (or which can be coerced to that class), 
+#' @param x an object of class matrix (or which can be coerced to that class), 
 #' where each column represents the distribution of a group within 
 #' spatial units. The number of columns should be greater than 1 (at least 2 
 #' groups are required). You should not include a column with total 
 #' population, because this will be interpreted as a group.
-#' @param fun - a character vector with the segregation function 
+#' @param fun a character vector with the segregation function 
 #' to be tested 
-#' @param var - vector with the variables to be tested 
-#' @param simtype - a character vector with the type of simulation. 
+#' @param var vector with the variables to be tested 
+#' @param simtype a character vector with the type of simulation. 
 #' If simtype = 'Boot', the function generates bootstrap replications
 #' If simtype = 'Jack', the function generates jackknife replications
 #' If simtype = 'MonteCarlo', the function produces a randomization test 
 #'  using Monte Carlo simulations
 #' @param sampleunit = 'unit' (by default) when the sampling unit is the 
 #' spatial/organisational unit and sampleunit = 'ind' for individual sampling
-#' @param samplesize - the size of the sample used for bootstraping. If null, 
+#' @param samplesize the size of the sample used for bootstraping. If null, 
 #' the samplesize equals the number of spatial/organizational units(sampleunit = 'unit') or 
 #' the total total population (sampleunit = 'ind')
-#' @param  perc - the percentiles for the bootstrap replications 
-#' @param outl - logical parameter for jackknife simulations, if TRUE 
+#' @param perc the percentiles for the bootstrap replications 
+#' @param outl logical parameter for jackknife simulations, if TRUE 
 #' the function provides the outliers obtained by jackknife iterations 
 #' @param outmeth - a character vector designing the outliers detection method:
-#' outmeth = 'bp' (by default) for boxplot method 
-#' outmeth = 'sd'  for standard deviation method 
-#' outmeth = 'z'  for normal scores method
-#' outmeth = 't'  for t Student scores method
-#' outmeth = 'chisq'  for chi-squared scores method
-#' outmeth = 'mad'  for median absolute deviation method
+#' outmeth = 'bp' (by default) for boxplot method, 
+#' outmeth = 'sd'  for standard deviation method, 
+#' outmeth = 'z'  for normal scores method,
+#' outmeth = 't'  for t Student scores method,
+#' outmeth = 'chisq'  for chi-squared scores method,
+#' outmeth = 'mad'  for median absolute deviation method.
 #' The estimations based on scoring methods are obtained using outliers package 
-#' @param sdtimes - multiplication factor of the standard deviation used for
+#' @param sdtimes multiplication factor of the standard deviation used for
 #' outliers detection with jackknife simulations (2 by default)
-#' @param IQRrange - determines the boxplot thresholds (1.5 by default) as multiplication of 
+#' @param IQRrange determines the boxplot thresholds (1.5 by default) as multiplication of 
 #' IQR (Inter Quartile Range)
-#' @param proba - for Monte Carlo simulations, proba is a vector with location 
+#' @param proba for Monte Carlo simulations, proba is a vector with location 
 #' probabilities. If proba = NULL, the vector is equiprobable. If outliers are determined 
 #' with jackknife technique, proba indicates the probability (confidence interval) for 
 #' scoring tests.
-#' @param nsim - the number of simulations
-#' @param setseed - if TRUE, specify zero seed for repetead simulation
-#' @param a - a numeric vector containing spatial unit areas
-#' @param c - a standard binary contiguity (adjacency) symmetric matrix where 
+#' @param nsim the number of simulations
+#' @param a a numeric vector containing spatial unit areas
+#' @param c a standard binary contiguity (adjacency) symmetric matrix where 
 #' each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 #' units are adjacent, and 0 otherwise.
-#' @param ck - a list containing contiguity matrices coresponding to each order 
+#' @param ck  a list containing contiguity matrices coresponding to each order 
 #' (from 1 to K)
-#' @param K - the order of the contiguity matrix
-#' @param queen - logical parameter defining criteria used for contiguity 
+#' @param K the order of the contiguity matrix
+#' @param queen logical parameter defining criteria used for contiguity 
 #' matrix computation, TRUE for queen, FALSE (by default) for rook 
-#' @param b - a common boundaries matrix where each element \emph{Bij} 
-#' @param p - a numeric vector containing spatial units perimeters.
-#' @param ptype - a string variable giving two options for perimeter calculation
+#' @param b a common boundaries matrix where each element \emph{Bij} 
+#' @param p a numeric vector containing spatial units perimeters.
+#' @param ptype a string variable giving two options for perimeter calculation
 #' when a spatial object or shapefile is provided: 'int' to use only interior
 #' boundaries of spatial units, and 'all' to use entire boundaries, 
 #' including the boundaries to the exterior
-#' @param d - a matrix of the distances between spatial unit centroids
-#' @param distin - input metric conversion, based on  \pkg{bink} package and 
+#' @param d a matrix of the distances between spatial unit centroids
+#' @param distin input metric conversion, based on  \pkg{bink} package and 
 #' includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param distout - output metric conversion, based on  \pkg{bink} package and 
+#' @param distout output metric conversion, based on  \pkg{bink} package and 
 #' includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.
-#' @param dc - a numeric vector containing the distances between spatial units
+#' @param dc a numeric vector containing the distances between spatial units
 #' centroids and the central spatial unit
-#' @param center - a numeric value giving the number of the spatial unit that 
+#' @param center a numeric value giving the number of the spatial unit that 
 #' represents the center in the table
-#' @param fdist - the method used for distance interaction matrix: 
+#' @param fdist the method used for distance interaction matrix: 
 #' e' for inverse exponential function (by default) and 'l' for linear.
-#' @param f - the distance function, f = 'exp' (by default) for negative 
+#' @param f the distance function, f = 'exp' (by default) for negative 
 #' exponential function and f = 'rec' for reciprocal function
-#' @param spatmat - the method used for spatial calculations: 'c' for the 
+#' @param spatmat the method used for spatial calculations: 'c' for the 
 #' contiguity matrix (by default) or any other user spatial interaction matrix 
 #' and 'd' for the inverse exponential function of the distance. 
-#' @param diagval - when providing a spatial object or a shape file, 
+#' @param diagval when providing a spatial object or a shape file, 
 #' the user has the choice of the spatial matrix diagonal definition: 
 #' diagval = '0' (by default) for an null diagonal and diagval = 'a' 
 #' to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) 
 #' (White, 1983) 
-#' @param itype - a character string defining the index type:
-#' itype = 'multi' (by default) for the multi-group index (White, 1986)
+#' @param itype a character string defining the index type:
+#' itype = 'multi' (by default) for the multigroup index (White, 1986)
 #' or itype = 'between' for the between groups version (White, 1983)
-#' @param variant - a character variable that allows to choose the index version: 
+#' @param variant a character variable that allows to choose the index version: 
 #' variant = 's' for the dissimilarity index adjusted for contiguous spatial units
 #' boundary lengths and perimeter/area ratio (by default) and variant = 'w' 
 #' for the version without perimeter/area ratio
-#' @param delta - an inequality aversion parameter
-#' @param exact - a logical variable to specifiy the index version: 
+#' @param delta an inequality aversion parameter
+#' @param exact a logical variable to specifiy the index version: 
 #' exact = FALSE (by default) for the approximate version of the index, 
 #' and exact = TRUE for the exact version
-#' @param polorder - order of the polynomial approximation (4 by default)
-#' @param pred  - a numerical vector with percentiles to be predicted. 
-#' @param folder - a character vector with the folder (directory) 
+#' @param polorder order of the polynomial approximation (4 by default)
+#' @param pred  a numerical vector with percentiles to be predicted. 
+#' @param folder a character vector with the folder (directory) 
 #' name indicating where the shapefile is located on the drive
-#' @param shape - a character vector with the name of the shapefile 
+#' @param shape a character vector with the name of the shapefile 
 #' (without the .shp extension).
-#' @param spatobj - a spatial object (SpatialPolygonsDataFrame) with 
+#' @param spatobj a spatial object (SpatialPolygonsDataFrame) with 
 #' geographic information
-#' @param ... - other specific parameters
-#' @return A list with: 
-#' - index's name
-#' - simulation type 
-#' - statistics summary of the simulations
-#' - simulated index distribution
-#' - simulated population distribution
-#' - matrix with outliers (jackknife)
-#' - list with outliers values (jackknife)
+#' @param ... other specific parameters
+#' @return A list including: 
+#' the index's name, 
+#' the simulation type, 
+#' the summary statistics of the simulations, 
+#' the simulated index distribution, 
+#' the simulated population distribution,
+#' a matrix with outliers (jackknife), 
+#' a list with outliers values (jackknife)
 #' @references Efron, B., and Tibshirani, R. J. (1993). 
 #' \emph{An Introduction to the Bootstrap}. New York, Chapman and Hall
 #' @references Tivadar M. (2019) 
@@ -3679,14 +3591,12 @@ segdataclean <- function(x, c = NULL, b = NULL, a = NULL, p = NULL,
 
 
 ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit = "unit", samplesize = NULL, perc = c(0.05, 0.95), outl = FALSE, outmeth = "bp", 
-    sdtimes = 2, IQRrange = 1.5, proba = NULL, nsim = NULL, setseed = FALSE, spatobj = NULL, folder = NULL, shape = NULL, delta = 0.5, exact = FALSE, 
+    sdtimes = 2, IQRrange = 1.5, proba = NULL, nsim = NULL, spatobj = NULL, folder = NULL, shape = NULL, delta = 0.5, exact = FALSE, 
     d = NULL, c = NULL, a = NULL, ck = NULL, f = "exp", b = NULL, p = NULL, spatmat = "c", queen = FALSE, distin = "m", distout = "m", diagval = "0", 
     fdist = "e", itype = "multi", dc = NULL, center = 1, polorder = 4, pred = NULL, K = 2, ptype = "int", variant = "s", ...) {
     
     # INIT
     
-    if (setseed) 
-        set.seed(0)
     x <- as.matrix(x)
     cldata <- segdataclean(x, c = c, b = b, a = a, p = p, ck = ck, d = d, dc = dc, spatobj = spatobj)
     x <- cldata$x
@@ -3754,7 +3664,7 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
         for (i in 1:ncol(dc)) dc[, i] <- distcenter(spatobj = spatobj, folder = folder, shape = shape, center = center[i])
     }
     ILmultiSimple <- c("HMulti", "PMulti", "GiniMulti", "DMulti", "RelDivers", "CMulti", "ordinalseg")
-    ILmultiAll <- c(ILmultiSimple, "spatmultiseg", "rankorderseg")
+    ILmultiAll <- c(ILmultiSimple, "rankorderseg")
     ILx <- c(ILmultiSimple, "ISDuncan", "Gini", "HTheil", "Gorard", "Eta2")
     ILbetween <- c("DIDuncan", "Gini2", "DIMorrill", "DIMorrillK", "DIWong", "xPy", "DPxy", "RCO", "Pxy", "RCL", "RCE", "RCEPoly", "RCEPolyK")
     if (is.element(fun, c(ILmultiSimple, "rankorderseg"))) {
@@ -3769,14 +3679,10 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
         nvar <- 4
         var <- 1:4
     }
-    if (fun == "spatmultiseg") {
-        nvar <- 3
-        var <- 1:3
-    }
     
     IndTest <- matrix(nrow = nvar, ncol = 5)
     between <- FALSE
-    if (is.element(fun, ILbetween) || (fun == "Poo" & itype == "between") || (fun == "SP" & itype == "between") || (fun == "spatinteract" & itype == "between")) 
+    if (is.element(fun, ILbetween) || (fun == "Poo" & itype == "between") || (fun == "SP" & itype == "between")) 
         between <- TRUE
     
     if (between) {
@@ -3853,7 +3759,7 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
             for (i in 1:nsim) {
                 xdistr[[i]] <- matrix(0, nrow = nrow(x), ncol = ncol(x))
                 for (k in 1:ncol(x)) {
-                  xprovi <- table(sample(nrow(x), size = sum(x[, k]), replace = T, prob = proba))
+                  xprovi <- table(sample(nrow(x), size = sum(x[, k]), replace = TRUE, prob = proba))
                   dimv <- as.numeric(dimnames(xprovi)[[1]])
                   xdistr[[i]][dimv, k] <- xprovi
                 }
@@ -3867,7 +3773,7 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
                 samplesize <- nrow(x)
             for (k in 1:nsim) {
                 xdistr[[k]] <- matrix(nrow = samplesize, ncol = ncol(x))
-                neworder <- sample(c(1:samplesize), size = samplesize, replace = T, prob = proba)
+                neworder <- sample(c(1:samplesize), size = samplesize, replace = TRUE, prob = proba)
                 for (i in 1:samplesize) for (j in 1:ncol(x)) xdistr[[k]][i, j] <- x[neworder[i], j]
             }
         }
@@ -3893,7 +3799,7 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
             }
             xprovi <- cbind(xprovi2, xprovi1)
             for (k in 1:nsim) {
-                xprovi2 <- xprovi[sample(nrow(xprovi), samplesize, replace = T), ]
+                xprovi2 <- xprovi[sample(nrow(xprovi), samplesize, replace = TRUE), ]
                 xdistr[[k]] <- t(table(xprovi2[, 1], xprovi2[, 2]))
             }
         }
@@ -4071,25 +3977,7 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
         IndTest[, 2] <- xvect
     }
     
-    
-    if (fun == "spatinteract" & itype != "between") {
-        for (k in 1:nsim) resim[, k] <- diag(func(xdistr[[k]], spatobj = spatobj, folder = folder, shape = shape))[var]
-        IndTest[, 2] <- diag(func(x, spatobj = spatobj, folder = folder, shape = shape))[var]
-    }
-    
-    if (fun == "spatinteract" & itype == "between") {
-        for (k in 1:nsim) {
-            xvect <- NULL
-            resprovi <- func(xdistr[[k]], spatobj = spatobj, folder = folder, shape = shape)
-            for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
-            resim[, k] <- xvect
-        }
-        xvect <- NULL
-        resprovi <- func(x, spatobj = spatobj, folder = folder, shape = shape)
-        for (i in 1:length(var)) xvect <- c(xvect, resprovi[var[i], var[-i]])
-        IndTest[, 2] <- xvect
-    }
-    
+
     if (fun == "Delta" || fun == "ACO") {
         for (k in 1:nsim) {
             if (simtype == "Jack" & sampleunit == "unit") 
@@ -4290,11 +4178,7 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
         IndTest[, 2] <- func(x, polorder = polorder, pred = pred)$Hr
     }
     
-    if (fun == "spatmultiseg") {
-        for (k in 1:nsim) resim[, k] <- func(xdistr[[k]], spatobj = spatobj, folder = folder, shape = shape, ...)[var]
-        IndTest[, 2] <- func(x, spatobj = spatobj, folder = folder, shape = shape, ...)[var]
-    }
-    
+   
     # RESULTS
     
     
@@ -4309,7 +4193,7 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
     
     if (simtype == "MonteCarlo") {
         names(IndTest) <- c("Var", fun, "Mean", "Rank", "P.Value")
-        if (fun == "ordinalseg" || fun == "spatmultiseg") 
+        if (fun == "ordinalseg") 
             names(IndTest)[1] <- "Index"
         for (i in 1:nrow(IndTest)) {
             IndTest[i, 3] <- round(mean(resim[i, ]), 4)
@@ -4328,7 +4212,7 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
             term <- "rd"
         names(IndTest) <- c("Var", fun, paste0(substr(as.character(perc[1]), 4, 4), term, "_percentile"), "Median", paste0(substr(as.character(perc[2]), 
             3, 4), "th_percentile"))
-        if (fun == "ordinalseg" || fun == "spatmultiseg") 
+        if (fun == "ordinalseg") 
             names(IndTest)[1] <- "Index"
         for (i in 1:nrow(IndTest)) {
             IndTest[i, 3] <- round(stats::quantile(resim[i, ], perc[1]), 4)
@@ -4394,20 +4278,20 @@ ResampleTest <- function(x, fun, var = NULL, simtype = "MonteCarlo", sampleunit 
 #' @usage ResamplePlot(ResampleTest, var = 1, coldist = 'red', colind = 'blue', 
 #' legend = TRUE, legendpos = 'top', cex.legend = 1, bty = 'o')
 #' @param ResampleTest - a ResampleTest object prodused with \code{\link{ResampleTest}} function
-#' @param var - the number of the variable to be plot 
-#' @param coldist - color used to plot the simulated distribution 
-#' @param colind - color used to plot the index
-#' @param legend - logical parameter, to control the legend's plots
-#' @param legendpos - a character string giving the legend's position: 
+#' @param var the number of the variable to be plot 
+#' @param coldist color used to plot the simulated distribution 
+#' @param colind color used to plot the index
+#' @param legend logical parameter, to control the legend's plots
+#' @param legendpos a character string giving the legend's position: 
 #' 'bottomright', 'bottom', 'bottomleft', 'left', 'topleft', 'top', 
 #' 'topright', 'right' and 'center'.
-#' @param cex.legend - a numerical value giving the amount by which 
+#' @param cex.legend a numerical value giving the amount by which 
 #' plotting text and symbols in legend should be magnified relative to the default. 
-#' @param bty - a character string which determines the type of box 
+#' @param bty a character string which determines the type of box 
 #' of the legend. If bty is one of 'o' (the default), 'l', '7', 'c', 
 #' 'u', or ']' the resulting box resembles the corresponding upper 
 #' case letter. A value of 'n' suppresses the box.
-#' @return A plot with resampling distribution
+#' @return A plot with resampling theoretical distribution
 #' @references Tivadar M. (2019) 
 #' \emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
 #' Journal of Statistical Software,  89 (7), pp 1-39

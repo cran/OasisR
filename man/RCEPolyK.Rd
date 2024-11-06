@@ -2,40 +2,41 @@
 % Please edit documentation in R/SegFunctions.R
 \name{RCEPolyK}
 \alias{RCEPolyK}
-\title{A function to compute Constrained Relative Centralisation Index}
+\title{A function to compute Constrained Polyentric Relative Centralisation Index}
 \usage{
 RCEPolyK(x, dc = NULL,  K = NULL, kdist = NULL, center = 1,
                 spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 
-\item{dc}{- a numeric matrix/vector containing the distances between spatial units
+\item{dc}{a numeric matrix/vector containing the distances between spatial units
 centroids and the central spatial unit(s).}
 
-\item{K}{- the number of neighbourhoods under the influence of a center}
+\item{K}{the number of neighbourhoods under the influence of a center}
 
-\item{kdist}{- the maximal distance that defines the neighbourhoods influenced
+\item{kdist}{the maximal distance that defines the neighbourhoods influenced
 by a center}
 
-\item{center}{- a numeric vector  giving the number of the spatial units that 
+\item{center}{a numeric vector  giving the number of the spatial units that 
 represent the centers in the table}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
+\item{spatobj}{a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile is located on the drive}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension).}
 }
 \value{
-a matrix containing relative centralisation index values
+a matrix containing the constrainted polycentric relative centralisation 
+index values for each pair of groups
 }
 \description{
 The constrained (local) version of relative centralization index.
@@ -67,6 +68,10 @@ American Sociological Review 41, pp. 210-217
 Folch D.C and Rey S. J (2016) \emph{The centralization index: 
 A measure of local spatial segregation}. Papers in Regional 
 Science 95 (3), pp. 555-576
+
+Tivadar M. (2019) 
+\emph{OasisR: An R Package to Bring Some Order to the World of Segregation Measurement}.
+Journal of Statistical Software,  89 (7), pp 1-39
 }
 \seealso{
 \code{\link{RCE}}, \code{\link{RCEPoly}},

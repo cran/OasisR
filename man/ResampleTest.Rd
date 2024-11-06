@@ -18,7 +18,6 @@ ResampleTest(
   IQRrange = 1.5,
   proba = NULL,
   nsim = NULL,
-  setseed = FALSE,
   spatobj = NULL,
   folder = NULL,
   shape = NULL,
@@ -49,18 +48,18 @@ ResampleTest(
 )
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 
-\item{fun}{- a character vector with the segregation function 
+\item{fun}{a character vector with the segregation function 
 to be tested}
 
-\item{var}{- vector with the variables to be tested}
+\item{var}{vector with the variables to be tested}
 
-\item{simtype}{- a character vector with the type of simulation. 
+\item{simtype}{a character vector with the type of simulation. 
 If simtype = 'Boot', the function generates bootstrap replications
 If simtype = 'Jack', the function generates jackknife replications
 If simtype = 'MonteCarlo', the function produces a randomization test 
@@ -69,131 +68,129 @@ If simtype = 'MonteCarlo', the function produces a randomization test
 \item{sampleunit}{= 'unit' (by default) when the sampling unit is the 
 spatial/organisational unit and sampleunit = 'ind' for individual sampling}
 
-\item{samplesize}{- the size of the sample used for bootstraping. If null, 
+\item{samplesize}{the size of the sample used for bootstraping. If null, 
 the samplesize equals the number of spatial/organizational units(sampleunit = 'unit') or 
 the total total population (sampleunit = 'ind')}
 
-\item{perc}{- the percentiles for the bootstrap replications}
+\item{perc}{the percentiles for the bootstrap replications}
 
-\item{outl}{- logical parameter for jackknife simulations, if TRUE 
+\item{outl}{logical parameter for jackknife simulations, if TRUE 
 the function provides the outliers obtained by jackknife iterations}
 
 \item{outmeth}{- a character vector designing the outliers detection method:
-outmeth = 'bp' (by default) for boxplot method 
-outmeth = 'sd'  for standard deviation method 
-outmeth = 'z'  for normal scores method
-outmeth = 't'  for t Student scores method
-outmeth = 'chisq'  for chi-squared scores method
-outmeth = 'mad'  for median absolute deviation method
+outmeth = 'bp' (by default) for boxplot method, 
+outmeth = 'sd'  for standard deviation method, 
+outmeth = 'z'  for normal scores method,
+outmeth = 't'  for t Student scores method,
+outmeth = 'chisq'  for chi-squared scores method,
+outmeth = 'mad'  for median absolute deviation method.
 The estimations based on scoring methods are obtained using outliers package}
 
-\item{sdtimes}{- multiplication factor of the standard deviation used for
+\item{sdtimes}{multiplication factor of the standard deviation used for
 outliers detection with jackknife simulations (2 by default)}
 
-\item{IQRrange}{- determines the boxplot thresholds (1.5 by default) as multiplication of 
+\item{IQRrange}{determines the boxplot thresholds (1.5 by default) as multiplication of 
 IQR (Inter Quartile Range)}
 
-\item{proba}{- for Monte Carlo simulations, proba is a vector with location 
+\item{proba}{for Monte Carlo simulations, proba is a vector with location 
 probabilities. If proba = NULL, the vector is equiprobable. If outliers are determined 
 with jackknife technique, proba indicates the probability (confidence interval) for 
 scoring tests.}
 
-\item{nsim}{- the number of simulations}
+\item{nsim}{the number of simulations}
 
-\item{setseed}{- if TRUE, specify zero seed for repetead simulation}
-
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
+\item{spatobj}{a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile is located on the drive}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension).}
 
-\item{delta}{- an inequality aversion parameter}
+\item{delta}{an inequality aversion parameter}
 
-\item{exact}{- a logical variable to specifiy the index version: 
+\item{exact}{a logical variable to specifiy the index version: 
 exact = FALSE (by default) for the approximate version of the index, 
 and exact = TRUE for the exact version}
 
-\item{d}{- a matrix of the distances between spatial unit centroids}
+\item{d}{a matrix of the distances between spatial unit centroids}
 
-\item{c}{- a standard binary contiguity (adjacency) symmetric matrix where 
+\item{c}{a standard binary contiguity (adjacency) symmetric matrix where 
 each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 units are adjacent, and 0 otherwise.}
 
-\item{a}{- a numeric vector containing spatial unit areas}
+\item{a}{a numeric vector containing spatial unit areas}
 
-\item{ck}{- a list containing contiguity matrices coresponding to each order 
+\item{ck}{a list containing contiguity matrices coresponding to each order 
 (from 1 to K)}
 
-\item{f}{- the distance function, f = 'exp' (by default) for negative 
+\item{f}{the distance function, f = 'exp' (by default) for negative 
 exponential function and f = 'rec' for reciprocal function}
 
-\item{b}{- a common boundaries matrix where each element \emph{Bij}}
+\item{b}{a common boundaries matrix where each element \emph{Bij}}
 
-\item{p}{- a numeric vector containing spatial units perimeters.}
+\item{p}{a numeric vector containing spatial units perimeters.}
 
-\item{spatmat}{- the method used for spatial calculations: 'c' for the 
+\item{spatmat}{the method used for spatial calculations: 'c' for the 
 contiguity matrix (by default) or any other user spatial interaction matrix 
 and 'd' for the inverse exponential function of the distance.}
 
-\item{queen}{- logical parameter defining criteria used for contiguity 
+\item{queen}{logical parameter defining criteria used for contiguity 
 matrix computation, TRUE for queen, FALSE (by default) for rook}
 
-\item{distin}{- input metric conversion, based on  \pkg{bink} package and 
+\item{distin}{input metric conversion, based on  \pkg{bink} package and 
 includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.}
 
-\item{distout}{- output metric conversion, based on  \pkg{bink} package and 
+\item{distout}{output metric conversion, based on  \pkg{bink} package and 
 includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.}
 
-\item{diagval}{- when providing a spatial object or a shape file, 
+\item{diagval}{when providing a spatial object or a shape file, 
 the user has the choice of the spatial matrix diagonal definition: 
 diagval = '0' (by default) for an null diagonal and diagval = 'a' 
 to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) 
 (White, 1983)}
 
-\item{fdist}{- the method used for distance interaction matrix: 
+\item{fdist}{the method used for distance interaction matrix: 
 e' for inverse exponential function (by default) and 'l' for linear.}
 
-\item{itype}{- a character string defining the index type:
-itype = 'multi' (by default) for the multi-group index (White, 1986)
+\item{itype}{a character string defining the index type:
+itype = 'multi' (by default) for the multigroup index (White, 1986)
 or itype = 'between' for the between groups version (White, 1983)}
 
-\item{dc}{- a numeric vector containing the distances between spatial units
+\item{dc}{a numeric vector containing the distances between spatial units
 centroids and the central spatial unit}
 
-\item{center}{- a numeric value giving the number of the spatial unit that 
+\item{center}{a numeric value giving the number of the spatial unit that 
 represents the center in the table}
 
-\item{polorder}{- order of the polynomial approximation (4 by default)}
+\item{polorder}{order of the polynomial approximation (4 by default)}
 
-\item{pred}{- a numerical vector with percentiles to be predicted.}
+\item{pred}{a numerical vector with percentiles to be predicted.}
 
-\item{K}{- the order of the contiguity matrix}
+\item{K}{the order of the contiguity matrix}
 
-\item{ptype}{- a string variable giving two options for perimeter calculation
+\item{ptype}{a string variable giving two options for perimeter calculation
 when a spatial object or shapefile is provided: 'int' to use only interior
 boundaries of spatial units, and 'all' to use entire boundaries, 
 including the boundaries to the exterior}
 
-\item{variant}{- a character variable that allows to choose the index version: 
+\item{variant}{a character variable that allows to choose the index version: 
 variant = 's' for the dissimilarity index adjusted for contiguous spatial units
 boundary lengths and perimeter/area ratio (by default) and variant = 'w' 
 for the version without perimeter/area ratio}
 
-\item{...}{- other specific parameters}
+\item{...}{other specific parameters}
 }
 \value{
-A list with: 
-- index's name
-- simulation type 
-- statistics summary of the simulations
-- simulated index distribution
-- simulated population distribution
-- matrix with outliers (jackknife)
-- list with outliers values (jackknife)
+A list including: 
+the index's name, 
+the simulation type, 
+the summary statistics of the simulations, 
+the simulated index distribution, 
+the simulated population distribution,
+a matrix with outliers (jackknife), 
+a list with outliers values (jackknife)
 }
 \description{
 Resampling tests for segregation indexes.

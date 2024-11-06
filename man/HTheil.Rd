@@ -7,15 +7,14 @@
 HTheil (x)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 }
 \value{
-a numeric vector containing Theils's entropy index value for 
-each group
+A numeric vector containing Theils's segregation index values for each group
 }
 \description{
 The entropy index (also called information index) measures

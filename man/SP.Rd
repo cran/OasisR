@@ -8,46 +8,50 @@ SP(x, d = NULL, fdist = 'e', distin = 'm',  distout = 'm', diagval = '0',
 itype = 'multi', beta = 1, spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 
-\item{d}{- a matrix of the distances between spatial unit centroids}
+\item{d}{a matrix of the distances between spatial unit centroids}
 
-\item{fdist}{- the method used for distance interaction matrix: 
+\item{fdist}{the method used for distance interaction matrix: 
 e' for inverse exponential function (by default) and 'l' for linear.}
 
-\item{distin}{- input metric conversion, based on  \pkg{bink} package and 
+\item{distin}{input metric conversion, based on  \pkg{bink} package and 
 includes conversions from 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.}
 
-\item{distout}{- output metric conversion, based on  \pkg{bink} package and 
+\item{distout}{output metric conversion, based on  \pkg{bink} package and 
 includes conversions to 'm', 'km', 'inch', 'ft', 'yd', 'mi', 'naut_mi', etc.}
 
-\item{diagval}{- when providing a spatial object or a shape file, 
+\item{diagval}{when providing a spatial object or a shape file, 
 the user has the choice of the spatial matrix diagonal definition: 
 diagval = '0' (by default) for an null diagonal and diagval = 'a' 
 to compute the diagonal as 0.6 * square root (spatial/organizational unitsarea) (White, 1983)}
 
-\item{itype}{- a character string defining the index type:
-itype = 'multi' (by default) for the multi-group index (White, 1986),
+\item{itype}{a character string defining the index type:
+itype = 'multi' (by default) for the multigroup index (White, 1986),
 itype = 'between' for the between groups version (White, 1983), or
 itype = 'one' for the one-group version (Apparicio et al, 2008)}
 
-\item{beta}{- distance decay parameter}
+\item{beta}{distance decay parameter}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
+\item{spatobj}{a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile is located on the drive}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension).}
 }
 \value{
-spatial proximity index value(s)
+If itype = 'multi' the function returns the multigroup
+spatial proximity index value (numeric). If itype = 'between', the 
+function returns a matrix containing the between group values of the 
+index. If itype = 'one', the function's  output is a numeric vector 
+containing the index values for each group
 }
 \description{
 The spatial proximity index, SP, compares the clustering 

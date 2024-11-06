@@ -2,34 +2,35 @@
 % Please edit documentation in R/SegFunctions.R
 \name{RCE}
 \alias{RCE}
-\title{A function to compute Relatice Centralisation Index (RCE)}
+\title{A function to compute Duncan's Relative Centralisation Index (RCE)}
 \usage{
 RCE(x, dc = NULL, center = 1, spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 
-\item{dc}{- a numeric vector containing the distances between spatial units
+\item{dc}{a numeric vector containing the distances between spatial units
 centroids and the central spatial unit}
 
-\item{center}{- a numeric value giving the number of the spatial unit that 
+\item{center}{a numeric value giving the number of the spatial unit that 
 represents the center in the table}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
+\item{spatobj}{a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile is located on the drive}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension).}
 }
 \value{
-a matrix containing relative centralisation index values
+A matrix containing the relative centralisation index values 
+for each pair of groups
 }
 \description{
 The relative centralisation index measures the 

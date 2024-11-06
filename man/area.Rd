@@ -7,18 +7,18 @@
 area(spatobj = NULL, folder = NULL, shape = NULL)
 }
 \arguments{
-\item{spatobj}{- a spatial object (class sf, sfc or sfg) containing 
+\item{spatobj}{a spatial object (class sf, sfc or sfg) containing 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile with the geographic information 
 is located.}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension) which contains the geographic information}
 }
 \value{
-A area vector
+A vector containing the areas of spatial units
 }
 \description{
 The function is based on \pkg{sf} package and can be 

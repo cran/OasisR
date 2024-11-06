@@ -2,19 +2,20 @@
 % Please edit documentation in R/SegFunctions.R
 \name{DIDuncan}
 \alias{DIDuncan}
-\title{A function to compute Duncan dissimilarity segregation index}
+\title{A function to compute Duncan's dissimilarity segregation index}
 \usage{
 DIDuncan(x)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 }
 \value{
-a matrix containing dissimilarity index values
+A matrix containing the dissimilarity index values for each 
+pair of groups
 }
 \description{
 Duncan's dissimilarity index is the segregation index 

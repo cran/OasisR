@@ -6,40 +6,40 @@
 \usage{
 segdataclean (x, c = NULL, b = NULL, a = NULL, p = NULL, 
 ck = NULL, d = NULL, dc = NULL, spatobj = NULL, folder = NULL, shape = NULL, 
-warnings = T)
+warnings = TRUE)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 
-\item{c}{- a standard binary contiguity (adjacency) symmetric matrix where 
+\item{c}{a standard binary contiguity (adjacency) symmetric matrix where 
 each element \emph{Cij} equals 1 if \emph{i}-th and \emph{j}-th spatial 
 units are adjacent, and 0 otherwise.}
 
-\item{b}{- a common boundaries matrix where each element \emph{Bij}}
+\item{b}{a common boundaries matrix where each element \emph{Bij}}
 
-\item{a}{- a numeric vector containing spatial unit areas}
+\item{a}{a numeric vector containing spatial unit areas}
 
-\item{p}{- a numeric vector containing spatial units perimeters.}
+\item{p}{a numeric vector containing spatial units perimeters.}
 
-\item{ck}{- a list containing contiguity matrices coresponding to each order 
+\item{ck}{a list containing contiguity matrices coresponding to each order 
 (from 1 to K)}
 
-\item{d}{- a matrix of the distances between spatial unit centroids}
+\item{d}{a matrix of the distances between spatial unit centroids}
 
-\item{dc}{- a numeric vector containing the distances between spatial units
+\item{dc}{a numeric vector containing the distances between spatial units
 centroids and the central spatial unit}
 
-\item{spatobj}{- a spatial object (SpatialPolygonsDataFrame) with 
+\item{spatobj}{a spatial object (SpatialPolygonsDataFrame) with 
 geographic information}
 
-\item{folder}{- a character vector with the folder (directory) 
+\item{folder}{a character vector with the folder (directory) 
 name indicating where the shapefile is located on the drive}
 
-\item{shape}{- a character vector with the name of the shapefile 
+\item{shape}{a character vector with the name of the shapefile 
 (without the .shp extension).}
 
 \item{warnings}{- warning alert (by default TRUE)}

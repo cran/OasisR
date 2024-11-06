@@ -7,7 +7,7 @@
 rankorderseg(x, polorder = 4, pred = NULL)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
@@ -15,9 +15,9 @@ population, because this will be interpreted as a group. The rows
 represent the nominal categories (spatial units) and the columns the population
 distribution as ordered groups divided by thresholds}
 
-\item{polorder}{- order of the polynomial approximation (4 by default)}
+\item{polorder}{order of the polynomial approximation (4 by default)}
 
-\item{pred}{- a numerical vector with percentiles to be predicted. 
+\item{pred}{a numerical vector with percentiles to be predicted. 
 If NULL, the predictions are made at threshold levels}
 }
 \value{
@@ -25,15 +25,15 @@ A list containing the results for three rank-ordered indices:
 rank-order information theory index (Hr), rank-order variation ratio 
 index (Rr) and rank-order square root index (Sr). For each index, a sublist 
 is provided, containing: 
-Index - the rank-ordered index value
-Hp/Rp/Sp - a vector with ordinal information theory/variance ratio/square root 
-segregation index values at thresholds
-Coefficients - Coefficients extracted from the polynomial estimation model,
-including basic statistics
-Predict - a list contining predicted values of the coresponding ordinal index (fit); 
+Index (the rank-ordered index value), 
+Hp/Rp/Sp (a vector containing the ordinal information theory/variance 
+ratio/square root segregation index values at thresholds), 
+Coefficients (the coefficients extracted from the polynomial estimation model,
+including basic statistics), 
+Predict (a list containing predicted values of the corresponding ordinal index (fit); 
 standard error of predicted means (se.fit); degrees of freedom for residual (df); 
 and residual standard deviations (residuale.scale). If pred is NULL, the function 
-will return the the statistics at thresholds
+will return the statistics at thresholds)
 }
 \description{
 A function computing Reardon (2011) rank-ordered 

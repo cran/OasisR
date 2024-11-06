@@ -7,14 +7,14 @@
 ISimpson(x)
 }
 \arguments{
-\item{x}{- an object of class matrix (or which can be coerced to that class), 
+\item{x}{an object of class matrix (or which can be coerced to that class), 
 where each column represents the distribution of a group within 
 spatial units. The number of columns should be greater than 1 (at least 2 
 groups are required). You should not include a column with total 
 population, because this will be interpreted as a group.}
 }
 \value{
-Simpson's interaction index
+The Simpson's interaction index value (numeric)
 }
 \description{
 Simpson's interaction index measures the probability 
@@ -32,7 +32,7 @@ Nature 163:688
 Social diversity indices: 
 \code{\link{HShannon}}, \code{\link{NShannon}},
 
-Multi-group indices: 
+multigroup indices: 
 \code{\link{PMulti}}, \code{\link{GiniMulti}}, \code{\link{DMulti}},  
 \code{\link{HMulti}}, \code{\link{CMulti}}, \code{\link{RelDivers}}
 }
